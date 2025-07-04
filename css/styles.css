@@ -110,15 +110,39 @@ ul {
 
 /* --- 4. Main Content Area --- */
 .main-content {
-  grid-column: 2 / 3; /* Explicitly place main content in the second column */
-  padding: 0 2rem;
+  grid-column: 2 / 3;
+  /* Make this a flex container to center the wrapper */
+  display: flex;
+  flex-direction: column;
+  /* Crucial: this prevents the main content from exceeding the viewport height */
+  height: auto;
+  overflow: hidden; /*Hide the main body's scrollbar */
 }
+
+.main-content-wrapper {
+  flex: grow 1; /* Allow this to take up remaining space */
+  overflow-y: auto; /* Enable scrolling for the main content */
+  padding: 1.5rem 2rem;
+  height: 100%;
+  
+
+  background-color: var(--color-bg-primary);
+}
+
 .main-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 0;
   border-bottom: 1px solid var(--color-border);
+  /* Make the header sticky within the scrolling wrapper */
+  /* position: sticky;
+    top: 0; */
+  background-color: var(
+    --color-bg-primary
+  ); /* Needs a background to hide content scrolling under it */
+  /* z-index: 10; */
+  padding: 1rem 2rem; /* ADD horizontal padding here */
 }
 /* ... rest of your styles from here are mostly correct ... */
 .ticker-tape-widget {
@@ -143,7 +167,7 @@ ul {
 }
 
 .content-body {
-  padding: 2rem 0;
+  /* padding: 2rem; */
 }
 .content-body h1 {
   font-size: 2rem;
@@ -406,10 +430,10 @@ ul {
 }
 
 .form-text-muted {
-    display: block;
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
 }
 
 .quick-amounts {
@@ -486,68 +510,344 @@ ul {
   }
 }
 
-
 /* --- Styles for Main Site Footer (index.html) --- */
 .site-footer {
-    background-color: var(--color-bg-sidebar); /* Use the dark sidebar color */
-    color: var(--color-text-sidebar);
-    padding: 4rem 0 2rem 0;
-    margin-top: 4rem;
+  background-color: var(--color-bg-sidebar); /* Use the dark sidebar color */
+  color: var(--color-text-sidebar);
+  padding: 4rem 0 2rem 0;
+  margin-top: 4rem;
 }
 
 .footer-content {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .footer-brand .logo {
-    color: var(--color-text-sidebar-active);
+  color: var(--color-text-sidebar-active);
 }
 
 .footer-brand p {
-    margin-top: 1rem;
-    max-width: 300px;
-    line-height: 1.6;
+  margin-top: 1rem;
+  max-width: 300px;
+  line-height: 1.6;
 }
 
 .footer-links h4 {
-    color: var(--color-text-sidebar-active);
-    font-weight: 600;
-    margin-bottom: 1rem;
+  color: var(--color-text-sidebar-active);
+  font-weight: 600;
+  margin-bottom: 1rem;
 }
 
 .footer-links ul {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .footer-links a:hover {
-    color: var(--color-text-sidebar-active);
+  color: var(--color-text-sidebar-active);
 }
 
 .footer-bottom {
-    text-align: center;
-    padding-top: 2rem;
-    border-top: 1px solid #4a5568; /* A slightly lighter border for the dark bg */
-    font-size: 0.9rem;
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid #4a5568; /* A slightly lighter border for the dark bg */
+  font-size: 0.9rem;
 }
 
 /* --- Styles for Sidebar Footer (Dashboard) --- */
 .sidebar-footer {
-    margin-top: auto; /* This is the magic to push it to the bottom */
-    padding-top: 1rem;
-    border-top: 1px solid #4a5568;
+  margin-top: auto; /* This is the magic to push it to the bottom */
+  padding-top: 1rem;
+  border-top: 1px solid #4a5568;
 }
 
 .footer-info {
-    padding: 0.75rem;
-    white-space: nowrap;
-    color: var(--color-text-sidebar-title); /* Use the dimmest text color */
+  padding: 0.75rem;
+  white-space: nowrap;
+  color: var(--color-text-sidebar-title); /* Use the dimmest text color */
 }
 
 .footer-info .nav-text {
+  font-size: 0.8rem;
+}
+
+
+/* --- 10. Account Page & Tab Styles --- */
+.account-tabs {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 2px solid var(--color-border);
+    margin-bottom: -2px; /* Pulls the card border up to overlap */
+    position: relative;
+    z-index: 1;
+}
+
+.account-tab-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--color-text-muted);
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.account-tab-btn:hover {
+    color: var(--color-text-primary);
+}
+
+.account-tab-btn.active {
+    color: var(--color-accent-primary);
+    border-bottom-color: var(--color-accent-primary);
+}
+
+.account-panel-card {
+    padding: 2rem;
+    border-top-left-radius: 0; /* Makes the card flush with the tabs */
+}
+
+.account-panel {
+    display: none; /* Hide all panels by default */
+}
+
+.account-panel.active {
+    display: block; /* Show only the active panel */
+}
+
+/* --- 11. KYC / Verify Account Page Styles --- */
+.status-banner {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+}
+
+.status-unverified {
+    background-color: #fff0e3; /* Orange-tinted background */
+    border-color: #ff9f43;
+    color: #a6692c;
+}
+
+.dark-theme .status-unverified {
+    background-color: #573c24;
+    border-color: #ff9f43;
+    color: #f3b985;
+}
+
+/* Add styles for other statuses later, e.g., status-verified, status-pending */
+.status-verified {
+    background-color: #e0fbf6; /* Teal-tinted background */
+    border-color: #17c6a4;
+    color: #0b6855;
+}
+.dark-theme .status-verified {
+    background-color: #1c4a45;
+    border-color: #17c6a4;
+    color: #8ce6d1;
+}
+
+.kyc-card {
+    padding: 2rem;
+}
+
+.kyc-upload-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.file-drop-area {
+    position: relative;
+    border: 2px dashed var(--color-border);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.file-drop-area:hover {
+    border-color: var(--color-accent-primary);
+    background-color: var(--color-bg-hover);
+}
+
+.file-drop-area.is-active {
+    border-style: solid;
+    border-color: var(--color-accent-primary);
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.file-drop-area svg {
+    stroke: var(--color-text-muted);
+    margin-bottom: 1rem;
+}
+
+.file-message {
+    color: var(--color-text-muted);
+    font-weight: 500;
+}
+
+.file-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+    opacity: 0; /* Make the default input invisible */
+}
+
+.file-name-display {
+    display: block;
+    margin-top: 0.75rem;
+    font-style: italic;
+    color: var(--color-accent-primary);
+    font-weight: 500;
+    text-align: center;
+}
+
+
+/* --- 12. Transaction Log Table Styles --- */
+.transaction-log-card {
+    padding: 0; /* Remove card padding to let the table be full-width */
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Allow horizontal scrolling on small screens if needed */
+}
+
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse; /* Removes space between table cells */
+}
+
+.transaction-table th,
+.transaction-table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+}
+
+.transaction-table thead {
+    background-color: var(--color-bg-hover);
+}
+
+.transaction-table th {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.transaction-table tbody tr {
+    border-bottom: 1px solid var(--color-border);
+}
+
+.transaction-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.transaction-table td {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
     font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-completed {
+    background-color: #e0fbf6;
+    color: #0b6855;
+}
+.dark-theme .status-completed {
+    background-color: #1c4a45;
+    color: #8ce6d1;
+}
+
+.status-pending {
+    background-color: #fff0e3;
+    color: #a6692c;
+}
+.dark-theme .status-pending {
+    background-color: #573c24;
+    color: #f3b985;
+}
+
+.status-failed {
+    background-color: #fdeeee;
+    color: #9b2c2c;
+}
+.dark-theme .status-failed {
+    background-color: #5d2828;
+    color: #f9a5a5;
+}
+
+/* Responsive Table Styles */
+@media (max-width: 768px) {
+    .transaction-table thead {
+        display: none; /* Hide the header on mobile */
+    }
+    .transaction-table tr {
+        display: block;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid var(--color-accent-primary);
+    }
+    .transaction-table td {
+        display: block;
+        text-align: right;
+        padding-left: 50%; /* Make space for the label */
+        position: relative;
+    }
+    .transaction-table td::before {
+        content: attr(data-label); /* Use the data-label as a pseudo-element */
+        position: absolute;
+        left: 1.5rem;
+        font-weight: 600;
+        color: var(--color-text-primary);
+    }
+}
+
+
+/* --- Auth Page Styles --- */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+.auth-card {
+    background-color: var(--color-bg-secondary);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+}
+.auth-card h2 {
+    margin: 1rem 0 2rem 0;
+    color: var(--color-text-primary);
+}
+.auth-switch {
+    margin-top: 1.5rem;
+    color: var(--color-text-muted);
+}
+.auth-switch a {
+    color: var(--color-accent-primary);
+    font-weight: 600;
 }

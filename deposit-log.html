@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Plans - Project Apex</title>
+    <title>Deposit Log - Project Apex</title>
 
     <script>
         (function() {
@@ -51,7 +51,7 @@
         </a>
     </li>
     <li>
-        <a href="deposit-log.html" class="nav-item">
+        <a href="deposit-log.html" class="nav-item active">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
             <span class="nav-text">Deposit Log</span>
         </a>
@@ -66,7 +66,7 @@
 
     <li class="nav-section-title">PLAN</li>
     <li>
-        <a href="plans.html" class="nav-item active">
+        <a href="plans.html" class="nav-item">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
             <span class="nav-text">Plans</span>
         </a>
@@ -150,80 +150,62 @@
                     </div>
                 </div>
             </header>
-            
+
             <div class="content-body">
-    <h1>Investment Plans</h1>
-    <p class="page-description">Choose a plan that best suits your investment goals. Our plans are designed to offer competitive returns with managed risk.</p>
+    <h1>Deposit History</h1>
+    <p class="page-description">A complete record of all your deposits made to the platform.</p>
 
-    <div class="plans-grid">
-        <!-- Plan 1 -->
-        <div class="plan-card">
-            <div class="plan-header">
-                <h3 class="plan-name">Trade Plan</h3>
-                <div class="plan-price">$500 - $999</div>
-            </div>
-            <ul class="plan-features">
-                <li>Return <strong>15% Daily</strong></li>
-                <li>Duration <strong>For 2 Days</strong></li>
-                <li>Referral Bonus <strong>5%</strong></li>
-                <li>Total <strong>30% + Capital</strong></li>
-            </ul>
-            <button class="btn btn-primary plan-btn">Invest Now</button>
-        </div>
-
-        <!-- Plan 2 -->
-        <div class="plan-card featured">
-            <div class="plan-badge">Most Popular</div>
-            <div class="plan-header">
-                <h3 class="plan-name">Premium Plan</h3>
-                <div class="plan-price">$1,000 - $4,999</div>
-            </div>
-            <ul class="plan-features">
-                <li>Return <strong>20% Daily</strong></li>
-                <li>Duration <strong>For 3 Days</strong></li>
-                <li>Referral Bonus <strong>5%</strong></li>
-                <li>Total <strong>60% + Capital</strong></li>
-            </ul>
-            <button class="btn btn-primary plan-btn">Invest Now</button>
-        </div>
-
-        <!-- Plan 3 -->
-        <div class="plan-card">
-            <div class="plan-header">
-                <h3 class="plan-name">Ultimate Plan</h3>
-                <div class="plan-price">$5,000 - $10,000</div>
-            </div>
-            <ul class="plan-features">
-                <li>Return <strong>25% Daily</strong></li>
-                <li>Duration <strong>For 5 Days</strong></li>
-                <li>Referral Bonus <strong>5%</strong></li>
-                <li>Total <strong>125% + Capital</strong></li>
-            </ul>
-            <button class="btn btn-primary plan-btn">Invest Now</button>
+    <div class="card transaction-log-card">
+        <div class="table-container">
+            <table class="transaction-table">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Currency</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Example Row 1: Completed -->
+                    <tr>
+                        <td data-label="Transaction ID">#TXN10235</td>
+                        <td data-label="Date">2024-05-10</td>
+                        <td data-label="Amount">$1,000.00</td>
+                        <td data-label="Currency">BTC</td>
+                        <td data-label="Status">
+                            <span class="status-badge status-completed">Completed</span>
+                        </td>
+                    </tr>
+                    <!-- Example Row 2: Pending -->
+                    <tr>
+                        <td data-label="Transaction ID">#TXN10234</td>
+                        <td data-label="Date">2024-05-09</td>
+                        <td data-label="Amount">$500.00</td>
+                        <td data-label="Currency">ETH</td>
+                        <td data-label="Status">
+                            <span class="status-badge status-pending">Pending</span>
+                        </td>
+                    </tr>
+                    <!-- Example Row 3: Failed -->
+                    <tr>
+                        <td data-label="Transaction ID">#TXN10233</td>
+                        <td data-label="Date">2024-05-08</td>
+                        <td data-label="Amount">$250.00</td>
+                        <td data-label="Currency">USDT</td>
+                        <td data-label="Status">
+                            <span class="status-badge status-failed">Failed</span>
+                        </td>
+                    </tr>
+                    <!-- Add more rows as needed -->
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
-                
-                 <div
-                   class="tradingview-widget-container"
-                    style="height: auto; width: 100%; margin-top: 1.5rem" >
-            <div id="advanced-chart-widget"></div>
-            <script type="text/javascript">
-              new TradingView.widget({
-                "autosize": true,
-                "symbol": "FX:EURUSD",
-                "interval": "D",
-                "timezone": "Etc/UTC",
-                "theme": "light",
-                "style": "1",
-                "locale": "en",
-                "enable_publishing": false,
-                "allow_symbol_change": true,
-                "container_id": "advanced-chart-widget"
-              });
-            </script>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async></script>
-          </div>
+            
+            
         </div>
         </main>
     </div>
