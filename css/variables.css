@@ -1,0 +1,43 @@
+:root {
+  /* === Light Theme (Pixel-Perfect Match) === */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #ffffff;
+  --color-bg-sidebar: #2c3e50;
+  --color-bg-input: #ffffff; 
+  --color-bg-hover: #f8f9fa;
+  --color-bg-active-nav: #007bff;
+  
+  --color-text-primary: #000000;
+  --color-text-secondary: #333333;
+  --color-text-muted: #868e96;
+  --color-text-sidebar: rgba(255, 255, 255, 0.7);
+  --color-text-sidebar-active: #ffffff;
+  --color-text-sidebar-title: rgba(255, 255, 255, 0.4);
+  
+  --color-border: #dee2e6;
+  --color-accent-primary: #007bff;
+
+  --shadow-card: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+    
+:root.dark-theme {
+  /* === Dark Theme (Enhanced) === */
+  --color-bg-primary: #121212;
+  --color-bg-secondary: #1e1e1e;
+  --color-bg-sidebar: #1e1e1e;
+  --color-bg-input: #2a2a2a;
+  --color-bg-hover: #2c2c2c;
+  --color-bg-active-nav: #007bff;
+  
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #e0e0e0;
+  --color-text-muted: #888888;
+  --color-text-sidebar: #a0a0a0;
+  --color-text-sidebar-active: #ffffff;
+  --color-text-sidebar-title: #666666;
+  
+  --color-border: #333333;
+  --color-accent-primary: #007bff;
+  
+  --shadow-card: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+}
