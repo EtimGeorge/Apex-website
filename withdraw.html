@@ -231,50 +231,46 @@
         </header>
 
         <div class="content-body">
-    <h1>Fund Your Account</h1>
-    <p class="page-description">Select a payment method and enter the amount you wish to deposit. Your balance will be updated upon confirmation.</p>
+    <h1>Withdraw Funds</h1>
+    <p class="page-description">Request a withdrawal to your personal wallet. Requests are processed within 24 hours.</p>
     
     <div class="form-card-container">
         <div class="card form-card">
-            <form id="deposit-form">
+            <form id="withdraw-form">
                 <div class="form-group">
-                    <label for="payment-method">Payment Method</label>
-                    <select id="payment-method" name="payment-method" class="form-control">
+                    <label for="withdraw-method">Withdraw To</label>
+                    <select id="withdraw-method" name="withdraw-method" class="form-control">
                         <option value="btc">Bitcoin (BTC)</option>
                         <option value="eth">Ethereum (ETH)</option>
                         <option value="usdt">Tether (USDT)</option>
-                        <option value="bnb">Binance Coin (BNB)</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="amount">Amount (USD)</label>
-                    <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter amount" required>
+                    <label for="withdraw-amount">Amount to Withdraw (USD)</label>
+                    <input type="number" id="withdraw-amount" name="withdraw-amount" class="form-control" placeholder="Enter amount" required>
+                    <small class="form-text-muted">Available Balance: $0.00</small>
                 </div>
                 
                 <div class="form-group">
-                    <p class="form-label">Quick Amounts</p>
-                    <div class="quick-amounts">
-                        <button type="button" class="btn-quick-amount">$100</button>
-                        <button type="button" class="btn-quick-amount">$500</button>
-                        <button type="button" class="btn-quick-amount">$1000</button>
-                        <button type="button" class="btn-quick-amount">$5000</button>
-                    </div>
+                    <label for="wallet-address">Your Wallet Address</label>
+                    <input type="text" id="wallet-address" name="wallet-address" class="form-control" placeholder="Enter your destination wallet address" required>
+                    <small class="form-text-muted">Please double-check the address. Transactions are irreversible.</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary form-submit-btn">Proceed to Payment</button>
+                <button type="submit" class="btn btn-primary form-submit-btn">Submit Request</button>
             </form>
         </div>
 
         <div class="card instructions-card">
-            <h4>Deposit Instructions</h4>
-            <p>After you click "Proceed to Payment", a unique payment address will be generated for your transaction.</p>
+            <h4>Withdrawal Rules</h4>
             <ul>
-                <li><span class="bullet-point">1</span> Send the exact amount of cryptocurrency to the provided address.</li>
-                <li><span class="bullet-point">2</span> Do NOT send funds from an exchange's hot wallet if they do not support it.</li>
-                <li><span class="bullet-point">3</span> Your account will be credited automatically after 3 blockchain confirmations.</li>
+                <li><span class="bullet-point">1</span> Minimum withdrawal is $50.</li>
+                <li><span class="bullet-point">2</span> A 2% withdrawal fee will be applied to cover network costs.</li>
+                <li><span class="bullet-point">3</span> Ensure the selected network (e.g., BTC, ERC20) matches your wallet.</li>
+                <li><span class="bullet-point">4</span> All requests are manually reviewed by our finance team for security.</li>
             </ul>
-            <p class="support-text">If you have any issues, please contact our support team.</p>
+            <p class="support-text">Processing times may vary depending on network congestion.</p>
         </div>
     </div>
 </div>
