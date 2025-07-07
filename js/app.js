@@ -1,65 +1,229 @@
-// Import the necessary functions from our Firebase config and the SDK
-import { auth, db } from './firebase-config.js';
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// =================================================================================
+// PROJECT APEX: APP.JS - FINAL CORRECTED VERSION
+// =================================================================================
 
-// List of pages that require the user to be logged in
+// --- IMPORTS ---
+import { auth, db, signOut } from './firebase-config.js'; // Assuming signOut is exported from firebase-config
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import {
+  doc,
+  getDoc,
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// --- 1. AUTHENTICATION & ROUTE PROTECTION ---
 const protectedPages = [
-    'dashboard.html',
-    'plans.html',
-    'fund-account.html',
-    'withdraw.html',
-    'my-account.html',
-    'deposit-log.html',
-    'my-plans.html',
-    'verify.html',
-    'withdrawal-log.html'
+  'dashboard.html',
+  'plans.html',
+  'fund-account.html',
+  'withdraw.html',
+  'my-account.html',
+  'deposit-log.html',
+  'my-plans.html',
+  'verify.html',
+  'withdrawal-log.html',
 ];
-
-// List of pages for logged-out users
 const publicPages = ['login.html', 'register.html'];
-
-// Get the current page's filename
 const currentPage = window.location.pathname.split('/').pop();
 
 onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        // --- USER IS LOGGED IN ---
-        console.log("Auth state changed: User is logged in.", user.uid);
-        
-        // If they are on a public page (login/register), redirect to dashboard
-        if (publicPages.includes(currentPage)) {
-            console.log("User is logged in but on a public page. Redirecting to dashboard.");
-            window.location.href = 'dashboard.html';
-            return; // Stop further execution
-        }
-        
-        // Fetch and display user data on the page
-        try {
-            const userDocRef = doc(db, "users", user.uid);
-            const userDocSnap = await getDoc(userDocRef);
+  if (user) {
+    // User is logged in.
 
-            if (userDocSnap.exists()) {
-                const userData = userDocSnap.data();
-                // Update the UI with user's name (and later, balance etc.)
-                const userNameElements = document.querySelectorAll('.user-info span');
-                userNameElements.forEach(el => el.textContent = userData.fullName);
-                // We can add more UI updates here, e.g., for account balance
-            } else {
-                console.log("No such user document!");
-            }
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-        }
-
-    } else {
-        // --- USER IS LOGGED OUT ---
-        console.log("Auth state changed: User is logged out.");
-        
-        // If they are on a protected page, redirect to login
-        if (protectedPages.includes(currentPage)) {
-            console.log("User is logged out but on a protected page. Redirecting to login.");
-            window.location.href = 'login.html';
-        }
+    // **REMOVED THE CONFLICTING REDIRECT LOGIC FROM HERE**
+    // The only redirect this script handles now is protecting public pages
+    // AFTER the user is already logged in and navigating around.
+    if (publicPages.includes(currentPage)) {
+      window.location.href = 'dashboard.html';
+      return;
     }
+
+    // Fetch and display user data
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+        // Update UI Elements
+        const userNameDisplay = document.getElementById('user-name-display');
+        if (userNameDisplay) userNameDisplay.textContent = userData.fullName;
+
+        const userProfilePic = document.getElementById('user-profile-pic');
+        if (userProfilePic) {
+          const encodedName = encodeURIComponent(userData.fullName);
+          userProfilePic.src = `https://ui-avatars.com/api/?name=${encodedName}&background=0D8ABC&color=fff&rounded=true`;
+        }
+      } else {
+        console.error(
+          'Data integrity error: User is authenticated but no document exists in Firestore. UID:',
+          user.uid
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  } else {
+    // User is logged out.
+    if (protectedPages.includes(currentPage)) {
+      window.location.href = 'login.html';
+    }
+  }
+});
+
+// =================================================================================
+//  2. UI INITIALIZATION & EVENT LISTENERS (Runs after DOM is loaded)
+// =================================================================================
+// --- 2. UI INITIALIZATION & EVENT LISTENERS ---
+document.addEventListener('DOMContentLoaded', () => {
+  // --- TradingView Widget Loader ---
+  // This is the single, correct way to load the widgets.
+  if (currentPage === 'dashboard.html' && typeof TradingView !== 'undefined') {
+    const theme = document.documentElement.classList.contains('dark-theme')
+      ? 'dark'
+      : 'light';
+
+    // Ticker Tape Widget
+    new TradingView.widget({
+      container_id: 'tradingview-ticker-tape',
+      symbols: [
+        { proName: 'FOREXCOM:SPXUSD', title: 'S&P 500' },
+        { proName: 'FOREXCOM:NSXUSD', title: 'US 100' },
+        { proName: 'FX_IDC:EURUSD', title: 'EUR/USD' },
+        { proName: 'BITSTAMP:BTCUSD', title: 'Bitcoin' },
+        { proName: 'BITSTAMP:ETHUSD', title: 'Ethereum' },
+      ],
+      showSymbolLogo: true,
+      colorTheme: theme,
+      isTransparent: false,
+      displayMode: 'adaptive',
+      locale: 'en',
+    });
+
+    // Advanced Chart Widget
+    new TradingView.widget({
+      container_id: 'tradingview-advanced-chart',
+      height: 500,
+      symbol: 'FX:EURUSD',
+      interval: 'D',
+      timezone: 'Etc/UTC',
+      theme: theme,
+      style: '1',
+      locale: 'en',
+      enable_publishing: false,
+      allow_symbol_change: true,
+    });
+  }
+
+  // --- Logout Button Logic ---
+const logoutButton = document.getElementById('logout-btn');
+if (logoutButton) {
+    logoutButton.addEventListener('click', () => {
+        // Correct way to call signOut
+        signOut(auth).then(() => {
+            console.log("User signed out successfully.");
+            // Redirect will be handled by onAuthStateChanged
+        }).catch((error) => {
+            console.error("Sign out error", error);
+        });
+    });
+}
+  // --- All Other UI Logic ---
+  // (Sidebar, Theme, Copy Button, Tabs, etc. are all placed here)
+
+  // Collapsible Sidebar
+  const dashboardLayout = document.querySelector('.dashboard-layout');
+  if (dashboardLayout) {
+    const sidebar = dashboardLayout.querySelector('.sidebar');
+    sidebar.addEventListener('mouseenter', () =>
+      dashboardLayout.classList.add('sidebar-expanded')
+    );
+    sidebar.addEventListener('mouseleave', () =>
+      dashboardLayout.classList.remove('sidebar-expanded')
+    );
+  }
+
+  // Theme Switcher
+  const themeToggleButton = document.getElementById('theme-toggle-btn');
+  const themeMenu = document.getElementById('theme-menu');
+  if (themeToggleButton && themeMenu) {
+    themeToggleButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+      themeMenu.classList.toggle('hidden');
+    });
+    document.addEventListener('click', (event) => {
+      if (
+        !themeMenu.contains(event.target) &&
+        !themeToggleButton.contains(event.target)
+      ) {
+        themeMenu.classList.add('hidden');
+      }
+    });
+    themeMenu.querySelectorAll('li').forEach((item) => {
+      item.addEventListener('click', () => {
+        localStorage.setItem('theme', item.getAttribute('data-theme'));
+        location.reload();
+      });
+    });
+  }
+
+  // --- Dashboard Page: Copy Button Logic ---
+  const copyButton = document.getElementById('copy-btn');
+  if (copyButton) {
+    const referralInput = document.getElementById('referral-link');
+    copyButton.addEventListener('click', () => {
+      navigator.clipboard.writeText(referralInput.value).then(() => {
+        const originalText = copyButton.textContent;
+        copyButton.textContent = 'Copied!';
+        copyButton.style.backgroundColor = '#28a745';
+        setTimeout(() => {
+          copyButton.textContent = originalText;
+          copyButton.style.backgroundColor = '';
+        }, 2000);
+      });
+    });
+  }
+
+  // --- Fund Account Page: Quick Amount Logic ---
+  const amountInput = document.getElementById('amount');
+  if (amountInput) {
+    const quickAmountButtons = document.querySelectorAll('.btn-quick-amount');
+    quickAmountButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        amountInput.value = button.textContent.replace('$', '');
+      });
+    });
+  }
+
+  /// --- My Account Page: Tab Logic ---
+  const accountTabsContainer = document.querySelector('.account-tabs');
+  if (accountTabsContainer) {
+    const tabButtons =
+      accountTabsContainer.querySelectorAll('.account-tab-btn');
+    const tabPanels = document.querySelectorAll('.account-panel');
+    tabButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const targetPanelId = button.dataset.tab;
+        const targetPanel = document.getElementById(targetPanelId);
+        tabButtons.forEach((btn) => btn.classList.remove('active'));
+        tabPanels.forEach((panel) => panel.classList.remove('active'));
+        button.classList.add('active');
+        if (targetPanel) targetPanel.classList.add('active');
+      });
+    });
+  }
+  // --- Verify Page: KYC File Upload Logic ---
+  // Note: The original code had some undefined variables. This is a corrected version.
+  const kycForm = document.getElementById('kyc-form');
+  if (kycForm) {
+    const fileInputs = kycForm.querySelectorAll('.file-input');
+    fileInputs.forEach((input) => {
+      const label = kycForm.querySelector(`label[for='${input.id}']`);
+      if (label) {
+        input.addEventListener('change', () => {
+          label.textContent =
+            input.files.length > 0 ? input.files[0].name : 'Choose File';
+        });
+      }
+    });
+  }
 });

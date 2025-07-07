@@ -18,8 +18,8 @@
       })();
     </script>
 
-    <link rel="stylesheet" href="/css/variables.css" />
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="css/variables.css" />
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
 
   <body>
@@ -211,24 +211,10 @@
               </a>
             </li>
             <li>
-              <a href="index.html" class="nav-item">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                  <polyline points="16 17 21 12 16 7"></polyline>
-                  <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-                <span class="nav-text">Logout</span>
-              </a>
+              <button id="logout-btn" class="nav-item">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+    <span class="nav-text">Logout</span>
+</button>
             </li>
           </ul>
         </nav>
@@ -369,13 +355,10 @@
               </div>
             </div>
             <div class="user-info">
-              <span>Samuel Etim</span>
-              <a href="#profile"
-                ><img
-                  src="images/profile-placeholder.png"
-                  alt="User Profile"
-                  class="profile-pic"
-              /></a>
+              <span id="user-name-display"></span>
+              <a href="my-account.html">
+                <img id="user-profile-pic" src="" alt="User Profile" class="profile-pic">
+              </a>
             </div>
           </div>
         </header>
@@ -449,6 +432,6 @@
 </div>
 
   <script type="module" src="js/app.js"></script>
-    <script src="js/main.js" defer></script>
+    
   </body>
 </html>

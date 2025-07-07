@@ -1,159 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <li><a href="fund-account.html" class="nav-item active">Fund Account</a></li>
 
-    <script>
-      (function () {
-        function applyTheme(theme) {
-          const isDark =
-            theme === "dark" ||
-            (theme === "system" &&
-              window.matchMedia("(prefers-color-scheme: dark)").matches);
-          document.documentElement.classList.toggle("dark-theme", isDark);
-        }
-        applyTheme(localStorage.getItem("theme") || "light");
-      })();
-    </script>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fund Account - Project Apex</title>
+  <meta name="description"
+    content="Fund your account with various payment methods. Choose your preferred cryptocurrency and deposit amount." />
+  <meta name="keywords"
+    content="fund account, deposit, cryptocurrency, bitcoin, ethereum, tether, binance coin, payment methods" />
+  <meta name="author" content="Project Apex Team" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="robots" content="index, follow" />
 
-    <link rel="stylesheet" href="/css/variables.css" />
-    <link rel="stylesheet" href="/css/styles.css" />
-  </head>
-  <body>
-    <div class="dashboard-layout">
-      <!-- ===== Sidebar Navigation ===== -->
-      <aside class="sidebar">
-        <div class="sidebar-header">
-          <a href="dashboard.html" class="logo">Project Apex</a>
-        </div>
-        <nav class="sidebar-nav">
-          <!-- New Sidebar Navigation with Icons -->
-<ul>
-    <li class="nav-section-title">NAVIGATION</li>
-    <li>
-        <a href="dashboard.html" class="nav-item ">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            <span class="nav-text">Dashboard</span>
-        </a>
-    </li>
-    
-    <li class="nav-section-title">FUNDS</li>
-    <li>
-        <a href="fund-account.html" class="nav-item active">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg>
-            <span class="nav-text">Fund Account</span>
-        </a>
-    </li>
-    <li>
-        <a href="withdraw.html" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="16 12 12 8 8 12"></polyline><line x1="12" y1="16" x2="12" y2="8"></line></svg>
-            <span class="nav-text">Withdraw Fund</span>
-        </a>
-    </li>
-    <li>
-        <a href="deposit-log.html" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span class="nav-text">Deposit Log</span>
-        </a>
-    </li>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
 
-    <li>
-    <a href="withdrawal-log.html" class="nav-item">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-        <span class="nav-text">Withdrawal Log</span>
-    </a>
-</li>
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
 
-    <li class="nav-section-title">PLAN</li>
-    <li>
-        <a href="plans.html" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-            <span class="nav-text">Plans</span>
-        </a>
-    </li>
-    <li>
-        <a href="my-plans.html" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
-            <span class="nav-text">My Plans</span>
-        </a>
-    </li>
+  <li><a href="fund-account.html" class="nav-item active">Fund Account</a></li>
 
-    <li class="nav-section-title">ACCOUNT</li>
-    <li>
-        <a href="my-account.html" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            <span class="nav-text">My Account</span>
-        </a>
-    </li>
-    <li>
-        <a href="verify.html" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-            <span class="nav-text">Verify Account</span>
-        </a>
-    </li>
-    <li>
-        <a href="index.html" class="nav-item">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            <span class="nav-text">Logout</span>
-        </a>
-    </li>
-</ul>
-        </nav>
+  <script>
+    (function () {
+      function applyTheme(theme) {
+        const isDark =
+          theme === "dark" ||
+          (theme === "system" &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark-theme", isDark);
+      }
+      applyTheme(localStorage.getItem("theme") || "light");
+    })();
+  </script>
 
-          <!-- ===== Sidebar Footer ===== -->
-    <div class="sidebar-footer">
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+  <div class="dashboard-layout">
+    <!-- ===== Sidebar Navigation ===== -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="logo">Project Apex</a>
+      </div>
+      <nav class="sidebar-nav">
+        <!-- New Sidebar Navigation with Icons -->
+        <ul>
+          <li class="nav-section-title">NAVIGATION</li>
+          <li>
+            <a href="dashboard.html" class="nav-item ">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </li>
+
+          <li class="nav-section-title">FUNDS</li>
+          <li>
+            <a href="fund-account.html" class="nav-item active">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="8 12 12 16 16 12"></polyline>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+              </svg>
+              <span class="nav-text">Fund Account</span>
+            </a>
+          </li>
+          <li>
+            <a href="withdraw.html" class="nav-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="16 12 12 8 8 12"></polyline>
+                <line x1="12" y1="16" x2="12" y2="8"></line>
+              </svg>
+              <span class="nav-text">Withdraw Fund</span>
+            </a>
+          </li>
+          <li>
+            <a href="deposit-log.html" class="nav-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span class="nav-text">Deposit Log</span>
+            </a>
+          </li>
+
+          <li>
+            <a href="withdrawal-log.html" class="nav-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span class="nav-text">Withdrawal Log</span>
+            </a>
+          </li>
+
+          <li class="nav-section-title">PLAN</li>
+          <li>
+            <a href="plans.html" class="nav-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+              <span class="nav-text">Plans</span>
+            </a>
+          </li>
+          <li>
+            <a href="my-plans.html" class="nav-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <polyline points="17 11 19 13 23 9"></polyline>
+              </svg>
+              <span class="nav-text">My Plans</span>
+            </a>
+          </li>
+
+          <li class="nav-section-title">ACCOUNT</li>
+          <li>
+            <a href="my-account.html" class="nav-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span class="nav-text">My Account</span>
+            </a>
+          </li>
+          <li>
+            <a href="verify.html" class="nav-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <span class="nav-text">Verify Account</span>
+            </a>
+          </li>
+          <li>
+            <button id="logout-btn" class="nav-item">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              <span class="nav-text">Logout</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- ===== Sidebar Footer ===== -->
+      <div class="sidebar-footer">
         <div class="footer-info">
-            <span class="nav-text">© 2024 Project Apex</span>
+          <span class="nav-text">© 2025 Project Apex</span>
         </div>
-    </div>
+      </div>
 
-      </aside>
+    </aside>
 
-      <!-- ===== Main Content Area ===== -->
+    <!-- ===== Main Content Area ===== -->
       <main class="main-content">
         <div class="main-content-wrapper">
-          <header class="main-header">
-            <div class="tradingview-widget-container ticker-tape-widget">
-              <div class="tradingview-widget-container__widget"></div>
-              <script
-                type="text/javascript"
+          <!-- 1. Ticker Tape widget(Top Block) -->
+          <!-- Original Ticker Tape Widget -->
+          <div class="tradingview-widget-container ticker-tape-widget">
+            <div class="tradingview-widget-container__widget"></div>
+            <script
+              type="text/javascript"
               src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
               async
-            ></script>
-            <script type="application/json" id="ticker-tape-config">
+            >
               {
-                "symbols": [
-                  {"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"},
-                  {"proName": "FOREXCOM:NSXUSD", "title": "US 100"},
-                  {"proName": "FX_IDC:EURUSD", "title": "EUR/USD"},
-                  {"proName": "BITSTAMP:BTCUSD", "title": "Bitcoin"},
-                  {"proName": "BITSTAMP:ETHUSD", "title": "Ethereum"}
-                ],
-                "showSymbolLogo": true,
-                "colorTheme": "light",
-                "isTransparent": true,
-                "displayMode": "adaptive",
-                "locale": "en"
+                "symbols": [{"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"}, {"proName": "FOREXCOM:NSXUSD", "title": "US 100"}, {"proName": "FX_IDC:EURUSD", "title": "EUR/USD"}, {"proName": "BITSTAMP:BTCUSD", "title": "Bitcoin"}, {"proName": "BITSTAMP:ETHUSD", "title": "Ethereum"}],
+                "showSymbolLogo": true, "colorTheme": "light", "isTransparent": true, "displayMode": "adaptive", "locale": "en"
               }
             </script>
           </div>
 
-          <div class="header-actions">
-            <div class="theme-dropdown">
-              <button id="theme-toggle-btn" class="theme-btn">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
+          <!-- 2. Main Header (Middle Block) -->
+          <header class="main-header">
+            <!-- This empty div is a spacer to push the other items to the right -->
+            <div class="header-spacer"></div>
+
+            <div class="header-actions">
+              <div class="theme-dropdown">
+                <button id="theme-toggle-btn" class="theme-btn">
+                  <!-- <span class="sr-only">Toggle Theme</span> -->
+
+                  <!-- SVG for theme icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="5"></circle>
                   <line x1="12" y1="1" x2="12" y2="3"></line>
                   <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -168,17 +223,8 @@
               <div id="theme-menu" class="theme-menu hidden">
                 <ul>
                   <li data-theme="light">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <circle cx="12" cy="12" r="5"></circle>
                       <line x1="12" y1="1" x2="12" y2="3"></line>
                       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -187,147 +233,108 @@
                       <line x1="1" y1="12" x2="3" y2="12"></line>
                       <line x1="21" y1="12" x2="23" y2="12"></line>
                       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                      <line
-                        x1="18.36"
-                        y1="5.64"
-                        x2="19.78"
-                        y2="4.22"
-                      ></line></svg
-                    ><span>Light</span>
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg><span>Light</span>
                   </li>
                   <li data-theme="dark">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path
-                        d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-                      ></path></svg
-                    ><span>Dark</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg><span>Dark</span>
                   </li>
                   <li data-theme="system">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <rect
-                        x="2"
-                        y="3"
-                        width="20"
-                        height="14"
-                        rx="2"
-                        ry="2"
-                      ></rect>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                       <line x1="8" y1="21" x2="16" y2="21"></line>
-                      <line x1="12" y1="17" x2="12" y2="21"></line></svg
-                    ><span>System</span>
+                      <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg><span>System</span>
                   </li>
                 </ul>
               </div>
             </div>
             <div class="user-info">
-              <span>Samuel Etim</span>
-              <a href="#profile"
-                ><img
-                  src="images/profile-placeholder.png"
-                  alt="User Profile"
-                  class="profile-pic"
-              /></a>
+              <span id="user-name-display"></span>
+              <a href="my-account.html">
+                <img id="user-profile-pic" src="" alt="User Profile" class="profile-pic">
+              </a>
             </div>
           </div>
         </header>
 
+        <!-- 3. Content Body (Bottom, Scrolling Block) -->
+
         <div class="content-body">
-    <h1>Fund Your Account</h1>
-    <p class="page-description">Select a payment method and enter the amount you wish to deposit. Your balance will be updated upon confirmation.</p>
-    
-    <div class="form-card-container">
-        <div class="card form-card">
-            <form id="deposit-form">
+          <h1>Fund Your Account</h1>
+          <p class="page-description">Select a payment method and enter the amount you wish to deposit. Your balance
+            will be updated upon confirmation.</p>
+
+          <div class="form-card-container">
+            <div class="card form-card">
+              <form id="deposit-form">
                 <div class="form-group">
-                    <label for="payment-method">Payment Method</label>
-                    <select id="payment-method" name="payment-method" class="form-control">
-                        <option value="btc">Bitcoin (BTC)</option>
-                        <option value="eth">Ethereum (ETH)</option>
-                        <option value="usdt">Tether (USDT)</option>
-                        <option value="bnb">Binance Coin (BNB)</option>
-                    </select>
+                  <label for="payment-method">Payment Method</label>
+                  <select id="payment-method" name="payment-method" class="form-control">
+                    <option value="btc">Bitcoin (BTC)</option>
+                    <option value="eth">Ethereum (ETH)</option>
+                    <option value="usdt">Tether (USDT)</option>
+                    <option value="bnb">Binance Coin (BNB)</option>
+                  </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="amount">Amount (USD)</label>
-                    <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter amount" required>
+                  <label for="amount">Amount (USD)</label>
+                  <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter amount"
+                    required>
                 </div>
-                
+
                 <div class="form-group">
-                    <p class="form-label">Quick Amounts</p>
-                    <div class="quick-amounts">
-                        <button type="button" class="btn-quick-amount">$100</button>
-                        <button type="button" class="btn-quick-amount">$500</button>
-                        <button type="button" class="btn-quick-amount">$1000</button>
-                        <button type="button" class="btn-quick-amount">$5000</button>
-                    </div>
+                  <p class="form-label">Quick Amounts</p>
+                  <div class="quick-amounts">
+                    <button type="button" class="btn-quick-amount">$100</button>
+                    <button type="button" class="btn-quick-amount">$500</button>
+                    <button type="button" class="btn-quick-amount">$1000</button>
+                    <button type="button" class="btn-quick-amount">$5000</button>
+                  </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary form-submit-btn">Proceed to Payment</button>
-            </form>
-        </div>
+              </form>
+            </div>
 
-        <div class="card instructions-card">
-            <h4>Deposit Instructions</h4>
-            <p>After you click "Proceed to Payment", a unique payment address will be generated for your transaction.</p>
-            <ul>
-                <li><span class="bullet-point">1</span> Send the exact amount of cryptocurrency to the provided address.</li>
-                <li><span class="bullet-point">2</span> Do NOT send funds from an exchange's hot wallet if they do not support it.</li>
-                <li><span class="bullet-point">3</span> Your account will be credited automatically after 3 blockchain confirmations.</li>
-            </ul>
-            <p class="support-text">If you have any issues, please contact our support team.</p>
-        </div>
-    </div>
-    </div>
-          <div
-            class="tradingview-widget-container"
-            style="height: auto; width: 100%; margin-top: 1.5rem;"
-          >
-
-          
-            <div id="advanced-chart-widget"></div>
-            <script type="text/javascript">
-              new TradingView.widget({
-                "autosize": true,
-                "symbol": "FX:EURUSD",
-                "interval": "D",
-                "timezone": "Etc/UTC",
-                "theme": "light",
-                "style": "1",
-                "locale": "en",
-                "enable_publishing": false,
-                "allow_symbol_change": true,
-                "container_id": "advanced-chart-widget"
-              });
-            </script>
-            <script src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async></script>
+            <div class="card instructions-card">
+              <h4>Deposit Instructions</h4>
+              <p>After you click "Proceed to Payment", a unique payment address will be generated for your transaction.
+              </p>
+              <ul>
+                <li><span class="bullet-point">1</span> Send the exact amount of cryptocurrency to the provided address.
+                </li>
+                <li><span class="bullet-point">2</span> Do NOT send funds from an exchange's hot wallet if they do not
+                  support it.</li>
+                <li><span class="bullet-point">3</span> Your account will be credited automatically after 3 blockchain
+                  confirmations.</li>
+              </ul>
+              <p class="support-text">If you have any issues, please contact our support team.</p>
+            </div>
           </div>
         </div>
-      </div>
-      </main>
-    </div>
 
-    <script type="module" src="js/app.js"></script>
-    <script src="js/main.js" defer></script>
-  </body>
+
+         <!-- Original Advanced Chart Widget -->
+          <div class="tradingview-widget-container" style="height: 500px; width: 100%; margin-top: 2rem">
+            <div id="tradingview-widget-container-chart"></div>
+            <script type="text/javascript"
+              src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+                { "height": 500, "symbol": "FX:EURUSD", "interval": "D", "timezone": "Etc/UTC", "theme": "light", "style": "1", "locale": "en", "enable_publishing": false, "allow_symbol_change": true, "container_id": "tradingview-widget-container-chart" }
+              </script>
+          </div>
+      </div>
+  </div>
+  </main>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+
+</body>
+
 </html>

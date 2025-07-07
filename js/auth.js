@@ -1,4 +1,7 @@
-// Import the necessary functions from our Firebase config and the SDK
+// =================================================================================
+// PROJECT APEX: AUTH.JS - FINAL CORRECTED VERSION
+// =================================================================================
+
 import { auth, db, doc, setDoc } from './firebase-config.js';
 import { 
     createUserWithEmailAndPassword, 
@@ -7,77 +10,62 @@ import {
 
 // --- REGISTRATION LOGIC ---
 const registerForm = document.getElementById('register-form');
-
 if (registerForm) {
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Prevent the form from submitting the traditional way
-
-        // Get user inputs
+    registerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
         const fullName = document.getElementById('register-name').value;
         const email = document.getElementById('register-email').value;
         const password = document.getElementById('register-password').value;
 
-        try {
-            // 1. Create the user in Firebase Authentication
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-
-            console.log("User registered successfully:", user.uid);
-
-            // 2. Create a document for the user in the Firestore database
-            // This is where we'll store their specific data like name, balance, etc.
-            await setDoc(doc(db, "users", user.uid), {
-                fullName: fullName,
-                email: email,
-                uid: user.uid,
-                accountBalance: 0,
-                totalDeposited: 0,
-                totalWithdrawn: 0,
-                kycStatus: 'unverified',
-                createdAt: new Date() // Store the registration date
+        // 1. Create the user in Firebase Auth
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // This block runs ONLY if the user was created successfully in Auth
+                const user = userCredential.user;
+                console.log('Step 1/2 SUCCESS: User created in Auth system. UID:', user.uid);
+                
+                // 2. Create the user's document in Firestore
+                const userDocRef = doc(db, "users", user.uid);
+                return setDoc(userDocRef, {
+                    fullName: fullName,
+                    email: email,
+                    uid: user.uid,
+                    accountBalance: 0,
+                    totalDeposited: 0,
+                    totalWithdrawn: 0,
+                    kycStatus: 'unverified',
+                    createdAt: new Date()
+                });
+            })
+            .then(() => {
+                // This block runs ONLY if setDoc() was SUCCESSFUL
+                console.log('Step 2/2 SUCCESS: Firestore document created.');
+                alert('Registration Successful! Welcome to Project Apex.');
+                // 3. NOW it is safe to redirect
+                window.location.href = 'dashboard.html';
+            })
+            .catch((error) => {
+                // This will catch errors from EITHER createUser or setDoc
+                console.error('REGISTRATION FAILED:', error);
+                alert('Registration Failed: ' + error.message);
             });
-            
-            console.log("User data created in Firestore");
-
-            // 3. Redirect to the dashboard after successful registration
-            // alert("Registration successful! Welcome to Project Apex.");
-            // window.location.href = 'dashboard.html';
-            console.log("Redirect will be handled by auth state listener.");
-
-        } catch (error) {
-            // Handle errors (e.g., email already in use, weak password)
-            console.error("Registration Error:", error.message);
-            alert("Registration failed: " + error.message);
-        }
     });
 }
 
 // --- LOGIN LOGIC ---
 const loginForm = document.getElementById('login-form');
-
 if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
+    loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-
-        // Get user inputs
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
-
-        try {
-            // 1. Sign in the user with Firebase Authentication
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-
-            console.log("User logged in successfully:", user.uid);
-
-            // 2. Redirect to the dashboard after successful login
-            // window.location.href = 'dashboard.html';
-            console.log("Redirect will be handled by auth state listener.");
-
-        } catch (error) {
-            // Handle errors (e.g., wrong password, user not found)
-            console.error("Login Error:", error.message);
-            alert("Login failed: " + error.message);
-        }
+        signInWithEmailAndPassword(auth, email, password)
+            .then(() => {
+                // It is safe to redirect on login because we are not creating data.
+                window.location.href = 'dashboard.html';
+            })
+            .catch((error) => {
+                alert('Login Failed: ' + error.message);
+            });
     });
 }
