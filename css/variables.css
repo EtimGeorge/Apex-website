@@ -18,6 +18,8 @@
   --color-accent-primary: #007bff;
 
   --shadow-card: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  --color-accent-success: #28a745;
+  --color-accent-danger: #dc3545;
 }
     
 :root.dark-theme {

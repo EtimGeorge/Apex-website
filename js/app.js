@@ -44,16 +44,66 @@ onAuthStateChanged(auth, async (user) => {
 
       if (userDocSnap.exists()) {
         const userData = userDocSnap.data();
-        // Update UI Elements
+
+        // --- Define a helper function for formatting currency ---
+        const formatCurrency = (number) => {
+          return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          }).format(number);
+        };
+
+        // --- Update Header UI ---
         const userNameDisplay = document.getElementById('user-name-display');
         if (userNameDisplay) userNameDisplay.textContent = userData.fullName;
 
         const userProfilePic = document.getElementById('user-profile-pic');
         if (userProfilePic) {
-          const encodedName = encodeURIComponent(userData.fullName);
-          userProfilePic.src = `https://ui-avatars.com/api/?name=${encodedName}&background=0D8ABC&color=fff&rounded=true`;
+          if (userData.photoURL) {
+            userProfilePic.src = userData.photoURL;
+          } else {
+            const encodedName = encodeURIComponent(userData.fullName);
+            userProfilePic.src = `https://ui-avatars.com/api/?name=${encodedName}&background=0D8ABC&color=fff&rounded=true`;
+          }
         }
-      } else {
+
+        // --- Update Dashboard Cards (only on dashboard.html) ---
+        if (currentPage === 'dashboard.html') {
+          const balanceDisplay = document.getElementById('balance-display');
+          if (balanceDisplay) {
+            balanceDisplay.textContent = formatCurrency(
+              userData.accountBalance || 0
+            );
+          }
+
+          const depositsDisplay = document.getElementById('deposits-display');
+          if (depositsDisplay) {
+            depositsDisplay.textContent = formatCurrency(
+              userData.totalDeposited || 0
+            );
+          }
+
+          const withdrawnDisplay = document.getElementById('withdrawn-display');
+          if (withdrawnDisplay) {
+            withdrawnDisplay.textContent = formatCurrency(
+              userData.totalWithdrawn || 0
+            );
+          }
+
+          // --- Update Referral Link ---
+          const referralLinkDisplay = document.getElementById(
+            'referral-link-display'
+          );
+          if (referralLinkDisplay) {
+            // The referral link will be the registration page URL + the user's UID as a parameter
+            referralLinkDisplay.value = `https://projectapex.com/register.html?ref=${user.uid}`;
+          }
+        }
+      }
+
+      // If the user is authenticated but no document exists, log an error.
+      // This is a data integrity issue that should be resolved.
+      else {
         console.error(
           'Data integrity error: User is authenticated but no document exists in Firestore. UID:',
           user.uid
@@ -115,18 +165,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Logout Button Logic ---
-const logoutButton = document.getElementById('logout-btn');
-if (logoutButton) {
+  const logoutButton = document.getElementById('logout-btn');
+  if (logoutButton) {
     logoutButton.addEventListener('click', () => {
-        // Correct way to call signOut
-        signOut(auth).then(() => {
-            console.log("User signed out successfully.");
-            // Redirect will be handled by onAuthStateChanged
-        }).catch((error) => {
-            console.error("Sign out error", error);
+      // Correct way to call signOut
+      signOut(auth)
+        .then(() => {
+          console.log('User signed out successfully.');
+          // Redirect will be handled by onAuthStateChanged
+        })
+        .catch((error) => {
+          console.error('Sign out error', error);
         });
     });
-}
+  }
   // --- All Other UI Logic ---
   // (Sidebar, Theme, Copy Button, Tabs, etc. are all placed here)
 
@@ -166,20 +218,33 @@ if (logoutButton) {
     });
   }
 
-  // --- Dashboard Page: Copy Button Logic ---
+  // --- Dashboard Page: Copy Button Logic (Corrected) ---
   const copyButton = document.getElementById('copy-btn');
-  if (copyButton) {
-    const referralInput = document.getElementById('referral-link');
+  // Note the corrected ID for the input field
+  const referralInput = document.getElementById('referral-link-display');
+
+  if (copyButton && referralInput) {
     copyButton.addEventListener('click', () => {
-      navigator.clipboard.writeText(referralInput.value).then(() => {
-        const originalText = copyButton.textContent;
-        copyButton.textContent = 'Copied!';
-        copyButton.style.backgroundColor = '#28a745';
-        setTimeout(() => {
-          copyButton.textContent = originalText;
-          copyButton.style.backgroundColor = '';
-        }, 2000);
-      });
+      navigator.clipboard
+        .writeText(referralInput.value)
+        .then(() => {
+          // --- SUCCESS FEEDBACK ---
+          const originalText = copyButton.textContent;
+          copyButton.textContent = 'Copied!';
+          copyButton.style.backgroundColor = 'var(--color-accent-success)'; // Use our CSS variable for green
+          copyButton.style.borderColor = 'var(--color-accent-success)';
+
+          // Revert back after 2 seconds
+          setTimeout(() => {
+            copyButton.textContent = originalText;
+            copyButton.style.backgroundColor = ''; // Reverts to the class style
+            copyButton.style.borderColor = '';
+          }, 2000);
+        })
+        .catch((err) => {
+          console.error('Failed to copy text: ', err);
+          alert('Could not copy text to clipboard.');
+        });
     });
   }
 

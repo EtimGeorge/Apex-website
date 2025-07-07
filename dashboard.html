@@ -276,7 +276,7 @@
                 </svg>
               </div>
               <div class="card-content">
-                <span class="card-title">Balance</span><span class="card-value">$0.00</span>
+                <span class="card-title">Balance</span><span class="card-value" id="balance-display">$0.00</span>
               </div>
             </div>
             <div class="card">
@@ -289,7 +289,7 @@
                 </svg>
               </div>
               <div class="card-content">
-                <span class="card-title">Total Deposits</span><span class="card-value">$0.00</span>
+                <span class="card-title">Total Deposits</span><span class="card-value" id="deposits-display">$0.00</span>
               </div>
             </div>
             <div class="card">
@@ -301,7 +301,7 @@
                 </svg>
               </div>
               <div class="card-content">
-                <span class="card-title">Profits</span><span class="card-value">$0.00</span>
+                <span class="card-title">Profits</span><span class="card-value" id="withdrawn-display">$0.00</span>
               </div>
             </div>
             <div class="card">
@@ -323,8 +323,7 @@
             <div class="referral-content">
               <label for="referral-link" class="card-title">Referral Link</label>
               <div class="referral-input-group">
-                <input type="text" id="referral-link" value="https://projectapex.com/register?ref=flow404"
-                  readonly /><button id="copy-btn" class="btn btn-primary">Copy</button>
+               <input type="text" id="referral-link-display" value="Loading..." readonly><button id="copy-btn" class="btn btn-primary">Copy</button>
               </div>
             </div>
           </div>
