@@ -482,6 +482,26 @@
       </main>
     </div>
 
+    <!-- ===== Investment Modal ===== -->
+<div id="investment-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <button id="modal-close-btn" class="modal-close">×</button>
+        <h2 id="modal-plan-name">Invest in [Plan Name]</h2>
+        <p id="modal-plan-details">ROI: [X]% for [Y] Days | Range: $[min] - $[max]</p>
+        <form id="investment-form">
+            <div class="form-group">
+                <label for="investment-amount">Enter Amount (USD)</label>
+                <div class="input-with-currency">
+                    <span>$</span>
+                    <input type="number" id="investment-amount" class="form-control" placeholder="500.00" required>
+                </div>
+                <small class="form-text-muted">Your current balance: <strong id="modal-user-balance">$0.00</strong></small>
+            </div>
+            <button type="submit" class="btn btn-primary form-submit-btn">Confirm Investment</button>
+        </form>
+    </div>
+</div>
+
     <script type="module" src="js/app.js"></script>
   </body>
 </html>
