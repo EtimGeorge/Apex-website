@@ -4,7 +4,7 @@
 // =================================================================================
 
 // --- 1. IMPORTS (Direct, Simple, and Correct) ---
-import { auth, db } from './firebase-config.js';
+import { auth, db, storage } from './firebase-config.js';
 import {
   onAuthStateChanged,
   signOut,
@@ -25,10 +25,8 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 import {
-  getStorage,
   ref,
   uploadBytes,
-  getDownloadURL,
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
 // --- 2. GLOBAL VARIABLES & ROUTE PROTECTION ---
@@ -270,150 +268,145 @@ function runAllPageLogic(userData, uid) {
     }
   }
 
+   // =============================================================================
+    // --- Withdrawal Log Page Logic (Corrected Placement) ---
+    // =============================================================================
+    if (currentPage === 'withdrawal-log.html') {
+        const tableBody = document.querySelector('.transaction-table tbody');
+        
+        if (tableBody) {
+            tableBody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+            
+            // Query for transactions of type 'withdrawal'
+            const q = query(
+                collection(db, "transactions"), 
+                where("userId", "==", uid), 
+                where("type", "==", "withdrawal"),
+                where("status", "==", "pending"),
+                orderBy("date", "desc")
+            );
+
+            getDocs(q).then(querySnapshot => {
+                if (querySnapshot.empty) {
+                    tableBody.innerHTML = '<tr><td colspan="4">No withdrawal history found.</td></tr>';
+                    return;
+                }
+
+                let tableRowsHTML = '';
+                querySnapshot.forEach(doc => {
+                    const tx = doc.data();
+                    const date = tx.date.toDate().toLocaleDateString();
+                    // Shorten the wallet address for display
+                    const shortAddress = `${tx.walletAddress.substring(0, 6)}...${tx.walletAddress.substring(tx.walletAddress.length - 4)}`;
+
+                    tableRowsHTML += `
+                        <tr>
+                            <td data-label="Date">${date}</td>
+                            <td data-label="Amount">$${tx.amount.toFixed(2)}</td>
+                            <td data-label="Wallet Address">${shortAddress}</td>
+                            <td data-label="Status">
+                                <span class="status-badge status-${tx.status}">${tx.status}</span>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tableBody.innerHTML = tableRowsHTML;
+            }).catch(error => {
+                console.error("Error fetching withdrawal log:", error);
+                tableBody.innerHTML = '<tr><td colspan="4">Error loading data.</td></tr>';
+            });
+        }
+    }
+
   // =============================================================================
-  // --- Withdrawal Log Page Logic ---
-  // =============================================================================
-  // Find the table body using the class we defined in the HTML
-  const tableBody = document.querySelector('.transaction-table tbody');
+    // --- Verify Page Logic (Corrected for your HTML) ---
+    // =============================================================================
+    if (currentPage === 'verify.html') {
+        const kycForm = document.getElementById('kyc-form');
+        const statusBanner = document.querySelector('.status-banner');
 
-  if (tableBody) {
-    tableBody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
-
-    // This query is almost identical to the deposit log,
-    // but it filters for type: 'withdrawal'.
-    const q = query(
-      collection(db, 'transactions'),
-      where('userId', '==', uid),
-      where('type', '==', 'withdrawal'), // The only change is here
-      orderBy('date', 'desc')
-    );
-
-    getDocs(q)
-      .then((querySnapshot) => {
-        if (querySnapshot.empty) {
-          tableBody.innerHTML =
-            '<tr><td colspan="5">No withdrawal history found.</td></tr>';
-          return;
+        // Update the status banner based on user data
+        if (statusBanner && userData.kycStatus) {
+            const status = userData.kycStatus;
+            statusBanner.className = `status-banner status-${status}`; // e.g., status-verified
+            statusBanner.innerHTML = `<strong>Your current status:</strong> ${status.charAt(0).toUpperCase() + status.slice(1)}`;
         }
 
-        let tableRowsHTML = '';
-        querySnapshot.forEach((doc) => {
-          const tx = doc.data();
-          const date = tx.date.toDate().toLocaleString();
+        // Disable form if already verified or pending
+        if (userData.kycStatus === 'pending' || userData.kycStatus === 'verified') {
+            kycForm.querySelectorAll('input, button').forEach(el => el.disabled = true);
+            kycForm.querySelectorAll('.file-drop-area').forEach(area => area.style.cursor = 'not-allowed');
+        }
 
-          tableRowsHTML += `
-                    <tr>
-                        <td>${doc.id.substring(0, 10)}...</td>
-                        <td>$${tx.amount.toFixed(2)}</td>
-                        <td>${tx.method.toUpperCase()}</td>
-                        <td><span class="status status-${tx.status}">${
-            tx.status
-          }</span></td>
-                        <td>${date}</td>
-                    </tr>
-                `;
-        });
+        // Logic for file input name display and drag & drop
+        const kycUploadBoxes = document.querySelectorAll('.kyc-upload-box');
+        kycUploadBoxes.forEach(box => {
+            const input = box.querySelector('.file-input');
+            const dropArea = box.querySelector('.file-drop-area');
+            const fileNameDisplay = box.querySelector('.file-name-display');
 
-        tableBody.innerHTML = tableRowsHTML;
-      })
-      .catch((error) => {
-        console.error('Error fetching withdrawal log: ', error);
-        tableBody.innerHTML =
-          '<tr><td colspan="5">Error loading withdrawal history.</td></tr>';
-      });
-  }
-
-
-
-  // =============================================================================
-// --- KYC / Verify Page Logic (NEW BLOCK) ---
-// =============================================================================
-if (currentPage === 'verify.html') {
-    const kycForm = document.getElementById('kyc-form');
-    const alertBox = document.querySelector('.alert');
-    
-    // Update the alert box based on the user's current KYC status
-    if (alertBox && userData.kycStatus) {
-        const status = userData.kycStatus; // e.g., 'unverified', 'pending', 'verified'
-        alertBox.classList.remove('alert-warning');
-        alertBox.classList.add(`alert-${status === 'verified' ? 'success' : 'warning'}`);
-        alertBox.innerHTML = `<strong>Status: ${status.charAt(0).toUpperCase() + status.slice(1)}.</strong> ${
-            status === 'unverified' ? 'Your account is not verified. Please upload your documents.' :
-            status === 'pending' ? 'Your documents are under review.' :
-            'Your account has been successfully verified.'
-        }`;
-    }
-    
-    // Disable the form if the user is already pending or verified
-    if (userData.kycStatus === 'pending' || userData.kycStatus === 'verified') {
-        kycForm.querySelectorAll('input, button').forEach(el => el.disabled = true);
-    }
-
-    // Attach event listeners to file inputs to show the chosen file name
-    const fileInputs = kycForm.querySelectorAll('.file-input');
-    fileInputs.forEach(input => {
-        const label = kycForm.querySelector(`label[for='${input.id}']`);
-        if (label) {
+            // Handle file selection via click
             input.addEventListener('change', () => {
-                if (input.files.length > 0) {
-                    label.textContent = input.files[0].name;
-                } else {
-                    label.textContent = 'Choose File';
+                fileNameDisplay.textContent = input.files.length > 0 ? input.files[0].name : '';
+            });
+
+            // Handle drag & drop
+            dropArea.addEventListener('click', () => input.click()); // Click drop area to open file dialog
+            dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.classList.add('is-active'); });
+            dropArea.addEventListener('dragleave', () => dropArea.classList.remove('is-active'));
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.classList.remove('is-active');
+                if (e.dataTransfer.files.length > 0) {
+                    input.files = e.dataTransfer.files;
+                    input.dispatchEvent(new Event('change')); // Trigger change event to update display
+                }
+            });
+        });
+        
+        // --- Form Submission Logic ---
+        if (kycForm) {
+            kycForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const submitButton = kycForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Uploading...';
+
+                // Get the files from the inputs your HTML uses
+                const selfieFile = document.getElementById('selfie-upload').files[0];
+                const idFrontFile = document.getElementById('id-front-upload').files[0];
+
+                if (!selfieFile || !idFrontFile) {
+                    alert('A selfie and the front of your ID are required.');
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Submit for Verification';
+                    return;
+                }
+                
+                try {
+                    // This upload logic is correct and remains the same
+                    const selfieRef = ref(storage, `kyc-documents/${uid}/selfie.jpg`);
+                    await uploadBytes(selfieRef, selfieFile);
+
+                    const idFrontRef = ref(storage, `kyc-documents/${uid}/id-front.jpg`);
+                    await uploadBytes(idFrontRef, idFrontFile);
+                    
+                    // Update user status in Firestore
+                    await updateDoc(doc(db, "users", uid), { kycStatus: 'pending' });
+
+                    alert('Documents uploaded! Your verification is now pending review.');
+                    window.location.reload();
+                } catch (error) {
+                    console.error("KYC upload failed:", error);
+                    alert("Upload failed. Please try again.");
+                } finally {
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Submit for Verification';
                 }
             });
         }
-    });
-
-    // --- KYC Form Submission ---
-    if (kycForm) {
-        kycForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitButton = kycForm.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.textContent = 'Uploading...';
-
-            const selfieFile = document.getElementById('selfie').files[0];
-            const idFrontFile = document.getElementById('id-front').files[0];
-
-            if (!selfieFile || !idFrontFile) {
-                alert('Please select at least a selfie and the front of your ID.');
-                submitButton.disabled = false;
-                submitButton.textContent = 'Submit for Verification';
-                return;
-            }
-
-            try {
-                // --- UPLOAD FILES TO FIREBASE STORAGE ---
-                // Create a reference to a folder like 'kyc-documents/USER_ID/selfie.jpg'
-                const selfieRef = ref(storage, `kyc-documents/${uid}/selfie.jpg`);
-                const idFrontRef = ref(storage, `kyc-documents/${uid}/id-front.jpg`);
-
-                await uploadBytes(selfieRef, selfieFile);
-                console.log('Uploaded selfie');
-                await uploadBytes(idFrontRef, idFrontFile);
-                console.log('Uploaded ID front');
-
-                // --- UPDATE USER STATUS IN FIRESTORE ---
-                const userDocRef = doc(db, "users", uid);
-                await updateDoc(userDocRef, {
-                    kycStatus: 'pending'
-                });
-
-                alert('Documents uploaded successfully! Your KYC status is now pending review.');
-                // Refresh the page to show the updated status
-                window.location.reload();
-
-            } catch (error) {
-                console.error("KYC upload failed: ", error);
-                alert("An error occurred during upload. Please try again.");
-                submitButton.disabled = false;
-                submitButton.textContent = 'Submit for Verification';
-            }
-        });
     }
-}
-
-
   // =================================================================================
   // --- 5. HELPER FUNCTIONS & EVENT HANDLERS ---
   // =================================================================================
@@ -644,20 +637,46 @@ if (currentPage === 'verify.html') {
           return;
         }
 
+        // =================================================================
+        // --- THIS IS THE REPLACEMENT BLOCK ---
+        // We replace the old `try...catch` with this new one that uses a transaction.
+        // =================================================================
         try {
-          await addDoc(collection(db, 'transactions'), {
-            userId: uid,
-            type: 'deposit',
-            amount: amount,
-            method: paymentMethod,
-            status: 'pending',
-            date: new Date(),
+          // Use a Transaction to safely update one document and create another.
+          await runTransaction(db, async (transaction) => {
+            const userDocRef = doc(db, 'users', uid);
+
+            // Best practice: get the most recent user data inside the transaction.
+            const userDoc = await transaction.get(userDocRef);
+            if (!userDoc.exists()) {
+              throw 'User document not found!';
+            }
+
+            // 1. UPDATE THE USER'S totalDeposited FIELD
+            const newTotalDeposited =
+              (userDoc.data().totalDeposited || 0) + amount;
+            transaction.update(userDocRef, {
+              totalDeposited: newTotalDeposited,
+            });
+
+            // 2. CREATE THE TRANSACTION RECORD
+            // We use .set() with a new reference inside a transaction.
+            const newTransactionRef = doc(collection(db, 'transactions'));
+            transaction.set(newTransactionRef, {
+              userId: uid,
+              type: 'deposit',
+              amount: amount,
+              method: paymentMethod,
+              status: 'pending',
+              date: new Date(),
+            });
           });
-          alert('Deposit request submitted!');
+
+          alert('Deposit request submitted successfully!');
           window.location.href = 'deposit-log.html';
         } catch (error) {
           console.error('Error submitting deposit: ', error);
-          alert('An error occurred.');
+          alert('An error occurred while submitting your deposit.');
         } finally {
           submitButton.disabled = false;
           submitButton.textContent = 'Proceed to Payment';
