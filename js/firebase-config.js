@@ -1,23 +1,11 @@
 // =================================================================================
-// PROJECT APEX: FIREBASE-CONFIG.JS - DEFINITIVE VERSION
+// PROJECT APEX: FIREBASE-CONFIG.JS - FINAL SIMPLIFIED VERSION
 // =================================================================================
 
-// Import the functions you need from the Firebase SDKs
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signOut,updatePassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"; 
-import { 
-    getFirestore, 
-    doc, 
-    setDoc, 
-    getDoc, 
-    updateDoc,
-    collection, 
-    addDoc,
-    runTransaction,
-    
-    
-    
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"; 
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// ...
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 // Your web app's Firebase configuration
@@ -33,20 +21,7 @@ const firebaseConfig = {
 // Initialize Firebase ONCE
 const app = initializeApp(firebaseConfig);
 
-// Initialize and export Firebase services
+// Initialize and export ONLY the core services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
-
-// Export all the specific functions we will ever need
-export { 
-    doc, 
-    setDoc, 
-    getDoc, 
-    updateDoc,
-    collection, 
-    addDoc,
-    runTransaction,
-    signOut, 
-    updatePassword
-};

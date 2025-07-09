@@ -178,35 +178,32 @@
     </aside>
 
     <!-- ===== Main Content Area ===== -->
-      <main class="main-content">
-        <div class="main-content-wrapper">
-          <!-- 1. Ticker Tape widget(Top Block) -->
-          <!-- Original Ticker Tape Widget -->
-          <div class="tradingview-widget-container ticker-tape-widget">
-            <div class="tradingview-widget-container__widget"></div>
-            <script
-              type="text/javascript"
-              src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
-              async
-            >
+    <main class="main-content">
+      <div class="main-content-wrapper">
+        <!-- 1. Ticker Tape widget(Top Block) -->
+        <!-- Original Ticker Tape Widget -->
+        <div class="tradingview-widget-container ticker-tape-widget">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
+            async>
               {
-                "symbols": [{"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"}, {"proName": "FOREXCOM:NSXUSD", "title": "US 100"}, {"proName": "FX_IDC:EURUSD", "title": "EUR/USD"}, {"proName": "BITSTAMP:BTCUSD", "title": "Bitcoin"}, {"proName": "BITSTAMP:ETHUSD", "title": "Ethereum"}],
-                "showSymbolLogo": true, "colorTheme": "light", "isTransparent": true, "displayMode": "adaptive", "locale": "en"
+                "symbols": [{ "proName": "FOREXCOM:SPXUSD", "title": "S&P 500" }, { "proName": "FOREXCOM:NSXUSD", "title": "US 100" }, { "proName": "FX_IDC:EURUSD", "title": "EUR/USD" }, { "proName": "BITSTAMP:BTCUSD", "title": "Bitcoin" }, { "proName": "BITSTAMP:ETHUSD", "title": "Ethereum" }],
+                  "showSymbolLogo": true, "colorTheme": "light", "isTransparent": true, "displayMode": "adaptive", "locale": "en"
               }
             </script>
-          </div>
+        </div>
 
-          <!-- 2. Main Header (Middle Block) -->
-          <header class="main-header">
-            <!-- This empty div is a spacer to push the other items to the right -->
-            <div class="header-spacer"></div>
+        <!-- 2. Main Header (Middle Block) -->
+        <header class="main-header">
+          <!-- This empty div is a spacer to push the other items to the right -->
+          <div class="header-spacer"></div>
 
-            <div class="header-actions">
-              <div class="theme-dropdown">
-                <button id="theme-toggle-btn" class="theme-btn">
-                  <!-- <span class="sr-only">Toggle Theme</span> -->
+          <div class="header-actions">
+            <div class="theme-dropdown">
+              <button id="theme-toggle-btn" class="theme-btn">
+                <!-- <span class="sr-only">Toggle Theme</span> -->
 
-                  <!-- SVG for theme icon -->
+                <!-- SVG for theme icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="5"></circle>
@@ -320,20 +317,21 @@
         </div>
 
 
-         <!-- Original Advanced Chart Widget -->
-          <div class="tradingview-widget-container" style="height: 500px; width: 100%; margin-top: 2rem">
-            <div id="tradingview-widget-container-chart"></div>
-            <script type="text/javascript"
-              src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-                { "height": 500, "symbol": "FX:EURUSD", "interval": "D", "timezone": "Etc/UTC", "theme": "light", "style": "1", "locale": "en", "enable_publishing": false, "allow_symbol_change": true, "container_id": "tradingview-widget-container-chart" }
-              </script>
-          </div>
+        <!-- Original Advanced Chart Widget -->
+        <div class="tradingview-widget-container" style="height: 500px; width: 100%; margin-top: 2rem">
+          <div id="tradingview-widget-container-chart"></div>
+          <script type="text/javascript"
+            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+              { "height": 500, "symbol": "FX:EURUSD", "interval": "D", "timezone": "Etc/UTC", "theme": "light", "style": "1", "locale": "en", "enable_publishing": false, "allow_symbol_change": true, "container_id": "tradingview-widget-container-chart" }
+            </script>
+        </div>
       </div>
   </div>
   </main>
   </div>
 
-  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/auth.js?v=1.1"></script>
+  <script type="module" src="js/app.js?v=1.1"></script>
 
 </body>
 

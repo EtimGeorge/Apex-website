@@ -764,8 +764,8 @@ ul {
   text-align: center;
 }
 
-/* --- 12. Transaction Log Table Styles --- */
-.transaction-log-card {
+/* --- 11. New Transaction Log Table Styles --- */
+.card.transaction-log-card {
   padding: 0; /* Remove card padding to let the table be full-width */
 }
 
@@ -809,7 +809,8 @@ ul {
   font-weight: 500;
 }
 
-.status-badge {
+/* Renamed .status-badge to .status to match existing HTML */
+.status { 
   display: inline-block;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
@@ -818,32 +819,12 @@ ul {
   text-transform: capitalize;
 }
 
-.status-completed {
-  background-color: #e0fbf6;
-  color: #0b6855;
-}
-.dark-theme .status-completed {
-  background-color: #1c4a45;
-  color: #8ce6d1;
-}
-
-.status-pending {
-  background-color: #fff0e3;
-  color: #a6692c;
-}
-.dark-theme .status-pending {
-  background-color: #573c24;
-  color: #f3b985;
-}
-
-.status-failed {
-  background-color: #fdeeee;
-  color: #9b2c2c;
-}
-.dark-theme .status-failed {
-  background-color: #5d2828;
-  color: #f9a5a5;
-}
+.status-completed { background-color: #e0fbf6; color: #0b6855; }
+.dark-theme .status-completed { background-color: #1c4a45; color: #8ce6d1; }
+.status-pending { background-color: #fff0e3; color: #a6692c; }
+.dark-theme .status-pending { background-color: #573c24; color: #f3b985; }
+.status-failed { background-color: #f8d7da; color: #9b2c2c; }
+.dark-theme .status-failed { background-color: #5d2828; color: #f9a5a5; }
 
 /* Responsive Table Styles */
 @media (max-width: 768px) {
@@ -854,12 +835,17 @@ ul {
     display: block;
     margin-bottom: 1.5rem;
     border-bottom: 2px solid var(--color-accent-primary);
+    padding-bottom: 1rem;
   }
   .transaction-table td {
     display: block;
     text-align: right;
     padding-left: 50%; /* Make space for the label */
     position: relative;
+    border-bottom: 1px dotted var(--color-border);
+  }
+  .transaction-table tr td:last-child {
+    border-bottom: none;
   }
   .transaction-table td::before {
     content: attr(data-label); /* Use the data-label as a pseudo-element */
@@ -867,10 +853,15 @@ ul {
     left: 1.5rem;
     font-weight: 600;
     color: var(--color-text-primary);
+    text-align: left;
   }
 }
 
-/* --- Auth Page Styles --- */
+/* =============end of 11. New Transaction Log Table Styles */
+
+
+
+/* --- .14 Auth Page Styles --- */
 .auth-container {
   display: flex;
   justify-content: center;
@@ -976,3 +967,5 @@ ul {
 .input-with-currency .form-control {
     padding-left: 2.5rem;
 }
+
+

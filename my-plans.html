@@ -409,65 +409,33 @@
           <!-- 3. Content Body (Bottom, Scrolling Block) -->
 
           <div class="content-body">
-            <h1>My Active Investments</h1>
-            <p class="page-description">
-              Here is a list of your ongoing and completed investment plans.
-            </p>
-
-            <div class="card transaction-log-card">
-              <div class="table-container">
+            <h1>My Active Plans</h1>
+            <p class="page-description">Track the progress of your ongoing and completed investment plans.</p>
+            <div class="card">
                 <table class="transaction-table">
-                  <thead>
-                    <tr>
-                      <th>Plan Name</th>
-                      <th>Invested Amount</th>
-                      <th>Start Date</th>
-                      <th>End Date</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- Example Row 1: Active Plan -->
-                    <tr>
-                      <td data-label="Plan Name">Premium Plan</td>
-                      <td data-label="Invested Amount">$2,500.00</td>
-                      <td data-label="Start Date">2024-05-12</td>
-                      <td data-label="End Date">2024-05-15</td>
-                      <td data-label="Status">
-                        <span class="status-badge status-active">Active</span>
-                      </td>
-                    </tr>
-                    <!-- Example Row 2: Completed Plan -->
-                    <tr>
-                      <td data-label="Plan Name">Trade Plan</td>
-                      <td data-label="Invested Amount">$500.00</td>
-                      <td data-label="Start Date">2024-05-10</td>
-                      <td data-label="End Date">2024-05-12</td>
-                      <td data-label="Status">
-                        <span class="status-badge status-completed"
-                          >Completed</span
-                        >
-                      </td>
-                    </tr>
-                    <!-- Example Row 3: Another Active Plan -->
-                    <tr>
-                      <td data-label="Plan Name">Ultimate Plan</td>
-                      <td data-label="Invested Amount">$5,000.00</td>
-                      <td data-label="Start Date">2024-05-11</td>
-                      <td data-label="End Date">2024-05-16</td>
-                      <td data-label="Status">
-                        <span class="status-badge status-active">Active</span>
-                      </td>
-                    </tr>
-                  </tbody>
+                    <thead>
+                        <tr>
+                            <th>Plan Name</th>
+                            <th>Invested Amount</th>
+                            <th>Start Date</th>
+                            <th>End Date</th> <!-- We will leave this blank for now -->
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <!-- This tbody will be populated by our JavaScript -->
+                    <tbody>
+                        <tr>
+                            <td colspan="5">Loading your investment plans...</td>
+                        </tr>
+                    </tbody>
                 </table>
-              </div>
             </div>
           </div>
         </div>
       </main>
     </div>
 
-    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/auth.js?v=1.1"></script>
+<script type="module" src="js/app.js?v=1.1"></script>
   </body>
 </html>

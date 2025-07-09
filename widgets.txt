@@ -1,1 +1,647 @@
-https://www.tradingview.com/?utm_campaign=ticker-tape-logo&utm_medium=widget&utm_source=paragonassetsgroup.com
+// =================================================================================
+// PROJECT APEX: APP.JS - FINAL CONSOLIDATED SCRIPT (ALL FEATURES RESTORED)
+// =================================================================================
+
+// --- 1. IMPORTS (Direct, Simple, and Correct) ---
+import { auth, db } from './firebase-config.js';
+import {
+  onAuthStateChanged,
+  signOut,
+  updatePassword,
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  collection,
+  addDoc,
+  query,
+  where,
+  orderBy,
+  getDocs,
+  runTransaction,
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// --- 2. GLOBAL VARIABLES & ROUTE PROTECTION ---
+const protectedPages = [
+  'dashboard.html',
+  'plans.html',
+  'fund-account.html',
+  'withdraw.html',
+  'my-account.html',
+  'deposit-log.html',
+  'my-plans.html',
+  'verify.html',
+  'withdrawal-log.html',
+];
+const publicPages = ['login.html', 'register.html'];
+const currentPage = window.location.pathname.split('/').pop();
+
+// =================================================================================
+// --- 3. MASTER AUTHENTICATION & DATA CONTROLLER ---
+// =================================================================================
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+
+
+    // --- A. USER IS LOGGED IN ---
+    if (publicPages.includes(currentPage)) {
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+
+    // --- B. FETCH USER'S DATA ---
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        const userData = userDocSnap.data();
+
+
+        // --- C. RUN ALL UI AND EVENT LISTENER LOGIC ---
+        runAllPageLogic(userData, user.uid);
+      } else {
+        console.error(
+          "CRITICAL ERROR: User is authenticated but has no Firestore document."
+        );
+      }
+    } catch (error) {
+      console.error("CRITICAL ERROR fetching user data:", error);
+    }
+  } else {
+    // --- D. USER IS LOGGED OUT ---
+    if (protectedPages.includes(currentPage)) {
+      window.location.href = 'login.html';
+    }
+  }
+});
+
+// =================================================================================
+// --- 4. MASTER LOGIC FUNCTION (Called After User Data is Fetched) ---
+// =================================================================================
+function runAllPageLogic(userData, uid) {
+  console.log(`Running page logic for: ${currentPage}`);
+
+  // --- A. LOGIC THAT RUNS ON EVERY PAGE ---
+  // This part is correct and remains.
+  updateHeaderUI(userData, uid);
+  attachStaticEventListeners();
+  handleThemeSwitcher();
+
+  // --- B. PAGE-SPECIFIC LOGIC ---
+  // =============================================================================
+  // --- Dashboard Page Logic (WITH DATA DISPLAY) ---
+  // This is the section with the new code.
+  // =============================================================================
+  if (currentPage === 'dashboard.html') {
+    // Helper function to format numbers into $USD currency format
+    const formatCurrency = (num) =>
+      new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(num || 0);
+
+    // Find the elements by their ID and update their content
+    const balanceDisplay = document.getElementById('balance-display');
+    if (balanceDisplay) {
+      balanceDisplay.textContent = formatCurrency(userData.accountBalance);
+    }
+
+    const depositsDisplay = document.getElementById('deposits-display');
+    if (depositsDisplay) {
+      depositsDisplay.textContent = formatCurrency(userData.totalDeposited);
+    }
+
+    const withdrawnDisplay = document.getElementById('withdrawn-display');
+    if (withdrawnDisplay) {
+      withdrawnDisplay.textContent = formatCurrency(userData.totalWithdrawn);
+    }
+
+    // The referral link logic is also part of this page's logic
+    const referralLinkDisplay = document.getElementById(
+      'referral-link-display'
+    );
+    if (referralLinkDisplay) {
+      referralLinkDisplay.value = `https://projectapex.com/register.html?ref=${uid}`;
+    }
+
+    // The copy button listener also belongs to this page
+    const copyButton = document.getElementById('copy-btn');
+    if (copyButton && referralLinkDisplay) {
+      copyButton.addEventListener('click', () => {
+        navigator.clipboard.writeText(referralLinkDisplay.value).then(() => {
+          copyButton.textContent = 'Copied!';
+          copyButton.style.backgroundColor = 'var(--color-accent-success)';
+          setTimeout(() => {
+            copyButton.textContent = 'Copy';
+            copyButton.style.backgroundColor = '';
+          }, 2000);
+        });
+      });
+    }
+  }
+  // =============================================================================
+  // --- Dashboard Page Logic END ---
+  // =============================================================================
+
+  // =============================================================================
+  // --- Plans Page Logic (WITH Investment Submission) ---
+  // =============================================================================
+  if (currentPage === 'plans.html') {
+    const investButtons = document.querySelectorAll('.plan-btn');
+    const modalOverlay = document.getElementById('investment-modal');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const investmentForm = document.getElementById('investment-form');
+
+    // This check ensures we only run this code on the plans page
+    if (investButtons.length > 0 && modalOverlay && investmentForm) {
+      const openModal = (planCard) => {
+        // Populate modal with data from the clicked card
+        document.getElementById('modal-plan-name').textContent = `Invest in ${
+          planCard.querySelector('.plan-name').textContent
+        }`;
+        document.getElementById('modal-plan-details').textContent = `Range: ${
+          planCard.querySelector('.plan-price').textContent
+        }`;
+        // Populate with the user's current balance, which we already have from userData
+        document.getElementById(
+          'modal-user-balance'
+        ).textContent = `$${userData.accountBalance.toFixed(2)}`;
+        modalOverlay.classList.remove('hidden');
+      };
+
+      const closeModal = () => {
+        investmentForm.reset();
+        modalOverlay.classList.add('hidden');
+      };
+
+      // Attach event listeners to open and close the modal
+      investButtons.forEach((button) =>
+        button.addEventListener('click', (e) =>
+          openModal(e.target.closest('.plan-card'))
+        )
+      );
+      modalCloseBtn.addEventListener('click', closeModal);
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) closeModal();
+      });
+
+      // Attach the master submit handler to the form
+      investmentForm.addEventListener('submit', (e) => {
+        // Pass the event and the current user's data to the handler
+        handleInvestmentSubmission(e, userData);
+      });
+    }
+  }
+  // =============================================================================
+  // --- My Plans Page Logic END---
+  // =============================================================================
+
+  if (currentPage === 'deposit-log.html') {
+    handleDepositLogPage(uid);
+  }
+  if (currentPage === 'my-account.html') {
+    handleMyAccountPage(userData);
+  }
+
+  if (currentPage === 'fund-account.html') {
+    handleFundAccountPage(uid);
+  }
+}
+
+// =================================================================================
+// --- 5. HELPER FUNCTIONS & EVENT HANDLERS ---
+// =================================================================================
+
+// --- Universal UI Updaters ---
+function updateHeaderUI(userData, uid) {
+  const userNameDisplay = document.getElementById('user-name-display');
+  const userProfilePic = document.getElementById('user-profile-pic');
+  if (userNameDisplay) userNameDisplay.textContent = userData.fullName;
+  if (userProfilePic)
+    userProfilePic.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      userData.fullName
+    )}&background=0D8ABC&color=fff&rounded=true`;
+}
+
+function attachStaticEventListeners() {
+  const dashboardLayout = document.querySelector('.dashboard-layout');
+  if (dashboardLayout) {
+    const sidebar = dashboardLayout.querySelector('.sidebar');
+    sidebar.addEventListener('mouseenter', () =>
+      dashboardLayout.classList.add('sidebar-expanded')
+    );
+    sidebar.addEventListener('mouseleave', () =>
+      dashboardLayout.classList.remove('sidebar-expanded')
+    );
+  }
+  const logoutButton = document.getElementById('logout-btn');
+  if (logoutButton) {
+    logoutButton.addEventListener('click', () =>
+      signOut(auth).catch((err) => console.error('Logout error', err))
+    );
+  }
+}
+
+function handleThemeSwitcher() {
+  const themeToggleButton = document.getElementById('theme-toggle-btn');
+  const themeMenu = document.getElementById('theme-menu');
+  if (themeToggleButton && themeMenu) {
+    themeToggleButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      themeMenu.classList.toggle('hidden');
+    });
+    document.addEventListener('click', (e) => {
+      if (
+        !themeMenu.contains(e.target) &&
+        !themeToggleButton.contains(e.target)
+      )
+        themeMenu.classList.add('hidden');
+    });
+    themeMenu.querySelectorAll('li').forEach((item) => {
+      item.addEventListener('click', () => {
+        localStorage.setItem('theme', item.getAttribute('data-theme'));
+        location.reload();
+      });
+    });
+  }
+}
+
+// --- Page-Specific Handlers ---
+function handleDashboardPage(userData, uid) {
+  const formatCurrency = (num) =>
+    new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(num || 0);
+  document.getElementById('balance-display').textContent = formatCurrency(
+    userData.accountBalance
+  );
+  document.getElementById('deposits-display').textContent = formatCurrency(
+    userData.totalDeposited
+  );
+  document.getElementById('withdrawn-display').textContent = formatCurrency(
+    userData.totalWithdrawn
+  );
+  document.getElementById(
+    'referral-link-display'
+  ).value = `https://projectapex.com/register.html?ref=${uid}`;
+
+  const copyButton = document.getElementById('copy-btn');
+  const referralInput = document.getElementById('referral-link-display');
+  if (copyButton && referralInput) {
+    copyButton.addEventListener('click', () => {
+      navigator.clipboard.writeText(referralInput.value).then(() => {
+        copyButton.textContent = 'Copied!';
+        copyButton.style.backgroundColor = 'var(--color-accent-success)';
+        setTimeout(() => {
+          copyButton.textContent = 'Copy';
+          copyButton.style.backgroundColor = '';
+        }, 2000);
+      });
+    });
+  }
+}
+
+function handleDepositLogPage(uid) {
+  const tableBody = document.querySelector(
+    '.data-table tbody, .transaction-table tbody'
+  );
+  if (tableBody) {
+    tableBody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
+    const q = query(
+      collection(db, 'transactions'),
+      where('userId', '==', uid),
+      where('type', '==', 'deposit'),
+      orderBy('date', 'desc')
+    );
+    getDocs(q).then((querySnapshot) => {
+      if (querySnapshot.empty) {
+        tableBody.innerHTML =
+          '<tr><td colspan="5">No deposit history found.</td></tr>';
+        return;
+      }
+      let rows = '';
+      querySnapshot.forEach((doc) => {
+        const tx = doc.data();
+        const date = tx.date.toDate().toLocaleString();
+        rows += `<tr><td>${doc.id.substring(
+          0,
+          10
+        )}...</td><td>$${tx.amount.toFixed(
+          2
+        )}</td><td>${tx.method.toUpperCase()}</td><td><span class="status status-${
+          tx.status
+        }">${tx.status}</span></td><td>${date}</td></tr>`;
+      });
+      tableBody.innerHTML = rows;
+    });
+  }
+}
+
+function handleMyAccountPage(userData) {
+  // Pre-populate forms
+  document.getElementById('full-name').value = userData.fullName || '';
+  document.getElementById('email').value = userData.email || '';
+  document.getElementById('phone').value = userData.phone || '';
+  document.getElementById('country').value = userData.country || '';
+
+  // Attach submit listeners
+  const profileForm = document.getElementById('profile-form');
+  if (profileForm) {
+    profileForm.addEventListener('submit', handleProfileUpdate);
+  }
+  const securityForm = document.getElementById('security-form');
+  if (securityForm) {
+    securityForm.addEventListener('submit', handlePasswordUpdate);
+  }
+
+  // Tab Logic
+  const tabButtons = document.querySelectorAll('.account-tab-btn');
+  const tabPanels = document.querySelectorAll('.account-panel');
+  tabButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      tabButtons.forEach((btn) => btn.classList.remove('active'));
+      tabPanels.forEach((panel) => panel.classList.remove('active'));
+      button.classList.add('active');
+      document.getElementById(button.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+function handlePlansPage(userData, uid) {
+  const investButtons = document.querySelectorAll('.plan-btn');
+  const modalOverlay = document.getElementById('investment-modal');
+  const modalCloseBtn = document.getElementById('modal-close-btn');
+  const investmentForm = document.getElementById('investment-form');
+
+  const openModal = (planCard) => {
+    document.getElementById('modal-plan-name').textContent = `Invest in ${
+      planCard.querySelector('.plan-name').textContent
+    }`;
+    document.getElementById('modal-plan-details').textContent = `Range: ${
+      planCard.querySelector('.plan-price').textContent
+    }`;
+    document.getElementById(
+      'modal-user-balance'
+    ).textContent = `$${userData.accountBalance.toFixed(2)}`;
+    modalOverlay.classList.remove('hidden');
+  };
+  const closeModal = () => {
+    investmentForm.reset();
+    modalOverlay.classList.add('hidden');
+  };
+
+  investButtons.forEach((button) =>
+    button.addEventListener('click', (e) =>
+      openModal(e.target.closest('.plan-card'))
+    )
+  );
+  modalCloseBtn.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) closeModal();
+  });
+  investmentForm.addEventListener('submit', (e) =>
+    handleInvestment(e, userData)
+  );
+}
+
+function handleFundAccountPage(uid) {
+  const fundForm = document.getElementById('deposit-form');
+  if (fundForm) {
+    fundForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitButton = fundForm.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.textContent = 'Processing...';
+      const amount = parseFloat(document.getElementById('amount').value);
+      const paymentMethod = document.getElementById('payment-method').value;
+
+      if (isNaN(amount) || amount <= 0) {
+        alert('Please enter a valid amount.');
+        submitButton.disabled = false;
+        submitButton.textContent = 'Proceed to Payment';
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, 'transactions'), {
+          userId: uid,
+          type: 'deposit',
+          amount: amount,
+          method: paymentMethod,
+          status: 'pending',
+          date: new Date(),
+        });
+        alert('Deposit request submitted!');
+        window.location.href = 'deposit-log.html';
+      } catch (error) {
+        console.error('Error submitting deposit: ', error);
+        alert('An error occurred.');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Proceed to Payment';
+      }
+    });
+  }
+}
+
+// --- Form Submission Handlers ---
+async function handleProfileUpdate(e) {
+  e.preventDefault();
+  const submitButton = e.target.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+  submitButton.textContent = 'Saving...';
+  try {
+    const userDocRef = doc(db, 'users', auth.currentUser.uid);
+    await updateDoc(userDocRef, {
+      fullName: document.getElementById('full-name').value,
+      phone: document.getElementById('phone').value,
+      country: document.getElementById('country').value,
+    });
+    alert('Profile updated successfully!');
+  } catch (error) {
+    alert('Failed to update profile.');
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = 'Save Changes';
+  }
+}
+
+async function handlePasswordUpdate(e) {
+  e.preventDefault();
+  const newPassword = document.getElementById('new-password').value;
+  if (newPassword.length < 6) {
+    alert('Password must be at least 6 characters long.');
+    return;
+  }
+  if (newPassword !== document.getElementById('confirm-password').value) {
+    alert('Passwords do not match.');
+    return;
+  }
+
+  const submitButton = e.target.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+  submitButton.textContent = 'Updating...';
+  try {
+    await updatePassword(auth.currentUser, newPassword);
+    alert('Password updated successfully! Please log in again.');
+    signOut(auth);
+  } catch (error) {
+    alert(
+      'Failed to update password. You may need to log out and log back in for this operation.'
+    );
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = 'Update Password';
+  }
+}
+
+
+
+
+
+  // =================================================================================
+  // --- Investment Form Submission Handler (DEBUGGING VERSION) ---
+  // =================================================================================
+  async function handleInvestmentSubmission(event, currentUserData) {
+    event.preventDefault();
+    const form = event.target;
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = 'Processing...';
+
+    const amount = parseFloat(
+      document.getElementById('investment-amount').value
+    );
+    const user = auth.currentUser;
+
+    // --- Validation ---
+    if (!user || isNaN(amount) || amount <= 0) {
+      alert('Please enter a valid investment amount.');
+      submitButton.disabled = false;
+      submitButton.textContent = 'Confirm Investment';
+      return;
+    }
+
+    // We use the globally fetched userData for the initial check
+    if (amount > currentUserData.accountBalance) {
+      alert('Insufficient balance for this investment.');
+      submitButton.disabled = false;
+      submitButton.textContent = 'Confirm Investment';
+      return;
+    }
+
+    // --- Firestore Transaction ---
+    try {
+      console.log('DEBUG: Starting investment transaction...');
+
+      await runTransaction(db, async (transaction) => {
+        console.log('DEBUG: 1. Inside runTransaction callback.');
+        const userDocRef = doc(db, 'users', user.uid);
+
+        console.log(
+          'DEBUG: 2. Getting fresh user document inside transaction...'
+        );
+        const userDoc = await transaction.get(userDocRef);
+
+        if (!userDoc.exists()) {
+          // This error will be caught by the outer catch block
+          throw 'FATAL: User document could not be found inside transaction.';
+        }
+        console.log('DEBUG: 3. Fresh user document found.');
+
+        const currentBalance = userDoc.data().accountBalance;
+        console.log(
+          `DEBUG: 4. Balance inside transaction is: $${currentBalance}`
+        );
+
+        if (amount > currentBalance) {
+          throw `Your current balance ($${currentBalance}) is no longer sufficient.`;
+        }
+
+        // --- Step A: Update User's Balance ---
+        const newBalance = currentBalance - amount;
+        console.log(`DEBUG: 5. Updating user balance to: $${newBalance}`);
+        transaction.update(userDocRef, { accountBalance: newBalance });
+
+        // --- Step B: Create New Investment Document ---
+        const newInvestmentRef = doc(collection(db, 'investments')); // Auto-generates an ID
+        const newInvestmentData = {
+          userId: user.uid,
+          planName: document
+            .getElementById('modal-plan-name')
+            .textContent.replace('Invest in ', ''),
+          investedAmount: amount,
+          status: 'active',
+          startDate: new Date(),
+        };
+        console.log(
+          'DEBUG: 6. Creating new investment document with data:',
+          newInvestmentData
+        );
+        transaction.set(newInvestmentRef, newInvestmentData);
+
+        console.log('DEBUG: 7. Transaction operations queued successfully.');
+      });
+
+      console.log('DEBUG: 8. Transaction completed successfully!');
+      alert('Investment successful! Your plan is now active.');
+      window.location.href = 'my-plans.html';
+    } catch (error) {
+      console.error('--- INVESTMENT FAILED ---');
+      console.error('Error message:', error);
+      alert('Investment failed: ' + error);
+      submitButton.disabled = false;
+      submitButton.textContent = 'Confirm Investment';
+    }
+  
+  }
+
+
+  async function handleInvestment(e, userData) {
+  e.preventDefault();
+  const submitButton = e.target.querySelector('button[type="submit"]');
+  submitButton.disabled = true;
+  submitButton.textContent = 'Processing...';
+  const amount = parseFloat(document.getElementById('investment-amount').value);
+
+  if (isNaN(amount) || amount <= 0 || amount > userData.accountBalance) {
+    alert('Invalid amount or insufficient balance.');
+    submitButton.disabled = false;
+    submitButton.textContent = 'Confirm Investment';
+    return;
+  }
+
+  try {
+    await runTransaction(db, async (transaction) => {
+      const userDocRef = doc(db, 'users', auth.currentUser.uid);
+      const userDoc = await transaction.get(userDocRef);
+      if (!userDoc.exists() || userDoc.data().accountBalance < amount) {
+        throw new Error('Insufficient balance.');
+      }
+
+      const newBalance = userDoc.data().accountBalance - amount;
+      transaction.update(userDocRef, { accountBalance: newBalance });
+
+      const newInvestmentRef = doc(collection(db, 'investments'));
+      transaction.set(newInvestmentRef, {
+        userId: auth.currentUser.uid,
+        planName: document
+          .getElementById('modal-plan-name')
+          .textContent.replace('Invest in ', ''),
+        investedAmount: amount,
+        status: 'active',
+        startDate: new Date(),
+      });
+    });
+    alert('Investment successful!');
+    window.location.href = 'my-plans.html';
+  } catch (error) {
+    alert('Investment failed: ' + error.message);
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = 'Confirm Investment';
+  }
+};

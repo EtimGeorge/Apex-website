@@ -2,26 +2,28 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deposit Log - Project Apex</title>
 
   <script>
     (function () {
       function applyTheme(theme) {
-        const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const isDark =
+          theme === 'dark' ||
+          (theme === 'system' &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
         document.documentElement.classList.toggle('dark-theme', isDark);
       }
       applyTheme(localStorage.getItem('theme') || 'light');
     })();
   </script>
 
-  <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 
 <body>
-
   <div class="dashboard-layout">
     <!-- ===== Sidebar Navigation ===== -->
     <aside class="sidebar">
@@ -33,7 +35,7 @@
         <ul>
           <li class="nav-section-title">NAVIGATION</li>
           <li>
-            <a href="dashboard.html" class="nav-item ">
+            <a href="dashboard.html" class="nav-item">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -107,7 +109,7 @@
             </a>
           </li>
           <li>
-            <a href="my-plans.html" class="nav-item ">
+            <a href="my-plans.html" class="nav-item">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -159,7 +161,6 @@
           <span class="nav-text">© 2025 Project Apex</span>
         </div>
       </div>
-
     </aside>
 
     <!-- ===== Main Content Area ===== -->
@@ -204,9 +205,9 @@
               </button>
               <div id="theme-menu" class="theme-menu hidden">
                 <ul>
-                  <li data-theme="light"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round">
+                  <li data-theme="light">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <circle cx="12" cy="12" r="5"></circle>
                       <line x1="12" y1="1" x2="12" y2="3"></line>
                       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -216,15 +217,17 @@
                       <line x1="21" y1="12" x2="23" y2="12"></line>
                       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
                       <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg><span>Light</span></li>
-                  <li data-theme="dark"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round">
+                    </svg><span>Light</span>
+                  </li>
+                  <li data-theme="dark">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg><span>Dark</span></li>
-                  <li data-theme="system"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round">
+                    </svg><span>Dark</span>
+                  </li>
+                  <li data-theme="system">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                       <line x1="8" y1="21" x2="16" y2="21"></line>
                       <line x1="12" y1="17" x2="12" y2="21"></line>
@@ -236,73 +239,48 @@
             <div class="user-info">
               <span id="user-name-display"></span>
               <a href="my-account.html">
-                <img id="user-profile-pic" src="" alt="User Profile" class="profile-pic">
+                <img id="user-profile-pic" src="" alt="User Profile" class="profile-pic" />
               </a>
             </div>
           </div>
         </header>
         <!-- 3. Content Body (Bottom, Scrolling Block) -->
         <div class="content-body">
-          <h1>Deposit History</h1>
-          <p class="page-description">A complete record of all your deposits made to the platform.</p>
+          <h1>Deposit Log</h1>
+          <p class="page-description">A complete history of all your funding transactions.</p>
 
+          <!-- Add the transaction-log-card class to the card -->
           <div class="card transaction-log-card">
             <div class="table-container">
+              <!-- Change the class from data-table to transaction-table -->
               <table class="transaction-table">
                 <thead>
                   <tr>
                     <th>Transaction ID</th>
-                    <th>Date</th>
                     <th>Amount</th>
-                    <th>Currency</th>
+                    <th>Method</th>
                     <th>Status</th>
+                    <th>Date</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- Example Row 1: Completed -->
+                  <!-- The JavaScript will now generate rows with data-label attributes -->
+                  <!-- Placeholder while loading -->
                   <tr>
-                    <td data-label="Transaction ID">#TXN10235</td>
-                    <td data-label="Date">2024-05-10</td>
-                    <td data-label="Amount">$1,000.00</td>
-                    <td data-label="Currency">BTC</td>
-                    <td data-label="Status">
-                      <span class="status-badge status-completed">Completed</span>
-                    </td>
+                    <td colspan="5">Loading transaction history...</td>
                   </tr>
-                  <!-- Example Row 2: Pending -->
-                  <tr>
-                    <td data-label="Transaction ID">#TXN10234</td>
-                    <td data-label="Date">2024-05-09</td>
-                    <td data-label="Amount">$500.00</td>
-                    <td data-label="Currency">ETH</td>
-                    <td data-label="Status">
-                      <span class="status-badge status-pending">Pending</span>
-                    </td>
-                  </tr>
-                  <!-- Example Row 3: Failed -->
-                  <tr>
-                    <td data-label="Transaction ID">#TXN10233</td>
-                    <td data-label="Date">2024-05-08</td>
-                    <td data-label="Amount">$250.00</td>
-                    <td data-label="Currency">USDT</td>
-                    <td data-label="Status">
-                      <span class="status-badge status-failed">Failed</span>
-                    </td>
-                  </tr>
-                  <!-- Add more rows as needed -->
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-
-
       </div>
     </main>
   </div>
 
-  <script type="module" src="js/app.js"></script>
-
+  < <script type="module" src="js/auth.js?v=1.1">
+    </script>
+    <script type="module" src="js/app.js?v=1.1"></script>
 </body>
 
 </html>
