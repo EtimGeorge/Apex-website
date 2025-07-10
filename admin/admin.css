@@ -1,0 +1,61 @@
+/* ==========================================================
+   ADMIN-SPECIFIC STYLES (FINAL VERSION)
+   This file ONLY handles color overrides for the admin theme.
+   All layout and functionality is handled by the main styles.css.
+   ========================================================== */
+
+.admin-sidebar {
+    /* Set the unique background color for the admin panel */
+    background-color: #343a40; /* Dark Slate Gray */
+}
+
+.admin-sidebar .nav-item:hover {
+    /* A slightly lighter hover state */
+    background-color: #495057; 
+}
+
+.admin-sidebar .nav-item.active {
+    /* The unique teal accent color for the active item */
+    background-color: #17a2b8;
+}
+
+/* Ensure the text and icon of the active item are bright white */
+.admin-sidebar .nav-item.active,
+.admin-sidebar .nav-item.active svg,
+.admin-sidebar .nav-item.active .nav-text {
+    color: #ffffff;
+}
+
+
+/* --- Admin Action Button Styles --- */
+.actions-cell {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    transition: opacity 0.2s ease;
+}
+
+.btn-action:hover {
+    opacity: 0.85;
+}
+
+.approve-kyc {
+    background-color: var(--color-accent-success); /* Green */
+}
+
+.reject-kyc {
+    background-color: #dc3545; /* Red */
+}
+
+.action-bar {
+    margin-bottom: 1.5rem;
+}

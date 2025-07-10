@@ -810,7 +810,7 @@ ul {
 }
 
 /* Renamed .status-badge to .status to match existing HTML */
-.status { 
+.status {
   display: inline-block;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
@@ -819,12 +819,30 @@ ul {
   text-transform: capitalize;
 }
 
-.status-completed { background-color: #e0fbf6; color: #0b6855; }
-.dark-theme .status-completed { background-color: #1c4a45; color: #8ce6d1; }
-.status-pending { background-color: #fff0e3; color: #a6692c; }
-.dark-theme .status-pending { background-color: #573c24; color: #f3b985; }
-.status-failed { background-color: #f8d7da; color: #9b2c2c; }
-.dark-theme .status-failed { background-color: #5d2828; color: #f9a5a5; }
+.status-completed {
+  background-color: #e0fbf6;
+  color: #0b6855;
+}
+.dark-theme .status-completed {
+  background-color: #1c4a45;
+  color: #8ce6d1;
+}
+.status-pending {
+  background-color: #fff0e3;
+  color: #a6692c;
+}
+.dark-theme .status-pending {
+  background-color: #573c24;
+  color: #f3b985;
+}
+.status-failed {
+  background-color: #f8d7da;
+  color: #9b2c2c;
+}
+.dark-theme .status-failed {
+  background-color: #5d2828;
+  color: #f9a5a5;
+}
 
 /* Responsive Table Styles */
 @media (max-width: 768px) {
@@ -859,8 +877,6 @@ ul {
 
 /* =============end of 11. New Transaction Log Table Styles */
 
-
-
 /* --- .14 Auth Page Styles --- */
 .auth-container {
   display: flex;
@@ -893,79 +909,77 @@ ul {
 
 /* --- 15. Modal Styles --- */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    opacity: 1;
-    transition: opacity 0.3s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 
 .modal-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .modal-content {
-    background-color: var(--color-bg-secondary);
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 500px;
-    position: relative;
-    transform: scale(1);
-    transition: transform 0.3s ease;
+  background-color: var(--color-bg-secondary);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  transform: scale(1);
+  transition: transform 0.3s ease;
 }
 
 .modal-overlay.hidden .modal-content {
-    transform: scale(0.9);
+  transform: scale(0.9);
 }
 
 .modal-close {
-    position: absolute;
-    top: 1rem;
-    right: 1.5rem;
-    font-size: 2rem;
-    font-weight: 300;
-    color: var(--color-text-muted);
-    background: none;
-    border: none;
-    cursor: pointer;
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .modal-content h2 {
-    color: var(--color-text-primary);
-    margin-bottom: 0.5rem;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
 }
 
 .modal-content p {
-    color: var(--color-text-muted);
-    margin-bottom: 2rem;
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
 }
 
 .input-with-currency {
-    position: relative;
+  position: relative;
 }
 
 .input-with-currency span {
-    position: absolute;
-    top: 50%;
-    left: 1rem;
-    transform: translateY(-50%);
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--color-text-muted);
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
 }
 
 .input-with-currency .form-control {
-    padding-left: 2.5rem;
+  padding-left: 2.5rem;
 }
-
-

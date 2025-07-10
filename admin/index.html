@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Project Apex</title>
+    <!-- We can reuse our main variable and style files -->
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/styles.css">
+    <!-- Link to the new admin-specific stylesheet -->
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <a href="../index.html" class="logo">Project Apex</a>
+            <h2>Administrator Login</h2>
+            <form id="admin-login-form">
+                <div class="form-group">
+                    <label for="admin-email">Email Address</label>
+                    <input type="email" id="admin-email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Password</label>
+                    <input type="password" id="admin-password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary form-submit-btn">Login</button>
+            </form>
+        </div>
+    </div>
+    <!-- We will need a dedicated JS file for admin logic later -->
+    <script type="module" src="../js/admin.js"></script>
+</body>
+</html>
