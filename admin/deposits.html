@@ -2,13 +2,14 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manage Users - Admin Panel</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Deposits - Admin Panel</title>
+
   <!-- Correct paths for CSS from the /admin/ folder -->
-  <link rel="stylesheet" href="../css/variables.css">
-  <link rel="stylesheet" href="../css/styles.css">
-  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <link rel="stylesheet" href="admin.css" />
 </head>
 
 <body>
@@ -36,7 +37,7 @@
             </a>
           </li>
           <li>
-            <a href="users.html" class="nav-item active">
+            <a href="users.html" class="nav-item">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -58,7 +59,7 @@
             </a>
           </li>
           <li>
-            <a href="deposits.html" class="nav-item">
+            <a href="deposits.html" class="nav-item active" >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -120,25 +121,27 @@
           </div>
         </header>
         <div class="content-body">
-          <h1>Manage Users</h1>
-          <p class="page-description">View, search, and manage all registered users on the platform.</p>
+          <h1>Manage Deposit Requests</h1>
+          <p class="page-description">
+            Approve or reject pending user deposit requests.
+          </p>
 
-          <div class="card transaction-log-card"> <!-- We can reuse this class for a full-width table card -->
+          <div class="card transaction-log-card">
             <div class="table-container">
               <table class="transaction-table">
                 <thead>
                   <tr>
                     <th>User</th>
-                    <th>Email</th>
-                    <th>KYC Status</th>
-                    <th>Balance</th>
-                    <th>Date Registered</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
-                <!-- This tbody will be populated by admin.js -->
-                <tbody id="users-table-body">
+                <tbody id="deposits-table-body">
                   <tr>
-                    <td colspan="5">Loading users...</td>
+                    <td colspan="6">Loading pending deposit requests...</td>
                   </tr>
                 </tbody>
               </table>

@@ -983,3 +983,123 @@ ul {
 .input-with-currency .form-control {
   padding-left: 2.5rem;
 }
+
+
+
+/* --- 16. Wallet Display Card Styles --- */
+.wallet-card {
+    text-align: center;
+    border: 2px solid var(--color-accent-primary);
+}
+.wallet-card.hidden {
+    display: none;
+}
+.wallet-card h4 {
+    color: var(--color-text-primary);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+.wallet-card p {
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+}
+.qr-code-container {
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: inline-block; /* Allows the padding to create a border */
+}
+.qr-code-container img {
+    display: block;
+    width: 150px;
+    height: 150px;
+}
+.wallet-address-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
+.wallet-address-group label {
+    padding: 0 1rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    border-right: 1px solid var(--color-border);
+}
+.wallet-address-group input {
+    flex-grow: 1;
+    border: none;
+    background: none;
+    padding: 0.8rem;
+    font-family: monospace;
+    color: var(--color-text-primary);
+}
+.wallet-address-group input:focus {
+    outline: none;
+}
+.wallet-address-group button {
+    background: none;
+    border: none;
+    padding: 0.8rem;
+    cursor: pointer;
+    color: var(--color-text-muted);
+}
+.wallet-address-group button:hover {
+    color: var(--color-accent-primary);
+}
+.wallet-warning {
+    font-style: italic;
+    color: #dc3545;
+}
+
+
+/* --- 17. Notification Styles --- */
+#notification-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+}
+
+.notification-item p {
+    margin: 0;
+    font-weight: 500;
+}
+
+.notification-item button.dismiss-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+    padding: 0 0.5rem;
+}
+.notification-item button.dismiss-btn:hover {
+    opacity: 1;
+}
+
+/* Colors for different notification types */
+.notification-success {
+    background-color: var(--color-bg-hover);
+    border-left: 5px solid var(--color-accent-success);
+    color: var(--color-text-primary);
+}
+
+.notification-failed {
+    background-color: var(--color-bg-hover);
+    border-left: 5px solid #dc3545; /* Red */
+    color: var(--color-text-primary);
+}

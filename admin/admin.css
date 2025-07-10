@@ -59,3 +59,41 @@
 .action-bar {
     margin-bottom: 1.5rem;
 }
+
+/* ==========================================================
+   Admin Table Action Button Styles (NEW BLOCK)
+   ========================================================== */
+
+.actions-cell {
+    display: flex;
+    gap: 0.5rem; /* Adds space between the buttons */
+}
+
+.btn-action {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    color: #ffffff; /* Text color for the buttons should be white */
+    transition: opacity 0.2s ease;
+}
+
+.btn-action:hover {
+    opacity: 0.85; /* Slight fade on hover */
+}
+
+.btn-action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* --- Button Specific Colors --- */
+.approve-deposit, .approve-withdrawal {
+    background-color: var(--color-accent-success); /* Green */
+}
+
+.reject-deposit, .reject-withdrawal {
+    background-color: #dc3545; /* A standard, strong red */
+}

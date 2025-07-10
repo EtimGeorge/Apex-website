@@ -165,12 +165,12 @@ function runAllPageLogic(userData, uid) {
   }
 
   // =============================================================================
-  // --- Withdraw Page Logic (NEW BLOCK) ---
+  // --- Withdraw Page Logic (Corrected to NOT change balance on request) ---
   // =============================================================================
   if (currentPage === 'withdraw.html') {
-    // const withdrawForm = document.getElementById('withdraw-form');
+    const withdrawForm = document.getElementById('withdraw-form');
 
-    // Pre-fill the available balance text
+    // This part, which pre-fills the balance, is correct and remains.
     const availableBalanceDisplay = document.getElementById(
       'withdraw-available-balance'
     );
@@ -180,7 +180,6 @@ function runAllPageLogic(userData, uid) {
       )}`;
     }
 
-    const withdrawForm = document.getElementById('withdraw-form');
     if (withdrawForm) {
       withdrawForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -197,61 +196,33 @@ function runAllPageLogic(userData, uid) {
         const walletAddress = document.getElementById('wallet-address').value;
 
         // --- Validation ---
-        if (isNaN(amount) || amount <= 0) {
-          alert('Please enter a valid withdrawal amount.');
-          submitButton.disabled = false;
-          submitButton.textContent = 'Submit Request';
-          return;
-        }
-        if (amount > userData.accountBalance) {
-          alert('Withdrawal amount cannot exceed your available balance.');
-          submitButton.disabled = false;
-          submitButton.textContent = 'Submit Request';
-          return;
-        }
-        if (walletAddress.trim() === '') {
-          alert('Please enter a valid wallet address.');
+        // The check against the balance is still important user feedback.
+        if (
+          isNaN(amount) ||
+          amount <= 0 ||
+          amount > userData.accountBalance ||
+          walletAddress.trim() === ''
+        ) {
+          alert(
+            'Invalid input. Please check the amount and wallet address, and ensure you have sufficient funds.'
+          );
           submitButton.disabled = false;
           submitButton.textContent = 'Submit Request';
           return;
         }
 
-        // --- Firestore Transaction ---
-        // We use a transaction here to ensure the balance is updated reliably.
+        // --- Create a PENDING transaction record ONLY ---
         try {
-          await runTransaction(db, async (transaction) => {
-            const userDocRef = doc(db, 'users', uid);
-            const userDoc = await transaction.get(userDocRef);
-
-            if (!userDoc.exists()) {
-              throw 'User document not found.';
-            }
-
-            const currentBalance = userDoc.data().accountBalance;
-            if (amount > currentBalance) {
-              throw 'Insufficient balance.';
-            }
-
-            // 1. Update the user's accountBalance and totalWithdrawn
-            const newBalance = currentBalance - amount;
-            const newTotalWithdrawn =
-              (userDoc.data().totalWithdrawn || 0) + amount;
-            transaction.update(userDocRef, {
-              accountBalance: newBalance,
-              totalWithdrawn: newTotalWithdrawn,
-            });
-
-            // 2. Create the withdrawal transaction record
-            const newTransactionRef = doc(collection(db, 'transactions'));
-            transaction.set(newTransactionRef, {
-              userId: uid,
-              type: 'withdrawal',
-              amount: amount,
-              method: method,
-              walletAddress: walletAddress,
-              status: 'pending', // All withdrawals start as pending for admin approval
-              date: new Date(),
-            });
+          // This is now a simple 'addDoc' and not a complex transaction.
+          // We are only recording the user's *request*.
+          await addDoc(collection(db, 'transactions'), {
+            userId: uid,
+            type: 'withdrawal',
+            amount: amount,
+            method: method,
+            walletAddress: walletAddress,
+            status: 'pending', // All withdrawals start as pending
+            date: new Date(),
           });
 
           alert(
@@ -259,8 +230,9 @@ function runAllPageLogic(userData, uid) {
           );
           window.location.href = 'withdrawal-log.html';
         } catch (error) {
-          console.error('Withdrawal failed: ', error);
+          console.error('Withdrawal request submission failed: ', error);
           alert('Withdrawal request failed: ' + error);
+        } finally {
           submitButton.disabled = false;
           submitButton.textContent = 'Submit Request';
         }
@@ -268,145 +240,168 @@ function runAllPageLogic(userData, uid) {
     }
   }
 
-   // =============================================================================
-    // --- Withdrawal Log Page Logic (Corrected Placement) ---
-    // =============================================================================
-    if (currentPage === 'withdrawal-log.html') {
-        const tableBody = document.querySelector('.transaction-table tbody');
-        
-        if (tableBody) {
-            tableBody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
-            
-            // Query for transactions of type 'withdrawal'
-            const q = query(
-                collection(db, "transactions"), 
-                where("userId", "==", uid), 
-                where("type", "==", "withdrawal"),
-                where("status", "==", "pending"),
-                orderBy("date", "desc")
-            );
+  // =============================================================================
+  // --- Withdrawal Log Page Logic (Corrected Placement) ---
+  // =============================================================================
+  if (currentPage === 'withdrawal-log.html') {
+    const tableBody = document.querySelector('.transaction-table tbody');
 
-            getDocs(q).then(querySnapshot => {
-                if (querySnapshot.empty) {
-                    tableBody.innerHTML = '<tr><td colspan="4">No withdrawal history found.</td></tr>';
-                    return;
-                }
+    if (tableBody) {
+      tableBody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
 
-                let tableRowsHTML = '';
-                querySnapshot.forEach(doc => {
-                    const tx = doc.data();
-                    const date = tx.date.toDate().toLocaleDateString();
-                    // Shorten the wallet address for display
-                    const shortAddress = `${tx.walletAddress.substring(0, 6)}...${tx.walletAddress.substring(tx.walletAddress.length - 4)}`;
+      // Query for transactions of type 'withdrawal'
+      const q = query(
+        collection(db, 'transactions'),
+        where('userId', '==', uid),
+        where('type', '==', 'withdrawal'),
+        where('status', '==', 'pending'),
+        orderBy('date', 'desc')
+      );
 
-                    tableRowsHTML += `
+      getDocs(q)
+        .then((querySnapshot) => {
+          if (querySnapshot.empty) {
+            tableBody.innerHTML =
+              '<tr><td colspan="4">No withdrawal history found.</td></tr>';
+            return;
+          }
+
+          let tableRowsHTML = '';
+          querySnapshot.forEach((doc) => {
+            const tx = doc.data();
+            const date = tx.date.toDate().toLocaleDateString();
+            // Shorten the wallet address for display
+            const shortAddress = `${tx.walletAddress.substring(
+              0,
+              6
+            )}...${tx.walletAddress.substring(tx.walletAddress.length - 4)}`;
+
+            tableRowsHTML += `
                         <tr>
                             <td data-label="Date">${date}</td>
-                            <td data-label="Amount">$${tx.amount.toFixed(2)}</td>
+                            <td data-label="Amount">$${tx.amount.toFixed(
+                              2
+                            )}</td>
                             <td data-label="Wallet Address">${shortAddress}</td>
                             <td data-label="Status">
-                                <span class="status-badge status-${tx.status}">${tx.status}</span>
+                                <span class="status-badge status-${
+                                  tx.status
+                                }">${tx.status}</span>
                             </td>
                         </tr>
                     `;
-                });
+          });
 
-                tableBody.innerHTML = tableRowsHTML;
-            }).catch(error => {
-                console.error("Error fetching withdrawal log:", error);
-                tableBody.innerHTML = '<tr><td colspan="4">Error loading data.</td></tr>';
-            });
-        }
+          tableBody.innerHTML = tableRowsHTML;
+        })
+        .catch((error) => {
+          console.error('Error fetching withdrawal log:', error);
+          tableBody.innerHTML =
+            '<tr><td colspan="4">Error loading data.</td></tr>';
+        });
     }
+  }
 
   // =============================================================================
-    // --- Verify Page Logic (Corrected for your HTML) ---
-    // =============================================================================
-    if (currentPage === 'verify.html') {
-        const kycForm = document.getElementById('kyc-form');
-        const statusBanner = document.querySelector('.status-banner');
+  // --- Verify Page Logic (Corrected for your HTML) ---
+  // =============================================================================
+  if (currentPage === 'verify.html') {
+    const kycForm = document.getElementById('kyc-form');
+    const statusBanner = document.querySelector('.status-banner');
 
-        // Update the status banner based on user data
-        if (statusBanner && userData.kycStatus) {
-            const status = userData.kycStatus;
-            statusBanner.className = `status-banner status-${status}`; // e.g., status-verified
-            statusBanner.innerHTML = `<strong>Your current status:</strong> ${status.charAt(0).toUpperCase() + status.slice(1)}`;
-        }
-
-        // Disable form if already verified or pending
-        if (userData.kycStatus === 'pending' || userData.kycStatus === 'verified') {
-            kycForm.querySelectorAll('input, button').forEach(el => el.disabled = true);
-            kycForm.querySelectorAll('.file-drop-area').forEach(area => area.style.cursor = 'not-allowed');
-        }
-
-        // Logic for file input name display and drag & drop
-        const kycUploadBoxes = document.querySelectorAll('.kyc-upload-box');
-        kycUploadBoxes.forEach(box => {
-            const input = box.querySelector('.file-input');
-            const dropArea = box.querySelector('.file-drop-area');
-            const fileNameDisplay = box.querySelector('.file-name-display');
-
-            // Handle file selection via click
-            input.addEventListener('change', () => {
-                fileNameDisplay.textContent = input.files.length > 0 ? input.files[0].name : '';
-            });
-
-            // Handle drag & drop
-            dropArea.addEventListener('click', () => input.click()); // Click drop area to open file dialog
-            dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.classList.add('is-active'); });
-            dropArea.addEventListener('dragleave', () => dropArea.classList.remove('is-active'));
-            dropArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropArea.classList.remove('is-active');
-                if (e.dataTransfer.files.length > 0) {
-                    input.files = e.dataTransfer.files;
-                    input.dispatchEvent(new Event('change')); // Trigger change event to update display
-                }
-            });
-        });
-        
-        // --- Form Submission Logic ---
-        if (kycForm) {
-            kycForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const submitButton = kycForm.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-                submitButton.textContent = 'Uploading...';
-
-                // Get the files from the inputs your HTML uses
-                const selfieFile = document.getElementById('selfie-upload').files[0];
-                const idFrontFile = document.getElementById('id-front-upload').files[0];
-
-                if (!selfieFile || !idFrontFile) {
-                    alert('A selfie and the front of your ID are required.');
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Submit for Verification';
-                    return;
-                }
-                
-                try {
-                    // This upload logic is correct and remains the same
-                    const selfieRef = ref(storage, `kyc-documents/${uid}/selfie.jpg`);
-                    await uploadBytes(selfieRef, selfieFile);
-
-                    const idFrontRef = ref(storage, `kyc-documents/${uid}/id-front.jpg`);
-                    await uploadBytes(idFrontRef, idFrontFile);
-                    
-                    // Update user status in Firestore
-                    await updateDoc(doc(db, "users", uid), { kycStatus: 'pending' });
-
-                    alert('Documents uploaded! Your verification is now pending review.');
-                    window.location.reload();
-                } catch (error) {
-                    console.error("KYC upload failed:", error);
-                    alert("Upload failed. Please try again.");
-                } finally {
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Submit for Verification';
-                }
-            });
-        }
+    // Update the status banner based on user data
+    if (statusBanner && userData.kycStatus) {
+      const status = userData.kycStatus;
+      statusBanner.className = `status-banner status-${status}`; // e.g., status-verified
+      statusBanner.innerHTML = `<strong>Your current status:</strong> ${
+        status.charAt(0).toUpperCase() + status.slice(1)
+      }`;
     }
+
+    // Disable form if already verified or pending
+    if (userData.kycStatus === 'pending' || userData.kycStatus === 'verified') {
+      kycForm
+        .querySelectorAll('input, button')
+        .forEach((el) => (el.disabled = true));
+      kycForm
+        .querySelectorAll('.file-drop-area')
+        .forEach((area) => (area.style.cursor = 'not-allowed'));
+    }
+
+    // Logic for file input name display and drag & drop
+    const kycUploadBoxes = document.querySelectorAll('.kyc-upload-box');
+    kycUploadBoxes.forEach((box) => {
+      const input = box.querySelector('.file-input');
+      const dropArea = box.querySelector('.file-drop-area');
+      const fileNameDisplay = box.querySelector('.file-name-display');
+
+      // Handle file selection via click
+      input.addEventListener('change', () => {
+        fileNameDisplay.textContent =
+          input.files.length > 0 ? input.files[0].name : '';
+      });
+
+      // Handle drag & drop
+      dropArea.addEventListener('click', () => input.click()); // Click drop area to open file dialog
+      dropArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropArea.classList.add('is-active');
+      });
+      dropArea.addEventListener('dragleave', () =>
+        dropArea.classList.remove('is-active')
+      );
+      dropArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropArea.classList.remove('is-active');
+        if (e.dataTransfer.files.length > 0) {
+          input.files = e.dataTransfer.files;
+          input.dispatchEvent(new Event('change')); // Trigger change event to update display
+        }
+      });
+    });
+
+    // --- Form Submission Logic ---
+    if (kycForm) {
+      kycForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitButton = kycForm.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Uploading...';
+
+        // Get the files from the inputs your HTML uses
+        const selfieFile = document.getElementById('selfie-upload').files[0];
+        const idFrontFile = document.getElementById('id-front-upload').files[0];
+
+        if (!selfieFile || !idFrontFile) {
+          alert('A selfie and the front of your ID are required.');
+          submitButton.disabled = false;
+          submitButton.textContent = 'Submit for Verification';
+          return;
+        }
+
+        try {
+          // This upload logic is correct and remains the same
+          const selfieRef = ref(storage, `kyc-documents/${uid}/selfie.jpg`);
+          await uploadBytes(selfieRef, selfieFile);
+
+          const idFrontRef = ref(storage, `kyc-documents/${uid}/id-front.jpg`);
+          await uploadBytes(idFrontRef, idFrontFile);
+
+          // Update user status in Firestore
+          await updateDoc(doc(db, 'users', uid), { kycStatus: 'pending' });
+
+          alert('Documents uploaded! Your verification is now pending review.');
+          window.location.reload();
+        } catch (error) {
+          console.error('KYC upload failed:', error);
+          alert('Upload failed. Please try again.');
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Submit for Verification';
+        }
+      });
+    }
+  }
   // =================================================================================
   // --- 5. HELPER FUNCTIONS & EVENT HANDLERS ---
   // =================================================================================
@@ -497,6 +492,105 @@ function runAllPageLogic(userData, uid) {
             copyButton.style.backgroundColor = '';
           }, 2000);
         });
+      });
+    }
+
+    // =============================================================================
+    // --- Dashboard Notification Logic (WITH WITHDRAWAL NOTIFICATIONS) ---
+    // =============================================================================
+    const notificationArea = document.getElementById('notification-area');
+    if (notificationArea) {
+      // This query correctly fetches ALL unread transactions for the user
+      const notificationQuery = query(
+        collection(db, 'transactions'),
+        where('userId', '==', uid),
+        where('isRead', '==', false)
+      );
+
+      getDocs(notificationQuery).then((snapshot) => {
+        if (snapshot.empty) {
+          notificationArea.style.display = 'none';
+          return;
+        }
+
+        notificationArea.innerHTML = ''; // Clear any existing notifications before adding new ones
+        notificationArea.style.display = 'flex';
+
+        snapshot.forEach((doc) => {
+          const tx = doc.data();
+          const txId = doc.id;
+          let message = '';
+          let type = '';
+
+          // --- THIS IS THE MODIFIED PART ---
+          // It now checks for both deposit and withdrawal types.
+
+          // Case 1: Successful Deposit
+          if (tx.type === 'deposit' && tx.status === 'completed') {
+            message = `Your deposit of $${tx.amount.toFixed(
+              2
+            )} has been approved and added to your balance.`;
+            type = 'success';
+          }
+          // Case 2: Failed Deposit
+          else if (tx.type === 'deposit' && tx.status === 'failed') {
+            message = `Your deposit of $${tx.amount.toFixed(
+              2
+            )} could not be processed. Please contact support.`;
+            type = 'failed';
+          }
+          // Case 3: Successful Withdrawal
+          else if (tx.type === 'withdrawal' && tx.status === 'completed') {
+            message = `Your withdrawal request for $${tx.amount.toFixed(
+              2
+            )} has been approved and processed.`;
+            type = 'success';
+          }
+          // Case 4: Failed/Rejected Withdrawal
+          else if (tx.type === 'withdrawal' && tx.status === 'failed') {
+            message = `Your withdrawal request for $${tx.amount.toFixed(
+              2
+            )} has been rejected, and the funds have been returned to your account balance.`;
+            type = 'failed';
+          }
+
+          // If a valid message was created, build and append the notification element
+          if (message) {
+            const notificationEl = document.createElement('div');
+            notificationEl.className = `notification-item notification-${type}`;
+            notificationEl.innerHTML = `
+                    <p>${message}</p>
+                    <button class="dismiss-btn" data-txid="${txId}">×</button>
+                `;
+            notificationArea.appendChild(notificationEl);
+          }
+        });
+      });
+
+      // The 'dismiss' event listener is correct and does not need to be changed.
+      notificationArea.addEventListener('click', async (e) => {
+        if (e.target.classList.contains('dismiss-btn')) {
+          const button = e.target;
+          const txId = button.dataset.txid;
+          const notificationItem = button.closest('.notification-item');
+
+          button.disabled = true;
+
+          try {
+            // Mark the notification as 'read' in Firestore
+            const txDocRef = doc(db, 'transactions', txId);
+            await updateDoc(txDocRef, { isRead: true });
+
+            // Fade out and remove the notification from the UI
+            notificationItem.style.transition = 'opacity 0.3s ease';
+            notificationItem.style.opacity = '0';
+            setTimeout(() => notificationItem.remove(), 300);
+          } catch (error) {
+            console.error('Error dismissing notification:', error);
+            alert('Could not dismiss notification. Please try again.');
+            button.disabled = false;
+          }
+        }
       });
     }
   }
@@ -605,7 +699,101 @@ function runAllPageLogic(userData, uid) {
   }
 
   function handleFundAccountPage(uid) {
+    // --- DATA ---
+    // In a real application, these addresses would be stored securely.
+    const companyWallets = {
+      btc: {
+        name: 'Bitcoin (BTC)',
+        symbol: 'BTC',
+        address: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+      },
+      eth: {
+        name: 'Ethereum (ETH)',
+        symbol: 'ETH',
+        address: '0x3a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b',
+      },
+      usdt: {
+        name: 'Tether (USDT)',
+        symbol: 'USDT',
+        address: '0x7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b',
+      },
+      pi: {
+        name: 'Pi Network (PI)',
+        symbol: 'PI',
+        address: 'GABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+      },
+      ice: {
+        name: 'Ice Network (ICE)',
+        symbol: 'ICE',
+        address: 'ice_1234567890abcdefghijklmnopqrstuvwxyz',
+      },
+      // Add more coins here
+    };
+
+    // ============delet top if error should occur================
+
+    // --- ELEMENTS ---
     const fundForm = document.getElementById('deposit-form');
+
+    // Populate the wallet address fields
+    const paymentMethodDropdown = document.getElementById('payment-method');
+    const walletDisplayCard = document.getElementById('wallet-display-card');
+
+    // --- HELPER FUNCTION to update the wallet display ---
+    const updateWalletDisplay = (selectedCoin) => {
+      const walletData = companyWallets[selectedCoin];
+      if (!walletData) {
+        walletDisplayCard.classList.add('hidden');
+        return;
+      }
+
+      // Populate text elements
+      document.getElementById('wallet-coin-name').textContent = walletData.name;
+      document.getElementById('wallet-coin-symbol').textContent =
+        walletData.symbol;
+      document.getElementById('wallet-address-display').value =
+        walletData.address;
+
+      // Generate and display QR Code
+      const qrCodeContainer = document.getElementById('wallet-qr-code');
+      qrCodeContainer.innerHTML = ''; // Clear previous QR code
+      new QRCode(qrCodeContainer, {
+        text: walletData.address,
+        width: 150,
+        height: 150,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H,
+      });
+
+      // Make the card visible
+      walletDisplayCard.classList.remove('hidden');
+    };
+
+    // --- EVENT LISTENERS ---
+    // When the dropdown value changes
+    paymentMethodDropdown.addEventListener('change', (e) => {
+      updateWalletDisplay(e.target.value);
+    });
+
+    // Copy button for the wallet address
+    const walletCopyBtn = document.getElementById('wallet-copy-btn');
+    if (walletCopyBtn) {
+      walletCopyBtn.addEventListener('click', () => {
+        const addressInput = document.getElementById('wallet-address-display');
+        navigator.clipboard.writeText(addressInput.value).then(() => {
+          alert('Wallet address copied to clipboard!');
+        });
+      });
+    }
+
+    // --- Initialize view on page load ---
+    // Hide the wallet card initially
+    walletDisplayCard.classList.add('hidden');
+
+    // The rest of your working fundForm, quick amount buttons logic remains here...
+    // ...
+
     const amountInput = document.getElementById('amount'); // Get the amount input field
     const quickAmountButtons = document.querySelectorAll('.btn-quick-amount'); // Get all quick amount buttons
 
@@ -637,50 +825,79 @@ function runAllPageLogic(userData, uid) {
           return;
         }
 
+        // ... inside the fundForm.addEventListener ...
+
         // =================================================================
         // --- THIS IS THE REPLACEMENT BLOCK ---
-        // We replace the old `try...catch` with this new one that uses a transaction.
+        // It now ONLY creates the transaction record and does NOT update the user's document.
         // =================================================================
         try {
-          // Use a Transaction to safely update one document and create another.
-          await runTransaction(db, async (transaction) => {
-            const userDocRef = doc(db, 'users', uid);
-
-            // Best practice: get the most recent user data inside the transaction.
-            const userDoc = await transaction.get(userDocRef);
-            if (!userDoc.exists()) {
-              throw 'User document not found!';
-            }
-
-            // 1. UPDATE THE USER'S totalDeposited FIELD
-            const newTotalDeposited =
-              (userDoc.data().totalDeposited || 0) + amount;
-            transaction.update(userDocRef, {
-              totalDeposited: newTotalDeposited,
-            });
-
-            // 2. CREATE THE TRANSACTION RECORD
-            // We use .set() with a new reference inside a transaction.
-            const newTransactionRef = doc(collection(db, 'transactions'));
-            transaction.set(newTransactionRef, {
-              userId: uid,
-              type: 'deposit',
-              amount: amount,
-              method: paymentMethod,
-              status: 'pending',
-              date: new Date(),
-            });
+          // This is no longer a transaction, just a single document creation.
+          await addDoc(collection(db, 'transactions'), {
+            userId: uid,
+            type: 'deposit',
+            amount: amount,
+            method: paymentMethod,
+            status: 'pending', // All deposits start as pending
+            date: new Date(),
           });
 
-          alert('Deposit request submitted successfully!');
+          alert(
+            'Deposit request submitted successfully! Your request is pending approval and will reflect in your balance soon.'
+          );
           window.location.href = 'deposit-log.html';
         } catch (error) {
-          console.error('Error submitting deposit: ', error);
-          alert('An error occurred while submitting your deposit.');
+          console.error('Error submitting deposit request: ', error);
+          alert('An error occurred while submitting your deposit request.');
         } finally {
           submitButton.disabled = false;
           submitButton.textContent = 'Proceed to Payment';
         }
+
+        // =================================================================
+        // --- THIS IS THE REPLACEMENT BLOCK ---
+        // We replace the old `try...catch` with this new one that uses a transaction.
+        // =================================================================
+        // try {
+        // Use a Transaction to safely update one document and create another.
+        // await runTransaction(db, async (transaction) => {
+        //   const userDocRef = doc(db, 'users', uid);
+
+        // Best practice: get the most recent user data inside the transaction.
+        // const userDoc = await transaction.get(userDocRef);
+        // if (!userDoc.exists()) {
+        //   throw 'User document not found!';
+        // }
+
+        // 1. UPDATE THE USER'S totalDeposited FIELD
+        // const newTotalDeposited =
+        //   (userDoc.data().totalDeposited || 0) + amount;
+        // transaction.update(userDocRef, {
+        //   totalDeposited: newTotalDeposited,
+        // });
+
+        // 2. CREATE THE TRANSACTION RECORD
+        // We use .set() with a new reference inside a transaction.
+        //   const newTransactionRef = doc(collection(db, 'transactions'));
+        //   transaction.set(newTransactionRef, {
+        //     userId: uid,
+        //     type: 'deposit',
+        //     amount: amount,
+        //     method: paymentMethod,
+        //     status: 'pending',
+        //     date: new Date(),
+        //   });
+        // });
+
+        //   alert('Deposit request submitted successfully!');
+        //   window.location.href = 'deposit-log.html';
+        // } catch (error) {
+        //   console.error('Error submitting deposit: ', error);
+        //   alert('An error occurred while submitting your deposit.');
+        // } finally {
+        //   submitButton.disabled = false;
+        //   submitButton.textContent = 'Proceed to Payment';
+        // }
       });
     }
   }
