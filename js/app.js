@@ -473,6 +473,15 @@ function runAllPageLogic(userData, uid) {
     document.getElementById('deposits-display').textContent = formatCurrency(
       userData.totalDeposited
     );
+
+     // =============================================================
+    // --- THIS IS THE FIX ---
+    // =============================================================
+    const profitsDisplay = document.getElementById('profits-display');
+    if (profitsDisplay) {
+        // Find and display the 'totalProfits' field from the user's document
+        profitsDisplay.textContent = formatCurrency(userData.totalProfits);
+    }
     document.getElementById('withdrawn-display').textContent = formatCurrency(
       userData.totalWithdrawn
     );
@@ -661,13 +670,18 @@ function runAllPageLogic(userData, uid) {
     });
   }
 
+  // =============================================================================
+  // --- This is the complete and correct function for the Plans page ---
+  // =============================================================================
   function handlePlansPage(userData, uid) {
-    const investButtons = document.querySelectorAll('.plan-btn');
+    const plansGrid = document.querySelector('.plans-grid');
     const modalOverlay = document.getElementById('investment-modal');
-    const modalCloseBtn = document.getElementById('modal-close-btn');
     const investmentForm = document.getElementById('investment-form');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
 
+    // --- Function to open the modal (logic is correct) ---
     const openModal = (planCard) => {
+      if (!planCard) return;
       document.getElementById('modal-plan-name').textContent = `Invest in ${
         planCard.querySelector('.plan-name').textContent
       }`;
@@ -679,23 +693,95 @@ function runAllPageLogic(userData, uid) {
       ).textContent = `$${userData.accountBalance.toFixed(2)}`;
       modalOverlay.classList.remove('hidden');
     };
+
+    // --- Function to close the modal (logic is correct) ---
     const closeModal = () => {
-      investmentForm.reset();
-      modalOverlay.classList.add('hidden');
+      if (investmentForm) investmentForm.reset();
+      if (modalOverlay) modalOverlay.classList.add('hidden');
     };
 
-    investButtons.forEach((button) =>
-      button.addEventListener('click', (e) =>
-        openModal(e.target.closest('.plan-card'))
-      )
-    );
-    modalCloseBtn.addEventListener('click', closeModal);
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) closeModal();
-    });
-    investmentForm.addEventListener('submit', (e) =>
-      handleInvestmentSubmission(e, userData)
-    );
+    // --- Function to attach listeners to buttons AFTER they are created ---
+    const attachInvestButtonListeners = () => {
+      const newInvestButtons = document.querySelectorAll('.plan-btn');
+      newInvestButtons.forEach((button) => {
+        button.addEventListener('click', (e) => {
+          const planCard = e.target.closest('.plan-card');
+          openModal(planCard);
+        });
+      });
+    };
+
+    // --- MAIN LOGIC: Fetch plans from Firestore ---
+    if (plansGrid) {
+      plansGrid.innerHTML = '<p>Loading available investment plans...</p>';
+      const plansQuery = query(
+        collection(db, 'plans'),
+        where('isActive', '==', true),
+        orderBy('minAmount')
+      );
+
+      getDocs(plansQuery)
+        .then((snapshot) => {
+          let plansHTML = '';
+          if (snapshot.empty) {
+            plansHTML =
+              '<p>No investment plans are available at this time.</p>';
+          } else {
+            snapshot.forEach((doc) => {
+              const plan = doc.data();
+              const isFeatured = plan.planName
+                .toLowerCase()
+                .includes('premium');
+              plansHTML += `
+                            <div class="plan-card ${
+                              isFeatured ? 'featured' : ''
+                            }">
+                                ${
+                                  isFeatured
+                                    ? '<div class="plan-badge">Most Popular</div>'
+                                    : ''
+                                }
+                                <div class="plan-header">
+                                    <h3 class="plan-name">${plan.planName}</h3>
+                                    <div class="plan-price">$${
+                                      plan.minAmount
+                                    } - $${plan.maxAmount}</div>
+                                </div>
+                                <ul class="plan-features">
+                                    <li>Return <strong>${
+                                      plan.roiPercent
+                                    }% Daily</strong></li>
+                                    <li>Duration <strong>For ${
+                                      plan.durationDays
+                                    } Days</strong></li>
+                                    <li>Referral Bonus <strong>5%</strong></li>
+                                </ul>
+                                <button class="btn btn-primary plan-btn">Invest Now</button>
+                            </div>
+                        `;
+            });
+          }
+          // Step 1: Render the dynamic HTML
+          plansGrid.innerHTML = plansHTML;
+          // Step 2: NOW that the buttons exist, attach the listeners
+          attachInvestButtonListeners();
+        })
+        .catch((error) => {
+          console.error('Error fetching plans:', error);
+          plansGrid.innerHTML = '<p>Could not load investment plans.</p>';
+        });
+    }
+
+    // --- Attach listeners for modal elements that are always in the HTML ---
+    if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
+    if (modalOverlay)
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) closeModal();
+      });
+    if (investmentForm)
+      investmentForm.addEventListener('submit', (e) =>
+        handleInvestmentSubmission(e, userData)
+      );
   }
 
   function handleFundAccountPage(uid) {

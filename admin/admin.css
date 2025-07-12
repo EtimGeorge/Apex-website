@@ -97,3 +97,15 @@
 .reject-deposit, .reject-withdrawal {
     background-color: #dc3545; /* A standard, strong red */
 }
+
+/* --- Admin Action Card Styles --- */
+.admin-action-card {
+    display: block; /* Override flex behavior from the main .card style */
+    margin-bottom: 2rem;
+    background-color: var(--color-bg-hover);
+}
+
+.admin-action-card p {
+    margin: -1rem 0 1.5rem 0;
+    color: var(--color-text-muted);
+}

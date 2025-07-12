@@ -81,10 +81,55 @@
                         </div>
                     </div>
                 </header>
-                <div class="content-body">
-                    <h1>Welcome, Admin</h1>
-                    <p class="page-description">This is the central control panel for Project Apex. Select an option from the sidebar to begin.</p>
-                </div>
+                <!-- This is the complete content-body for admin/dashboard.html -->
+<div class="content-body">
+    <h1>Admin Dashboard</h1>
+<p class="page-description">This is the central control panel for Project Apex. Select an option from the sidebar to begin.</p>
+
+    <p class="page-description">Overview of platform activity and key metrics.</p>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+        <!-- Card 1: Total Users -->
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Total Registered Users</span>
+                <span class="card-value" id="admin-total-users">0</span>
+            </div>
+        </div>
+
+        <!-- Card 2: Total Invested -->
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Total Amount Invested</span>
+                <span class="card-value" id="admin-total-invested">$0.00</span>
+            </div>
+        </div>
+
+        <!-- Card 3: Pending KYC -->
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Pending KYC Requests</span>
+                <span class="card-value" id="admin-pending-kyc">0</span>
+            </div>
+        </div>
+
+        <!-- Card 4: Pending Deposits -->
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">Pending Deposit Requests</span>
+                <span class="card-value" id="admin-pending-deposits">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Actions Card -->
+    <div class="card admin-action-card">
+        <h3 class="card-header">Manual Actions</h3>
+        <p>Run scheduled jobs manually. This is for testing and should be automated in production.</p>
+        <button id="process-investments-btn" class="btn btn-primary">Run Daily Profit Calculation</button>
+    </div>
+</div>
             </div>
         </main>
     </div>

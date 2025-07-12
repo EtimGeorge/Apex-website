@@ -2,7 +2,7 @@
 // PROJECT APEX: ADMIN.JS - FINAL ARCHITECTURE
 // =================================================================================
 
-import { auth, db } from './firebase-config.js';
+import { auth, db, storage } from './firebase-config.js';
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
@@ -20,6 +20,10 @@ import {
   updateDoc, // <<<--- ADDED
   addDoc,
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import {
+  ref,
+  getDownloadURL
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
 // --- ADMIN AUTHENTICATION & ROUTE PROTECTION ---
 const adminProtectedPages = [
@@ -102,13 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
           querySnapshot.forEach((doc) => {
             const userData = doc.data();
             const regDate = userData.createdAt.toDate().toLocaleDateString();
-            tableRowsHTML += `<tr><td>${userData.fullName}</td><td>${
-              userData.email
-            }</td><td><span class="status status-${userData.kycStatus}">${
-              userData.kycStatus
-            }</span></td><td>$${(userData.accountBalance || 0).toFixed(
-              2
-            )}</td><td>${regDate}</td></tr>`;
+            tableRowsHTML += `<tr><td>${userData.fullName}</td><td>${userData.email
+              }</td><td><span class="status status-${userData.kycStatus}">${userData.kycStatus
+              }</span></td><td>$${(userData.accountBalance || 0).toFixed(
+                2
+              )}</td><td>${regDate}</td></tr>`;
           });
           tableBody.innerHTML = querySnapshot.empty
             ? '<tr><td colspan="5">No users found.</td></tr>'
@@ -118,48 +120,284 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- Manage KYC Page Logic (THE FIX) ---
-  if (currentPage === 'kyc.html') {
-    const loadButton = document.getElementById('load-kyc-requests-btn');
-    const tableBody = document.getElementById('kyc-table-body');
+  // =============================================================================
+  // --- Admin Dashboard Page Logic (WITH CARDS & ACTIONS) ---
+  // =============================================================================
+  if (currentPage === 'dashboard.html') {
+    // --- Function to fetch and display stats for the cards ---
+    const populateDashboardStats = async () => {
+      try {
+        // 1. Get total users count
+        const usersSnapshot = await getDocs(collection(db, 'users'));
+        document.getElementById('admin-total-users').textContent =
+          usersSnapshot.size;
 
-    if (loadButton && tableBody) {
-      loadButton.addEventListener('click', () => {
-        loadButton.disabled = true;
-        loadButton.textContent = 'Loading...';
-        tableBody.innerHTML =
-          '<tr><td colspan="5">Loading pending requests...</td></tr>';
+        // 2. Get total amount invested
+        const investmentsSnapshot = await getDocs(
+          collection(db, 'investments')
+        );
+        let totalInvested = 0;
+        investmentsSnapshot.forEach((doc) => {
+          totalInvested += doc.data().investedAmount || 0;
+        });
+        document.getElementById('admin-total-invested').textContent =
+          new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+          }).format(totalInvested);
 
+        // 3. Get pending KYC count
         const kycQuery = query(
           collection(db, 'users'),
           where('kycStatus', '==', 'pending')
         );
+        const kycSnapshot = await getDocs(kycQuery);
+        document.getElementById('admin-pending-kyc').textContent =
+          kycSnapshot.size;
 
-        getDocs(kycQuery)
-          .then((querySnapshot) => {
-            if (querySnapshot.empty) {
-              tableBody.innerHTML =
-                '<tr><td colspan="5">No pending KYC requests found.</td></tr>';
-              return;
+        // 4. Get pending deposits count
+        const depositsQuery = query(
+          collection(db, 'transactions'),
+          where('type', '==', 'deposit'),
+          where('status', '==', 'pending')
+        );
+        const depositsSnapshot = await getDocs(depositsQuery);
+        document.getElementById('admin-pending-deposits').textContent =
+          depositsSnapshot.size;
+      } catch (error) {
+        console.error('Error populating admin dashboard stats:', error);
+        alert('Could not load dashboard statistics.');
+      }
+    };
+
+    // --- Logic for the "Process Investments" Button (This is your existing, working code) ---
+    const processButton = document.getElementById('process-investments-btn');
+
+    if (processButton) {
+      processButton.addEventListener('click', async () => {
+        processButton.disabled = true;
+        processButton.textContent = 'Processing... Please Wait';
+
+        try {
+          console.log('Starting investment processing job...');
+          const investmentsRef = collection(db, 'investments');
+          const plansRef = collection(db, 'plans');
+
+          // 1. Get all active investments and all plans
+          const activeInvestmentsQuery = query(
+            investmentsRef,
+            where('status', '==', 'active')
+          );
+          const [investmentsSnapshot, plansSnapshot] = await Promise.all([
+            getDocs(activeInvestmentsQuery),
+            getDocs(plansRef),
+          ]);
+
+          if (investmentsSnapshot.empty) {
+            alert('No active investments found to process.');
+            processButton.disabled = false;
+            processButton.textContent = 'Run Daily Profit Calculation';
+            return;
+          }
+
+          // Convert plans to a quick-lookup map for efficiency
+          const plansMap = new Map();
+          plansSnapshot.forEach((doc) =>
+            plansMap.set(doc.data().planName, doc.data())
+          );
+
+          let processedCount = 0;
+          const now = new Date();
+
+          // 2. Loop through each investment and process it
+          for (const investmentDoc of investmentsSnapshot.docs) {
+            const investment = investmentDoc.data();
+            const plan = plansMap.get(investment.planName);
+
+            if (!plan) {
+              console.warn(
+                `Plan '${investment.planName}' not found for investment ID: ${investmentDoc.id}. Skipping.`
+              );
+              continue;
             }
-            let tableRowsHTML = '';
-            querySnapshot.forEach((doc) => {
-              const userData = doc.data();
-              tableRowsHTML += `<tr><td>${userData.fullName}</td><td>${userData.email}</td><td>N/A</td><td><span class="status status-pending">${userData.kycStatus}</span></td><td class="actions-cell"><button class="btn-action approve-kyc">Approve</button><button class="btn-action reject-kyc">Reject</button></td></tr>`;
+
+            const userRef = doc(db, 'users', investment.userId);
+            const investmentRef = doc(db, 'investments', investmentDoc.id);
+
+            // 3. Run a transaction for each investment to ensure safety
+            await runTransaction(db, async (transaction) => {
+              const userDoc = await transaction.get(userRef);
+              if (!userDoc.exists()) return;
+
+              const userData = userDoc.data();
+              const dailyProfit =
+                (investment.investedAmount * plan.roiPercent) / 100;
+
+              // Check if investment is completed
+              const startDate = investment.startDate.toDate();
+              const endDate = new Date(startDate.getTime());
+              endDate.setDate(startDate.getDate() + plan.durationDays);
+              const isCompleted = now >= endDate;
+
+              let newBalance = (userData.accountBalance || 0) + dailyProfit;
+              let newTotalProfits = (userData.totalProfits || 0) + dailyProfit;
+
+              // If completed, return capital and update status
+              if (isCompleted) {
+                newBalance += investment.investedAmount;
+                transaction.update(investmentRef, { status: 'completed' });
+              }
+
+              // Update user's balances
+              transaction.update(userRef, {
+                accountBalance: newBalance,
+                totalProfits: newTotalProfits,
+              });
             });
-            tableBody.innerHTML = tableRowsHTML;
-          })
-          .catch((error) => {
-            console.error('Error fetching KYC requests:', error);
-            tableBody.innerHTML =
-              '<tr><td colspan="5">Failed to load requests. See console.</td></tr>';
-          })
-          .finally(() => {
-            loadButton.disabled = false;
-            loadButton.textContent = 'Load Pending Requests';
-          });
+            processedCount++;
+          }
+
+          alert(
+            `Job finished. Processed ${processedCount} investments successfully.`
+          );
+        } catch (error) {
+          console.error('Error processing investments:', error);
+          alert('An error occurred during processing. Check the console.');
+        } finally {
+          processButton.disabled = false;
+          processButton.textContent = 'Run Daily Profit Calculation';
+        }
       });
     }
+
+    // --- Initial Page Load ---
+    populateDashboardStats();
+  } // End of dashboard.html block
+
+  // =============================================================================
+  // --- Manage KYC Page Logic (Complete with Actions) ---
+  // =============================================================================
+  if (currentPage === 'kyc.html') {
+    const tableBody = document.getElementById('kyc-table-body');
+
+    // This function fetches and displays pending requests
+    const loadKycRequests = () => {
+      if (!tableBody) return;
+      tableBody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
+      const kycQuery = query(
+        collection(db, 'users'),
+        where('kycStatus', '==', 'pending')
+      );
+
+      getDocs(kycQuery).then((snapshot) => {
+        if (snapshot.empty) {
+          tableBody.innerHTML =
+            '<tr><td colspan="5">No pending KYC requests.</td></tr>';
+          return;
+        }
+        let rowsHTML = '';
+        snapshot.forEach((doc) => {
+          const userData = doc.data();
+          rowsHTML += `
+                    <tr data-userid="${doc.id}">
+                        <td>${userData.fullName}</td>
+                        <td>${userData.email}</td>
+                        <td>${userData.createdAt
+              .toDate()
+              .toLocaleDateString()}</td>
+                        <td><span class="status status-pending">${userData.kycStatus
+            }</span></td>
+                        <td class="actions-cell">
+                            <button class="btn-action view-docs">View Docs</button>
+                            <button class="btn-action approve-kyc">Approve</button>
+                            <button class="btn-action reject-kyc">Reject</button>
+                        </td>
+                    </tr>
+                `;
+        });
+        tableBody.innerHTML = rowsHTML;
+      });
+    };
+
+    // This function handles all button clicks in the table
+    const handleKycActions = () => {
+      if (!tableBody) return;
+      tableBody.addEventListener('click', async (e) => {
+        const target = e.target;
+        const row = target.closest('tr');
+        if (!row) return;
+
+        const userId = row.dataset.userid;
+        const userDocRef = doc(db, 'users', userId);
+
+        // --- VIEW DOCS LOGIC ---
+        if (target.classList.contains('view-docs')) {
+          alert('Opening documents... (See console for links)');
+          try {
+            // Create references to the files in Firebase Storage
+            const selfieRef = ref(
+              storage,
+              `kyc-documents/${userId}/selfie.jpg`
+            );
+            const idFrontRef = ref(
+              storage,
+              `kyc-documents/${userId}/id-front.jpg`
+            );
+
+            // Get the public download URL for each file
+            const selfieUrl = await getDownloadURL(selfieRef);
+            const idFrontUrl = await getDownloadURL(idFrontRef);
+
+            console.log('Selfie URL:', selfieUrl);
+            console.log('ID Front URL:', idFrontUrl);
+
+            // Open the URLs in new tabs for the admin to view
+            window.open(selfieUrl, '_blank');
+            window.open(idFrontUrl, '_blank');
+          } catch (error) {
+            console.error('Error getting document URLs:', error);
+            alert(
+              'Could not retrieve documents. They may not have been uploaded correctly.'
+            );
+          }
+        }
+
+        // --- APPROVE LOGIC ---
+        if (target.classList.contains('approve-kyc')) {
+          if (confirm(`Are you sure you want to approve user ${userId}?`)) {
+            target.disabled = true;
+            try {
+              await updateDoc(userDocRef, { kycStatus: 'verified' });
+              alert('User KYC has been approved.');
+              row.remove();
+            } catch (error) {
+              alert('Failed to approve KYC.');
+              target.disabled = false;
+            }
+          }
+        }
+
+        // --- REJECT LOGIC ---
+        if (target.classList.contains('reject-kyc')) {
+          if (confirm(`Are you sure you want to reject user ${userId}?`)) {
+            target.disabled = true;
+            try {
+              // In a real app, you might set it back to 'unverified' or a new 'rejected' status
+              await updateDoc(userDocRef, { kycStatus: 'unverified' });
+              alert('User KYC has been rejected.');
+              row.remove();
+            } catch (error) {
+              alert('Failed to reject KYC.');
+              target.disabled = false;
+            }
+          }
+        }
+      });
+    };
+
+    // Initialize the page
+    loadKycRequests();
+    handleKycActions();
   }
 
   // =============================================================================
@@ -216,18 +454,16 @@ document.addEventListener('DOMContentLoaded', () => {
             let rowsHTML = '';
             transactionsWithUsernames.forEach((tx) => {
               rowsHTML += `
-                            <tr data-txid="${tx.id}" data-userid="${
-                tx.userId
-              }" data-amount="${tx.amount}">
+                            <tr data-txid="${tx.id}" data-userid="${tx.userId
+                }" data-amount="${tx.amount}">
                                 <td>${tx.userName}</td>
                                 <td>$${tx.amount.toFixed(2)}</td>
                                 <td>${tx.method.toUpperCase()}</td>
                                 <td>${tx.date
-                                  .toDate()
-                                  .toLocaleDateString()}</td>
-                                <td><span class="status status-pending">${
-                                  tx.status
-                                }</span></td>
+                  .toDate()
+                  .toLocaleDateString()}</td>
+                                <td><span class="status status-pending">${tx.status
+                }</span></td>
                                 <td class="actions-cell">
                                     <button class="btn-action approve-deposit">Approve</button>
                                     <button class="btn-action reject-deposit">Reject</button>
@@ -393,28 +629,25 @@ document.addEventListener('DOMContentLoaded', () => {
               // Truncate wallet address for display
               const shortAddress = tx.walletAddress
                 ? `${tx.walletAddress.substring(
-                    0,
-                    8
-                  )}...${tx.walletAddress.substring(
-                    tx.walletAddress.length - 6
-                  )}`
+                  0,
+                  8
+                )}...${tx.walletAddress.substring(
+                  tx.walletAddress.length - 6
+                )}`
                 : 'N/A';
               rowsHTML += `
-                                <tr data-txid="${tx.id}" data-userid="${
-                tx.userId
-              }" data-amount="${tx.amount}">
+                                <tr data-txid="${tx.id}" data-userid="${tx.userId
+                }" data-amount="${tx.amount}">
                                     <td>${tx.userName}</td>
                                     <td>$${tx.amount.toFixed(2)}</td>
                                     <td>${tx.method.toUpperCase()}</td>
-                                    <td title="${
-                                      tx.walletAddress
-                                    }">${shortAddress}</td>
+                                    <td title="${tx.walletAddress
+                }">${shortAddress}</td>
                                     <td>${tx.date
-                                      .toDate()
-                                      .toLocaleDateString()}</td>
-                                    <td><span class="status status-pending">${
-                                      tx.status
-                                    }</span></td>
+                  .toDate()
+                  .toLocaleDateString()}</td>
+                                    <td><span class="status status-pending">${tx.status
+                }</span></td>
                                     <td class="actions-cell">
                                         <button class="btn-action approve-withdrawal">Approve</button>
                                         <button class="btn-action reject-withdrawal">Reject</button>
@@ -433,7 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // =============================================================================
-    // --- This function handles the clicks on the 'Approve' and 'Reject' buttons (FINAL VERSION) ---
+    // --- This function handles withdrawal actions (DEFINITIVE FIX) ---
     // =============================================================================
     const handleWithdrawalActions = () => {
       if (!tableBody) return;
@@ -456,18 +689,39 @@ document.addEventListener('DOMContentLoaded', () => {
           target.textContent = 'Approving...';
 
           try {
-            // For approval, we just update the transaction status.
-            // The user's balance was already debited when they made the request.
-            await updateDoc(txDocRef, {
-              status: 'completed',
-              isRead: false, // Add notification flag for the user
+            // Use a transaction to ensure we update both documents safely.
+            await runTransaction(db, async (transaction) => {
+              const userDocRef = doc(db, 'users', userId);
+
+              // Re-read the user's document inside the transaction for fresh data
+              const userDoc = await transaction.get(userDocRef);
+              if (!userDoc.exists()) {
+                throw 'User document not found. Cannot process withdrawal.';
+              }
+
+              // THIS IS THE CRITICAL FIX:
+              // The user's balance was ALREADY debited on request.
+              // We ONLY need to update the totalWithdrawn amount here.
+              const newTotalWithdrawn =
+                (userDoc.data().totalWithdrawn || 0) + amount;
+
+              // 1. Update the user's totalWithdrawn field
+              transaction.update(userDocRef, {
+                totalWithdrawn: newTotalWithdrawn,
+              });
+
+              // 2. Update the transaction's status and add the notification flag
+              transaction.update(txDocRef, {
+                status: 'completed',
+                isRead: false,
+              });
             });
 
-            alert('Withdrawal approved! (Funds were debited on request).');
+            alert('Withdrawal approved successfully!');
             row.remove();
           } catch (error) {
             console.error('Error approving withdrawal:', error);
-            alert('Failed to approve withdrawal.');
+            alert('Failed to approve withdrawal. See console for details.');
             row
               .querySelectorAll('.btn-action')
               .forEach((btn) => (btn.disabled = false));
@@ -475,7 +729,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
 
-        // --- REJECT LOGIC ---
+        // --- REJECT LOGIC (This logic is correct and remains) ---
         if (target.classList.contains('reject-withdrawal')) {
           row
             .querySelectorAll('.btn-action')
