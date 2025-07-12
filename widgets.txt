@@ -1,647 +1,719 @@
-// =================================================================================
-// PROJECT APEX: APP.JS - FINAL CONSOLIDATED SCRIPT (ALL FEATURES RESTORED)
-// =================================================================================
+/* ==========================================================
+   PUBLIC.CSS - Styles for Marketing Pages
+   ========================================================== */
 
-// --- 1. IMPORTS (Direct, Simple, and Correct) ---
-import { auth, db } from './firebase-config.js';
-import {
-  onAuthStateChanged,
-  signOut,
-  updatePassword,
-} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import {
-  doc,
-  getDoc,
-  updateDoc,
-  collection,
-  addDoc,
-  query,
-  where,
-  orderBy,
-  getDocs,
-  runTransaction,
-} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+/* --- 1. Page Preloader --- */
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+}
 
-// --- 2. GLOBAL VARIABLES & ROUTE PROTECTION ---
-const protectedPages = [
-  'dashboard.html',
-  'plans.html',
-  'fund-account.html',
-  'withdraw.html',
-  'my-account.html',
-  'deposit-log.html',
-  'my-plans.html',
-  'verify.html',
-  'withdrawal-log.html',
-];
-const publicPages = ['login.html', 'register.html'];
-const currentPage = window.location.pathname.split('/').pop();
+.preloader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 
-// =================================================================================
-// --- 3. MASTER AUTHENTICATION & DATA CONTROLLER ---
-// =================================================================================
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--color-border);
+  border-top-color: var(--color-accent-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
 
-
-    // --- A. USER IS LOGGED IN ---
-    if (publicPages.includes(currentPage)) {
-      window.location.href = 'dashboard.html';
-      return;
-    }
-
-
-    // --- B. FETCH USER'S DATA ---
-    try {
-      const userDocRef = doc(db, "users", user.uid);
-      const userDocSnap = await getDoc(userDocRef);
-      if (userDocSnap.exists()) {
-        const userData = userDocSnap.data();
-
-
-        // --- C. RUN ALL UI AND EVENT LISTENER LOGIC ---
-        runAllPageLogic(userData, user.uid);
-      } else {
-        console.error(
-          "CRITICAL ERROR: User is authenticated but has no Firestore document."
-        );
-      }
-    } catch (error) {
-      console.error("CRITICAL ERROR fetching user data:", error);
-    }
-  } else {
-    // --- D. USER IS LOGGED OUT ---
-    if (protectedPages.includes(currentPage)) {
-      window.location.href = 'login.html';
-    }
-  }
-});
-
-// =================================================================================
-// --- 4. MASTER LOGIC FUNCTION (Called After User Data is Fetched) ---
-// =================================================================================
-function runAllPageLogic(userData, uid) {
-  console.log(`Running page logic for: ${currentPage}`);
-
-  // --- A. LOGIC THAT RUNS ON EVERY PAGE ---
-  // This part is correct and remains.
-  updateHeaderUI(userData, uid);
-  attachStaticEventListeners();
-  handleThemeSwitcher();
-
-  // --- B. PAGE-SPECIFIC LOGIC ---
-  // =============================================================================
-  // --- Dashboard Page Logic (WITH DATA DISPLAY) ---
-  // This is the section with the new code.
-  // =============================================================================
-  if (currentPage === 'dashboard.html') {
-    // Helper function to format numbers into $USD currency format
-    const formatCurrency = (num) =>
-      new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(num || 0);
-
-    // Find the elements by their ID and update their content
-    const balanceDisplay = document.getElementById('balance-display');
-    if (balanceDisplay) {
-      balanceDisplay.textContent = formatCurrency(userData.accountBalance);
-    }
-
-    const depositsDisplay = document.getElementById('deposits-display');
-    if (depositsDisplay) {
-      depositsDisplay.textContent = formatCurrency(userData.totalDeposited);
-    }
-
-    const withdrawnDisplay = document.getElementById('withdrawn-display');
-    if (withdrawnDisplay) {
-      withdrawnDisplay.textContent = formatCurrency(userData.totalWithdrawn);
-    }
-
-    // The referral link logic is also part of this page's logic
-    const referralLinkDisplay = document.getElementById(
-      'referral-link-display'
-    );
-    if (referralLinkDisplay) {
-      referralLinkDisplay.value = `https://projectapex.com/register.html?ref=${uid}`;
-    }
-
-    // The copy button listener also belongs to this page
-    const copyButton = document.getElementById('copy-btn');
-    if (copyButton && referralLinkDisplay) {
-      copyButton.addEventListener('click', () => {
-        navigator.clipboard.writeText(referralLinkDisplay.value).then(() => {
-          copyButton.textContent = 'Copied!';
-          copyButton.style.backgroundColor = 'var(--color-accent-success)';
-          setTimeout(() => {
-            copyButton.textContent = 'Copy';
-            copyButton.style.backgroundColor = '';
-          }, 2000);
-        });
-      });
-    }
-  }
-  // =============================================================================
-  // --- Dashboard Page Logic END ---
-  // =============================================================================
-
-  // =============================================================================
-  // --- Plans Page Logic (WITH Investment Submission) ---
-  // =============================================================================
-  if (currentPage === 'plans.html') {
-    const investButtons = document.querySelectorAll('.plan-btn');
-    const modalOverlay = document.getElementById('investment-modal');
-    const modalCloseBtn = document.getElementById('modal-close-btn');
-    const investmentForm = document.getElementById('investment-form');
-
-    // This check ensures we only run this code on the plans page
-    if (investButtons.length > 0 && modalOverlay && investmentForm) {
-      const openModal = (planCard) => {
-        // Populate modal with data from the clicked card
-        document.getElementById('modal-plan-name').textContent = `Invest in ${
-          planCard.querySelector('.plan-name').textContent
-        }`;
-        document.getElementById('modal-plan-details').textContent = `Range: ${
-          planCard.querySelector('.plan-price').textContent
-        }`;
-        // Populate with the user's current balance, which we already have from userData
-        document.getElementById(
-          'modal-user-balance'
-        ).textContent = `$${userData.accountBalance.toFixed(2)}`;
-        modalOverlay.classList.remove('hidden');
-      };
-
-      const closeModal = () => {
-        investmentForm.reset();
-        modalOverlay.classList.add('hidden');
-      };
-
-      // Attach event listeners to open and close the modal
-      investButtons.forEach((button) =>
-        button.addEventListener('click', (e) =>
-          openModal(e.target.closest('.plan-card'))
-        )
-      );
-      modalCloseBtn.addEventListener('click', closeModal);
-      modalOverlay.addEventListener('click', (e) => {
-        if (e.target === modalOverlay) closeModal();
-      });
-
-      // Attach the master submit handler to the form
-      investmentForm.addEventListener('submit', (e) => {
-        // Pass the event and the current user's data to the handler
-        handleInvestmentSubmission(e, userData);
-      });
-    }
-  }
-  // =============================================================================
-  // --- My Plans Page Logic END---
-  // =============================================================================
-
-  if (currentPage === 'deposit-log.html') {
-    handleDepositLogPage(uid);
-  }
-  if (currentPage === 'my-account.html') {
-    handleMyAccountPage(userData);
-  }
-
-  if (currentPage === 'fund-account.html') {
-    handleFundAccountPage(uid);
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-// =================================================================================
-// --- 5. HELPER FUNCTIONS & EVENT HANDLERS ---
-// =================================================================================
+/* ==========================================================
+   PUBLIC.CSS - Styles for Marketing Pages
+   ========================================================== */
 
-// --- Universal UI Updaters ---
-function updateHeaderUI(userData, uid) {
-  const userNameDisplay = document.getElementById('user-name-display');
-  const userProfilePic = document.getElementById('user-profile-pic');
-  if (userNameDisplay) userNameDisplay.textContent = userData.fullName;
-  if (userProfilePic)
-    userProfilePic.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      userData.fullName
-    )}&background=0D8ABC&color=fff&rounded=true`;
+/* --- 1. Main Site Header --- */
+.main-site-header {
+  background-color: var(--color-bg-secondary);
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  box-shadow: var(--shadow-sm);
+}
+.main-site-header .nav-links a.active {
+  color: var(--color-accent-primary);
+  font-weight: 700;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+/* This holds the theme toggle, which we will add later */
+#public-theme-switcher-container {
+  margin-right: 0.5rem;
 }
 
-function attachStaticEventListeners() {
-  const dashboardLayout = document.querySelector('.dashboard-layout');
-  if (dashboardLayout) {
-    const sidebar = dashboardLayout.querySelector('.sidebar');
-    sidebar.addEventListener('mouseenter', () =>
-      dashboardLayout.classList.add('sidebar-expanded')
-    );
-    sidebar.addEventListener('mouseleave', () =>
-      dashboardLayout.classList.remove('sidebar-expanded')
-    );
-  }
-  const logoutButton = document.getElementById('logout-btn');
-  if (logoutButton) {
-    logoutButton.addEventListener('click', () =>
-      signOut(auth).catch((err) => console.error('Logout error', err))
-    );
-  }
+/* --- 2. Responsive Mobile Navigation --- */
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 25px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1011;
+}
+.mobile-menu-toggle span {
+  width: 100%;
+  height: 3px;
+  background-color: var(--color-text-primary);
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+}
+/* Animation for hamburger to 'X' */
+.mobile-menu-toggle.active span:nth-child(1) {
+  transform: rotate(45deg) translate(7px, 7px);
+}
+.mobile-menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+.mobile-menu-toggle.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
 }
 
-function handleThemeSwitcher() {
-  const themeToggleButton = document.getElementById('theme-toggle-btn');
-  const themeMenu = document.getElementById('theme-menu');
-  if (themeToggleButton && themeMenu) {
-    themeToggleButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      themeMenu.classList.toggle('hidden');
-    });
-    document.addEventListener('click', (e) => {
-      if (
-        !themeMenu.contains(e.target) &&
-        !themeToggleButton.contains(e.target)
-      )
-        themeMenu.classList.add('hidden');
-    });
-    themeMenu.querySelectorAll('li').forEach((item) => {
-      item.addEventListener('click', () => {
-        localStorage.setItem('theme', item.getAttribute('data-theme'));
-        location.reload();
-      });
-    });
-  }
+.mobile-nav {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: -100%; /* Start off-screen */
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg-primary);
+  z-index: 1010;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: left 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.mobile-nav.active {
+  left: 0;
+}
+.mobile-nav ul {
+  text-align: center;
+}
+.mobile-nav ul li {
+  margin: 2rem 0;
+}
+.mobile-nav ul li a {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.mobile-actions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
 }
 
-// --- Page-Specific Handlers ---
-function handleDashboardPage(userData, uid) {
-  const formatCurrency = (num) =>
-    new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(num || 0);
-  document.getElementById('balance-display').textContent = formatCurrency(
-    userData.accountBalance
-  );
-  document.getElementById('deposits-display').textContent = formatCurrency(
-    userData.totalDeposited
-  );
-  document.getElementById('withdrawn-display').textContent = formatCurrency(
-    userData.totalWithdrawn
-  );
-  document.getElementById(
-    'referral-link-display'
-  ).value = `https://projectapex.com/register.html?ref=${uid}`;
-
-  const copyButton = document.getElementById('copy-btn');
-  const referralInput = document.getElementById('referral-link-display');
-  if (copyButton && referralInput) {
-    copyButton.addEventListener('click', () => {
-      navigator.clipboard.writeText(referralInput.value).then(() => {
-        copyButton.textContent = 'Copied!';
-        copyButton.style.backgroundColor = 'var(--color-accent-success)';
-        setTimeout(() => {
-          copyButton.textContent = 'Copy';
-          copyButton.style.backgroundColor = '';
-        }, 2000);
-      });
-    });
+/* Responsive Breakpoint */
+@media (max-width: 992px) {
+  .desktop-nav,
+  .header-actions {
+    display: none;
   }
-}
-
-function handleDepositLogPage(uid) {
-  const tableBody = document.querySelector(
-    '.data-table tbody, .transaction-table tbody'
-  );
-  if (tableBody) {
-    tableBody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
-    const q = query(
-      collection(db, 'transactions'),
-      where('userId', '==', uid),
-      where('type', '==', 'deposit'),
-      orderBy('date', 'desc')
-    );
-    getDocs(q).then((querySnapshot) => {
-      if (querySnapshot.empty) {
-        tableBody.innerHTML =
-          '<tr><td colspan="5">No deposit history found.</td></tr>';
-        return;
-      }
-      let rows = '';
-      querySnapshot.forEach((doc) => {
-        const tx = doc.data();
-        const date = tx.date.toDate().toLocaleString();
-        rows += `<tr><td>${doc.id.substring(
-          0,
-          10
-        )}...</td><td>$${tx.amount.toFixed(
-          2
-        )}</td><td>${tx.method.toUpperCase()}</td><td><span class="status status-${
-          tx.status
-        }">${tx.status}</span></td><td>${date}</td></tr>`;
-      });
-      tableBody.innerHTML = rows;
-    });
+  .mobile-menu-toggle {
+    display: flex;
   }
 }
 
-function handleMyAccountPage(userData) {
-  // Pre-populate forms
-  document.getElementById('full-name').value = userData.fullName || '';
-  document.getElementById('email').value = userData.email || '';
-  document.getElementById('phone').value = userData.phone || '';
-  document.getElementById('country').value = userData.country || '';
-
-  // Attach submit listeners
-  const profileForm = document.getElementById('profile-form');
-  if (profileForm) {
-    profileForm.addEventListener('submit', handleProfileUpdate);
-  }
-  const securityForm = document.getElementById('security-form');
-  if (securityForm) {
-    securityForm.addEventListener('submit', handlePasswordUpdate);
-  }
-
-  // Tab Logic
-  const tabButtons = document.querySelectorAll('.account-tab-btn');
-  const tabPanels = document.querySelectorAll('.account-panel');
-  tabButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      tabButtons.forEach((btn) => btn.classList.remove('active'));
-      tabPanels.forEach((panel) => panel.classList.remove('active'));
-      button.classList.add('active');
-      document.getElementById(button.dataset.tab).classList.add('active');
-    });
-  });
+/* --- 3. Main Site Footer --- */
+.site-footer {
+  background-color: #1e2d3b;
+  color: #a0aec0;
+  padding: 5rem 0 2rem 0;
+}
+.footer-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+.footer-brand .logo {
+  color: #ffffff;
+}
+.footer-brand p {
+  margin-top: 1rem;
+  line-height: 1.6;
+  max-width: 300px;
+}
+.footer-links h4,
+.footer-newsletter h4 {
+  color: #ffffff;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+.footer-links ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.footer-links a:hover {
+  color: #ffffff;
+  padding-left: 5px;
+  transition: all 0.2s ease-in-out;
+}
+#newsletter-form {
+  display: flex;
+}
+#newsletter-form input {
+  width: 100%;
+  border: 1px solid #4a5568;
+  background-color: #2d3748;
+  padding: 0.75rem;
+  color: #ffffff;
+  border-radius: 6px 0 0 6px;
+}
+#newsletter-form input:focus {
+  outline: none;
+  border-color: var(--color-accent-primary);
+}
+#newsletter-form button {
+  padding: 0 1rem;
+  border: none;
+  background-color: var(--color-accent-primary);
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0 6px 6px 0;
+}
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid #2d3748;
+  font-size: 0.9rem;
 }
 
-function handlePlansPage(userData, uid) {
-  const investButtons = document.querySelectorAll('.plan-btn');
-  const modalOverlay = document.getElementById('investment-modal');
-  const modalCloseBtn = document.getElementById('modal-close-btn');
-  const investmentForm = document.getElementById('investment-form');
-
-  const openModal = (planCard) => {
-    document.getElementById('modal-plan-name').textContent = `Invest in ${
-      planCard.querySelector('.plan-name').textContent
-    }`;
-    document.getElementById('modal-plan-details').textContent = `Range: ${
-      planCard.querySelector('.plan-price').textContent
-    }`;
-    document.getElementById(
-      'modal-user-balance'
-    ).textContent = `$${userData.accountBalance.toFixed(2)}`;
-    modalOverlay.classList.remove('hidden');
-  };
-  const closeModal = () => {
-    investmentForm.reset();
-    modalOverlay.classList.add('hidden');
-  };
-
-  investButtons.forEach((button) =>
-    button.addEventListener('click', (e) =>
-      openModal(e.target.closest('.plan-card'))
-    )
-  );
-  modalCloseBtn.addEventListener('click', closeModal);
-  modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) closeModal();
-  });
-  investmentForm.addEventListener('submit', (e) =>
-    handleInvestment(e, userData)
-  );
+/* Responsive Footer */
+@media (max-width: 992px) {
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+  }
 }
-
-function handleFundAccountPage(uid) {
-  const fundForm = document.getElementById('deposit-form');
-  if (fundForm) {
-    fundForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const submitButton = fundForm.querySelector('button[type="submit"]');
-      submitButton.disabled = true;
-      submitButton.textContent = 'Processing...';
-      const amount = parseFloat(document.getElementById('amount').value);
-      const paymentMethod = document.getElementById('payment-method').value;
-
-      if (isNaN(amount) || amount <= 0) {
-        alert('Please enter a valid amount.');
-        submitButton.disabled = false;
-        submitButton.textContent = 'Proceed to Payment';
-        return;
-      }
-
-      try {
-        await addDoc(collection(db, 'transactions'), {
-          userId: uid,
-          type: 'deposit',
-          amount: amount,
-          method: paymentMethod,
-          status: 'pending',
-          date: new Date(),
-        });
-        alert('Deposit request submitted!');
-        window.location.href = 'deposit-log.html';
-      } catch (error) {
-        console.error('Error submitting deposit: ', error);
-        alert('An error occurred.');
-      } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = 'Proceed to Payment';
-      }
-    });
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .footer-brand p {
+    margin: 1rem auto;
   }
 }
 
-// --- Form Submission Handlers ---
-async function handleProfileUpdate(e) {
-  e.preventDefault();
-  const submitButton = e.target.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
-  submitButton.textContent = 'Saving...';
-  try {
-    const userDocRef = doc(db, 'users', auth.currentUser.uid);
-    await updateDoc(userDocRef, {
-      fullName: document.getElementById('full-name').value,
-      phone: document.getElementById('phone').value,
-      country: document.getElementById('country').value,
-    });
-    alert('Profile updated successfully!');
-  } catch (error) {
-    alert('Failed to update profile.');
-  } finally {
-    submitButton.disabled = false;
-    submitButton.textContent = 'Save Changes';
+/* --- 4. Hero Section --- */
+.hero-section {
+  position: relative;
+  height: 90vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #ffffff;
+  overflow: hidden;
+}
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('../images/hero-background.jpg') no-repeat center center/cover;
+  /* --- IMAGE PROMPT for hero-background.jpg ---
+       "A sophisticated, abstract background image for a financial technology website. It should feature a deep navy blue and dark grey color palette with subtle, glowing lines forming a network or graph pattern, suggesting data, connectivity, and growth. The style should be minimalist, professional, and feel high-tech. 4K resolution."
+    */
+  animation: zoomIn 20s infinite alternate;
+  z-index: 1;
+}
+.hero-section::after {
+  /* Overlay */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+   background-image: var(--gradient-hero-overlay); /* Using the new gradient */
+  z-index: 2;
+}
+@keyframes zoomIn {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
   }
 }
-
-async function handlePasswordUpdate(e) {
-  e.preventDefault();
-  const newPassword = document.getElementById('new-password').value;
-  if (newPassword.length < 6) {
-    alert('Password must be at least 6 characters long.');
-    return;
-  }
-  if (newPassword !== document.getElementById('confirm-password').value) {
-    alert('Passwords do not match.');
-    return;
-  }
-
-  const submitButton = e.target.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
-  submitButton.textContent = 'Updating...';
-  try {
-    await updatePassword(auth.currentUser, newPassword);
-    alert('Password updated successfully! Please log in again.');
-    signOut(auth);
-  } catch (error) {
-    alert(
-      'Failed to update password. You may need to log out and log back in for this operation.'
-    );
-  } finally {
-    submitButton.disabled = false;
-    submitButton.textContent = 'Update Password';
-  }
+.hero-content {
+  position: relative;
+  z-index: 3;
+  max-width: 800px;
+  margin: 0 auto;
+  animation: fadeInHero 1s ease-in-out forwards;
+}
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px; /* Constrain the width of the text */
+    margin: 0 auto;
+    animation: fadeIn Hero 1s ease-in-out forwards;
 }
 
+.hero-headline {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
 
+.hero-headline .highlight-text {
+    color: var(--color-accent-primary);
+    display: block; /* Makes it appear on a new line */
+}
 
+.hero-tagline {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto 2.5rem auto;
+    color: rgba(255, 255, 255, 0.8);
+}
 
+.hero-cta {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
 
-  // =================================================================================
-  // --- Investment Form Submission Handler (DEBUGGING VERSION) ---
-  // =================================================================================
-  async function handleInvestmentSubmission(event, currentUserData) {
-    event.preventDefault();
-    const form = event.target;
-    const submitButton = form.querySelector('button[type="submit"]');
-    submitButton.disabled = true;
-    submitButton.textContent = 'Processing...';
+/* Larger button variant */
+.btn-lg {
+    padding: 0.9rem 2rem;
+    font-size: 1.1rem;
+}
 
-    const amount = parseFloat(
-      document.getElementById('investment-amount').value
-    );
-    const user = auth.currentUser;
-
-    // --- Validation ---
-    if (!user || isNaN(amount) || amount <= 0) {
-      alert('Please enter a valid investment amount.');
-      submitButton.disabled = false;
-      submitButton.textContent = 'Confirm Investment';
-      return;
+/* Simple fade-in animation for the content */
+@keyframes fadeInHero {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
-
-    // We use the globally fetched userData for the initial check
-    if (amount > currentUserData.accountBalance) {
-      alert('Insufficient balance for this investment.');
-      submitButton.disabled = false;
-      submitButton.textContent = 'Confirm Investment';
-      return;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
+}
 
-    // --- Firestore Transaction ---
-    try {
-      console.log('DEBUG: Starting investment transaction...');
-
-      await runTransaction(db, async (transaction) => {
-        console.log('DEBUG: 1. Inside runTransaction callback.');
-        const userDocRef = doc(db, 'users', user.uid);
-
-        console.log(
-          'DEBUG: 2. Getting fresh user document inside transaction...'
-        );
-        const userDoc = await transaction.get(userDocRef);
-
-        if (!userDoc.exists()) {
-          // This error will be caught by the outer catch block
-          throw 'FATAL: User document could not be found inside transaction.';
-        }
-        console.log('DEBUG: 3. Fresh user document found.');
-
-        const currentBalance = userDoc.data().accountBalance;
-        console.log(
-          `DEBUG: 4. Balance inside transaction is: $${currentBalance}`
-        );
-
-        if (amount > currentBalance) {
-          throw `Your current balance ($${currentBalance}) is no longer sufficient.`;
-        }
-
-        // --- Step A: Update User's Balance ---
-        const newBalance = currentBalance - amount;
-        console.log(`DEBUG: 5. Updating user balance to: $${newBalance}`);
-        transaction.update(userDocRef, { accountBalance: newBalance });
-
-        // --- Step B: Create New Investment Document ---
-        const newInvestmentRef = doc(collection(db, 'investments')); // Auto-generates an ID
-        const newInvestmentData = {
-          userId: user.uid,
-          planName: document
-            .getElementById('modal-plan-name')
-            .textContent.replace('Invest in ', ''),
-          investedAmount: amount,
-          status: 'active',
-          startDate: new Date(),
-        };
-        console.log(
-          'DEBUG: 6. Creating new investment document with data:',
-          newInvestmentData
-        );
-        transaction.set(newInvestmentRef, newInvestmentData);
-
-        console.log('DEBUG: 7. Transaction operations queued successfully.');
-      });
-
-      console.log('DEBUG: 8. Transaction completed successfully!');
-      alert('Investment successful! Your plan is now active.');
-      window.location.href = 'my-plans.html';
-    } catch (error) {
-      console.error('--- INVESTMENT FAILED ---');
-      console.error('Error message:', error);
-      alert('Investment failed: ' + error);
-      submitButton.disabled = false;
-      submitButton.textContent = 'Confirm Investment';
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .hero-headline {
+        font-size: 2.5rem;
     }
-  
+    .hero-tagline {
+        font-size: 1rem;
+    }
+    .hero-cta {
+        flex-direction: column;
+        align-items: center;
+    }
+    .hero-cta .btn {
+        width: 80%;
+    }
+}
+
+/* --- 5. Ticker Section --- */
+.ticker-section {
+    /* This separates it from the sections above and below */
+    padding: 1.5rem 0;
+    background-color: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* --- 6. Key Benefits Section --- */
+.benefits-section {
+  padding: 6rem 0;
+  background-color: var(--color-bg-primary);
+}
+.section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
+}
+.section-subtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+.benefit-card {
+  background-color: var(--color-bg-secondary);
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid var(--color-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.benefit-card:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-md);
+}
+.benefit-icon {
+  margin-bottom: 1.5rem;
+}
+.benefit-icon img {
+  width: 64px;
+  height: 64px;
+}
+.benefit-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
+}
+.benefit-description {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 992px) {
+  .benefits-grid {
+    grid-template-columns: 1fr;
   }
+}
+
+/* --- 7. Public Plans Section --- */
+.plans-section-public {
+    padding: 6rem 0;
+    background-color: var(--color-bg-hover);
+}
+
+/* We can reuse the .plans-grid and .plan-card styles from the main style.css,
+   so no new styles are needed for the cards themselves, ensuring consistency. */
+
+#public-plans-grid p { /* For the loading/error message */
+    text-align: center;
+    width: 100%;
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+}
+
+/* --- 8. How It Works Section --- */
+.how-it-works-section {
+    padding: 6rem 0;
+    background-color: var(--color-bg-primary);
+}
+
+.steps-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    position: relative;
+    margin-top: 3rem;
+}
+
+/* The connecting line */
+.steps-container::before {
+    content: '';
+    position: absolute;
+    top: 30px; /* Aligns with the middle of the step number */
+    left: 5%;
+    right: 5%;
+    height: 2px;
+    background-color: var(--color-border);
+    z-index: 1;
+}
+
+.step-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--color-bg-secondary);
+    border: 2px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-accent-primary);
+    margin-bottom: 1.5rem;
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.step-card:hover .step-number {
+    border-color: var(--color-accent-primary);
+}
+
+.step-title {
+    font-size: 1.5rem;
+    color: var(--color-text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.step-description {
+    color: var(--color-text-muted);
+    line-height: 1.6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .steps-container {
+        flex-direction: column;
+    }
+    .steps-container::before {
+        left: 30px;
+        top: 5%;
+        bottom: 5%;
+        width: 2px;
+        height: auto;
+    }
+    .step-card {
+        flex-direction: row;
+        text-align: left;
+        align-items: flex-start;
+    }
+    .step-number {
+        margin-bottom: 0;
+        margin-right: 1.5rem;
+    }
+}
+
+/* --- 9. Testimonials Section --- */
+.testimonials-section {
+    padding: 6rem 0;
+    background-color: var(--color-bg-hover);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.testimonial-card {
+    background-color: var(--color-bg-secondary);
+    padding: 2.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+}
+
+.testimonial-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    flex-grow: 1; /* Pushes the author to the bottom */
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.testimonial-author img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+/* --- IMAGE PROMPTS ---
+- For avatar-1.jpg: "A professional headshot of a smiling woman in her 30s, with a neutral office background. She looks confident and successful."
+- For avatar-2.jpg: "A friendly headshot of a smiling man in his 40s, with a slightly more casual, out-of-focus background. He looks trustworthy and approachable."
+*/
+
+.author-name {
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.author-title {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+}
 
 
-  async function handleInvestment(e, userData) {
-  e.preventDefault();
-  const submitButton = e.target.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
-  submitButton.textContent = 'Processing...';
-  const amount = parseFloat(document.getElementById('investment-amount').value);
+/* ==========================================================
+   10. Scroll-to-Reveal Animations
+   ========================================================== */
 
-  if (isNaN(amount) || amount <= 0 || amount > userData.accountBalance) {
-    alert('Invalid amount or insufficient balance.');
-    submitButton.disabled = false;
-    submitButton.textContent = 'Confirm Investment';
-    return;
-  }
+/* The 'before' state: hidden and slightly moved down */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
 
-  try {
-    await runTransaction(db, async (transaction) => {
-      const userDocRef = doc(db, 'users', auth.currentUser.uid);
-      const userDoc = await transaction.get(userDocRef);
-      if (!userDoc.exists() || userDoc.data().accountBalance < amount) {
-        throw new Error('Insufficient balance.');
-      }
+/* The 'after' state: revealed and in its final position */
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
 
-      const newBalance = userDoc.data().accountBalance - amount;
-      transaction.update(userDocRef, { accountBalance: newBalance });
+/* ==========================================================
+   11. Scroll to Top Button Styles
+   ========================================================== */
 
-      const newInvestmentRef = doc(collection(db, 'investments'));
-      transaction.set(newInvestmentRef, {
-        userId: auth.currentUser.uid,
-        planName: document
-          .getElementById('modal-plan-name')
-          .textContent.replace('Invest in ', ''),
-        investedAmount: amount,
-        status: 'active',
-        startDate: new Date(),
-      });
-    });
-    alert('Investment successful!');
-    window.location.href = 'my-plans.html';
-  } catch (error) {
-    alert('Investment failed: ' + error.message);
-  } finally {
-    submitButton.disabled = false;
-    submitButton.textContent = 'Confirm Investment';
-  }
-};
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-image: var(--gradient-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 998;
+    box-shadow: var(--shadow-lg);
+    
+    /* Start hidden and off-screen */
+    opacity: 0;
+    transform: translateY(100px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.scroll-to-top.visible {
+    /* The visible state */
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.scroll-to-top:hover {
+    background-position: right center; /* Uses the same gradient hover as our other buttons */
+}
+
+/* --- 12. Testimonials Carousel --- */
+
+/* Ensure our card works well inside the slide */
+.splide__slide {
+    padding: 1rem 0; /* Add some vertical space for the shadow on hover */
+}
+
+.testimonial-card {
+    height: 100%; /* Make all cards in the slider the same height */
+}
+
+/* Style the pagination dots to match our theme */
+.splide__pagination__page {
+    background: var(--color-border);
+    opacity: 1;
+}
+
+.splide__pagination__page.is-active {
+    background: var(--color-accent-primary);
+    transform: scale(1.2);
+}
+
+
+/* --- 13. Newsletter Signup Section --- */
+.newsletter-section {
+    padding: 6rem 0;
+    background-color: var(--color-bg-primary);
+    /* You could also use a subtle background pattern here */
+}
+
+.newsletter-content {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#page-newsletter-form {
+    margin-top: 2.5rem;
+    display: flex;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: var(--shadow-lg);
+    border-radius: 8px;
+}
+
+/* We can reuse the #newsletter-form styles from the footer for consistency,
+   but we can make the button slightly larger here. */
+#page-newsletter-form input {
+    width: 100%;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-secondary);
+    padding: 1rem;
+    color: var(--color-text-primary);
+    border-radius: 8px 0 0 8px;
+    font-size: 1rem;
+}
+#page-newsletter-form input:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+}
+#page-newsletter-form button {
+    padding: 0 1.5rem;
+    border: none;
+    background-image: var(--gradient-primary);
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 0 8px 8px 0;
+    font-size: 1rem;
+    transition: background-position 0.3s ease;
+}
+#page-newsletter-form button:hover {
+    background-position: right center;
+}

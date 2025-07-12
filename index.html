@@ -2,328 +2,384 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Apex - Secure Your Financial Future</title>
-    <!-- Link to our existing stylesheets -->
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/pub-variable.css">
-    <link rel="stylesheet" href="css/public.css">
-    <!-- We can add a dedicated public.css later if needed -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Apex - Secure Your Financial Future</title>
+  <!-- Link to our existing stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/pub-variable.css">
+  <!-- <link rel="stylesheet" href="css/styles.css"> -->
+  <link rel="stylesheet" href="css/splide.min.css">
+
+  <link rel="stylesheet" href="css/public.css">
+  
+  <!-- Add Google Fonts for a more premium look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <!-- ===== PAGE PRELOADER ===== -->
-    <div class="preloader">
-        <div class="spinner">Project Apex</div>
+  <!-- ===== PAGE PRELOADER ===== -->
+  <div class="preloader">
+    <div class="spinner">Project Apex</div>
+  </div>
+  <!-- ========================== -->
+
+  <!-- ... rest of your page content ... -->
+
+  <!-- ============================ -->
+  <!--     MAIN HEADER (V2)         -->
+  <!-- ============================ -->
+  <header class="main-site-header">
+    <div class="container">
+      <nav class="navbar">
+        <a href="index.html" class="logo">Project Apex</a>
+
+        <!-- Desktop Navigation -->
+        <ul class="nav-links desktop-nav">
+          <li><a href="index.html" class="active">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="plans.html">Plans</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+
+        <!-- Header Actions (Visible on Desktop) -->
+        <div class="header-actions">
+          <!-- Theme Switcher will be added here via JS -->
+          <a href="login.html" class="btn btn-secondary">Login</a>
+          <a href="register.html" class="btn btn-primary">Get Started</a>
+        </div>
+
+        <!-- Mobile Menu Toggle (Hamburger Icon) -->
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </nav>
     </div>
-    <!-- ========================== -->
 
-    <!-- ... rest of your page content ... -->
+    <!-- Mobile Navigation Menu (Hidden by default) -->
+    <div class="mobile-nav" id="mobile-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="plans.html">Plans</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="mobile-actions">
+        <a href="login.html" class="btn btn-secondary">Login</a>
+        <a href="register.html" class="btn btn-primary">Get Started</a>
+      </div>
+    </div>
+  </header>
 
-    <!-- ============================ -->
-    <!--     MAIN HEADER (V2)         -->
-    <!-- ============================ -->
-    <header class="main-site-header">
-        <div class="container">
-            <nav class="navbar">
-                <a href="index.html" class="logo">Project Apex</a>
-
-                <!-- Desktop Navigation -->
-                <ul class="nav-links desktop-nav">
-                    <li><a href="index.html" class="active">Home</a></li>
-                    <li><a href="about.html">About Us</a></li>
-                    <li><a href="plans.html">Plans</a></li>
-                    <li><a href="blog.html">Blog</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
-
-                <!-- Header Actions (Visible on Desktop) -->
-                <div class="header-actions">
-                    <!-- Theme Switcher will be added here via JS -->
-                    <a href="login.html" class="btn btn-secondary">Login</a>
-                    <a href="register.html" class="btn btn-primary">Get Started</a>
-                </div>
-
-                <!-- Mobile Menu Toggle (Hamburger Icon) -->
-                <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Open menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </nav>
+  <!-- ============================ -->
+  <!--      MAIN PAGE CONTENT       -->
+  <!-- ============================ -->
+  <main>
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero-section">
+      <div class="hero-background"></div> <!-- For background image -->
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-headline">
+            Build Your Future With
+            <span class="highlight-text">Intelligent Investing.</span>
+          </h1>
+          <p class="hero-tagline">
+            Welcome to Project Apex, where technology meets financial expertise. We provide transparent,
+            secure, and powerful solutions to help you grow your capital.
+          </p>
+          <div class="hero-cta">
+            <a href="plans.html" class="btn btn-primary btn-lg">Explore Investment Plans</a>
+            <a href="about.html" class="btn btn-secondary btn-lg">Learn More</a>
+          </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Mobile Navigation Menu (Hidden by default) -->
-        <div class="mobile-nav" id="mobile-nav">
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About Us</a></li>
-                <li><a href="plans.html">Plans</a></li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="contact.html">Contact</a></li>
+    <!-- ===== MARKET DATA TICKER ===== -->
+    <section class="ticker-section">
+      <!-- ============================ -->
+      <!--    MARKET DATA TICKER        -->
+      <!-- ============================ -->
+      <section class="ticker-section" class="benefits-section fade-in-section">
+        <!-- The TradingView Ticker Tape Widget -->
+        <div class="tradingview-widget-container">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
+            async>
+              {
+                "symbols": [
+                  { "proName": "FOREXCOM:SPXUSD", "title": "S&P 500" },
+                  { "proName": "FOREXCOM:NSXUSD", "title": "US 100" },
+                  { "proName": "FX_IDC:EURUSD", "title": "EUR/USD" },
+                  { "proName": "BITSTAMP:BTCUSD", "title": "Bitcoin" },
+                  { "proName": "BITSTAMP:ETHUSD", "title": "Ethereum" },
+                  { "description": "Gold", "proName": "OANDA:XAUUSD" }
+                ],
+                  "showSymbolLogo": true,
+                    "colorTheme": "light",
+                      "isTransparent": false,
+                        "displayMode": "adaptive",
+                          "locale": "en"
+              }
+            </script>
+        </div>
+        <!-- End TradingView Widget -->
+      </section>
+    </section>
+
+    <!-- ===== KEY BENEFITS SECTION ===== -->
+    <section class="benefits-section fade-in-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Experience the Apex Advantage</h2>
+          <p class="section-subtitle">We combine cutting-edge technology with financial expertise to give you
+            a secure and profitable investment experience.</p>
+        </div>
+        <div class="benefits-grid">
+          <!-- Benefit 1: Security -->
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <img src="images/icon-security.gif"
+                alt="Animated icon of a shield with a checkmark, symbolizing robust security and protection of funds.">
+            </div>
+            <h3 class="benefit-title">Unmatched Security</h3>
+            <p class="benefit-description">Your assets are protected with multi-layer security protocols,
+              cold storage solutions, and regular audits.</p>
+          </div>
+          <!-- Benefit 2: Diverse Plans -->
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <img src="images/icon-plans.gif"
+                alt="Animated icon of a bar chart showing upward growth, representing diverse and profitable investment plans.">
+            </div>
+            <h3 class="benefit-title">Diverse Plans</h3>
+            <p class="benefit-description">Choose from a range of expertly managed investment plans tailored
+              to your financial goals and risk appetite.</p>
+          </div>
+          <!-- Benefit 3: Expert Support -->
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <img src="images/icon-support.gif"
+                alt="Animated icon of a customer support agent with a headset, symbolizing 24/7 expert assistance.">
+            </div>
+            <h3 class="benefit-title">24/7 Expert Support</h3>
+            <p class="benefit-description">Our dedicated support team is always available to assist you with
+              any questions, ensuring a seamless experience.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ -->
+    <!--    INVESTMENT PLANS SECTION  -->
+    <!-- ============================ -->
+    <section class="plans-section-public">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Find Your Perfect Plan</h2>
+          <p class="section-subtitle">We offer a variety of investment plans to suit every financial goal and
+            risk profile. Explore your options below.</p>
+        </div>
+        <!-- This grid will be populated by public.js -->
+        <div class="plans-grid" id="public-plans-grid">
+          <!-- Loading state -->
+          <p>Loading plans...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ -->
+    <!--      HOW IT WORKS SECTION    -->
+    <!-- ============================ -->
+    <section class="how-it-works-section fade-in-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Get Started in 3 Simple Steps</h2>
+          <p class="section-subtitle">Investing with Project Apex is designed to be straightforward, secure,
+            and efficient.</p>
+        </div>
+        <div class="steps-container">
+          <!-- Step 1 -->
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3 class="step-title">Create an Account</h3>
+              <p class="step-description">Complete our quick and secure registration process to get your
+                account set up in minutes.</p>
+            </div>
+          </div>
+          <!-- Step 2 -->
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3 class="step-title">Fund Your Account</h3>
+              <p class="step-description">Choose from various secure payment methods to add funds to your
+                investment wallet.</p>
+            </div>
+          </div>
+          <!-- Step 3 -->
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3 class="step-title">Invest & Grow</h3>
+              <p class="step-description">Select an investment plan that fits your goals and watch your
+                capital grow with our expert management.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ -->
+    <!--      TESTIMONIALS SECTION    -->
+    <!-- ============================ -->
+    <section class="testimonials-section fade-in-section">
+      <div class="container">
+        <div class="section-header">
+          <h2 class="section-title">Trusted by Investors Worldwide</h2>
+          <p class="section-subtitle">Our commitment to excellence and performance has earned us the trust of
+            a growing global client base.</p>
+        </div>
+        <!-- This replaces the .testimonials-grid div -->
+        <div class="splide" id="testimonials-slider" aria-label="What our clients say">
+          <div class="splide__track">
+            <ul class="splide__list">
+              <!-- Testimonial 1 -->
+              <li class="splide__slide">
+                <div class="testimonial-card">
+                  <p class="testimonial-text">"The transparency and consistent returns are what keep me with Project
+                    Apex. Their platform is incredibly easy to use, and the support is second to none."</p>
+                  <div class="testimonial-author">
+                    <img src="images/avatar-1.jpg" alt="Photo of Jane Doe">
+                    <div class="author-details">
+                      <span class="author-name">Jane Doe</span>
+                      <span class="author-title">Long-term Investor</span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <!-- Testimonial 2 -->
+              <li class="splide__slide">
+                <div class="testimonial-card">
+                  <p class="testimonial-text">"As someone new to investing, I was hesitant. Project Apex made the
+                    process simple and understandable. I've seen steady growth and couldn't be happier."</p>
+                  <div class="testimonial-author">
+                    <img src="images/avatar-2.jpg" alt="Photo of John Smith">
+                    <div class="author-details">
+                      <span class="author-name">John Smith</span>
+                      <span class="author-title">New Investor</span>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <!-- Testimonial 3 -->
+              <li class="splide__slide">
+                <div class="testimonial-card">
+                  <p class="testimonial-text">"The level of security and professionalism is top-tier. I feel confident
+                    knowing my investments are being managed by the experts at Project Apex."</p>
+                  <div class="testimonial-author">
+                    <img src="images/avatar-3.jpg" alt="Photo of Sarah Lee">
+                    <div class="author-details">
+                      <span class="author-name">Sarah Lee</span>
+                      <span class="author-title">Experienced Trader</span>
+                    </div>
+                  </div>
+                </div>
+              </li>
             </ul>
-            <div class="mobile-actions">
-                <a href="login.html" class="btn btn-secondary">Login</a>
-                <a href="register.html" class="btn btn-primary">Get Started</a>
-            </div>
+          </div>
         </div>
-    </header>
+      </div>
+    </section>
 
     <!-- ============================ -->
-    <!--      MAIN PAGE CONTENT       -->
-    <!-- ============================ -->
-    <main>
-        <!-- ===== HERO SECTION ===== -->
-        <section class="hero-section">
-            <div class="hero-background"></div> <!-- For background image -->
-            <div class="container">
-                <div class="hero-content">
-                    <h1 class="hero-headline">
-                        Build Your Future With
-                        <span class="highlight-text">Intelligent Investing.</span>
-                    </h1>
-                    <p class="hero-tagline">
-                        Welcome to Project Apex, where technology meets financial expertise. We provide transparent,
-                        secure, and powerful solutions to help you grow your capital.
-                    </p>
-                    <div class="hero-cta">
-                        <a href="plans.html" class="btn btn-primary btn-lg">Explore Investment Plans</a>
-                        <a href="about.html" class="btn btn-secondary btn-lg">Learn More</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== MARKET DATA TICKER ===== -->
-        <section class="ticker-section" >
-            <!-- ============================ -->
-            <!--    MARKET DATA TICKER        -->
-            <!-- ============================ -->
-            <section class="ticker-section" class="benefits-section fade-in-section">
-                <!-- The TradingView Ticker Tape Widget -->
-                <div class="tradingview-widget-container">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript"
-                        src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-                            {
-                                "symbols": [
-                                    { "proName": "FOREXCOM:SPXUSD", "title": "S&P 500" },
-                                    { "proName": "FOREXCOM:NSXUSD", "title": "US 100" },
-                                    { "proName": "FX_IDC:EURUSD", "title": "EUR/USD" },
-                                    { "proName": "BITSTAMP:BTCUSD", "title": "Bitcoin" },
-                                    { "proName": "BITSTAMP:ETHUSD", "title": "Ethereum" },
-                                    { "description": "Gold", "proName": "OANDA:XAUUSD" }
-                                ],
-                                    "showSymbolLogo": true,
-                                        "colorTheme": "light",
-                                            "isTransparent": false,
-                                                "displayMode": "adaptive",
-                                                    "locale": "en"
-                            }
-                        </script>
-                </div>
-                <!-- End TradingView Widget -->
-            </section>
-        </section>
-
-        <!-- ===== KEY BENEFITS SECTION ===== -->
-        <section class="benefits-section fade-in-section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Experience the Apex Advantage</h2>
-                    <p class="section-subtitle">We combine cutting-edge technology with financial expertise to give you
-                        a secure and profitable investment experience.</p>
-                </div>
-                <div class="benefits-grid">
-                    <!-- Benefit 1: Security -->
-                    <div class="benefit-card">
-                        <div class="benefit-icon">
-                            <img src="images/icon-security.gif"
-                                alt="Animated icon of a shield with a checkmark, symbolizing robust security and protection of funds.">
-                        </div>
-                        <h3 class="benefit-title">Unmatched Security</h3>
-                        <p class="benefit-description">Your assets are protected with multi-layer security protocols,
-                            cold storage solutions, and regular audits.</p>
-                    </div>
-                    <!-- Benefit 2: Diverse Plans -->
-                    <div class="benefit-card">
-                        <div class="benefit-icon">
-                            <img src="images/icon-plans.gif"
-                                alt="Animated icon of a bar chart showing upward growth, representing diverse and profitable investment plans.">
-                        </div>
-                        <h3 class="benefit-title">Diverse Plans</h3>
-                        <p class="benefit-description">Choose from a range of expertly managed investment plans tailored
-                            to your financial goals and risk appetite.</p>
-                    </div>
-                    <!-- Benefit 3: Expert Support -->
-                    <div class="benefit-card">
-                        <div class="benefit-icon">
-                            <img src="images/icon-support.gif"
-                                alt="Animated icon of a customer support agent with a headset, symbolizing 24/7 expert assistance.">
-                        </div>
-                        <h3 class="benefit-title">24/7 Expert Support</h3>
-                        <p class="benefit-description">Our dedicated support team is always available to assist you with
-                            any questions, ensuring a seamless experience.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================ -->
-        <!--    INVESTMENT PLANS SECTION  -->
-        <!-- ============================ -->
-        <section class="plans-section-public">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Find Your Perfect Plan</h2>
-                    <p class="section-subtitle">We offer a variety of investment plans to suit every financial goal and
-                        risk profile. Explore your options below.</p>
-                </div>
-                <!-- This grid will be populated by public.js -->
-                <div class="plans-grid" id="public-plans-grid">
-                    <!-- Loading state -->
-                    <p>Loading plans...</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================ -->
-        <!--      HOW IT WORKS SECTION    -->
-        <!-- ============================ -->
-        <section class="how-it-works-section fade-in-section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Get Started in 3 Simple Steps</h2>
-                    <p class="section-subtitle">Investing with Project Apex is designed to be straightforward, secure,
-                        and efficient.</p>
-                </div>
-                <div class="steps-container">
-                    <!-- Step 1 -->
-                    <div class="step-card">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h3 class="step-title">Create an Account</h3>
-                            <p class="step-description">Complete our quick and secure registration process to get your
-                                account set up in minutes.</p>
-                        </div>
-                    </div>
-                    <!-- Step 2 -->
-                    <div class="step-card">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h3 class="step-title">Fund Your Account</h3>
-                            <p class="step-description">Choose from various secure payment methods to add funds to your
-                                investment wallet.</p>
-                        </div>
-                    </div>
-                    <!-- Step 3 -->
-                    <div class="step-card">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h3 class="step-title">Invest & Grow</h3>
-                            <p class="step-description">Select an investment plan that fits your goals and watch your
-                                capital grow with our expert management.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ============================ -->
-        <!--      TESTIMONIALS SECTION    -->
-        <!-- ============================ -->
-        <section class="testimonials-section fade-in-section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Trusted by Investors Worldwide</h2>
-                    <p class="section-subtitle">Our commitment to excellence and performance has earned us the trust of
-                        a growing global client base.</p>
-                </div>
-                <div class="testimonials-grid">
-                    <!-- Testimonial 1 -->
-                    <div class="testimonial-card">
-                        <p class="testimonial-text">"The transparency and consistent returns are what keep me with
-                            Project Apex. Their platform is incredibly easy to use, and the support is second to none."
-                        </p>
-                        <div class="testimonial-author">
-                            <img src="images/avatar-1.jpg" alt="Photo of Jane Doe, a satisfied investor.">
-                            <div class="author-details">
-                                <span class="author-name">Jane Doe</span>
-                                <span class="author-title">Long-term Investor</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Testimonial 2 -->
-                    <div class="testimonial-card">
-                        <p class="testimonial-text">"As someone new to investing, I was hesitant. Project Apex made the
-                            process simple and understandable. I've seen steady growth and couldn't be happier."</p>
-                        <div class="testimonial-author">
-                            <img src="images/avatar-2.jpg" alt="Photo of John Smith, a new and happy investor.">
-                            <div class="author-details">
-                                <span class="author-name">John Smith</span>
-                                <span class="author-title">New Investor</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- The rest of the page sections will go here -->
-    </main>
-
-    <!-- ============================ -->
-    <!--         MAIN FOOTER          -->
-    <!-- ============================ -->
-    <footer class="site-footer">
-        <div class="container">
-            <!-- Footer Top Section (Links and Brand) -->
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <a href="index.html" class="logo">Project Apex</a>
-                    <p>Your trusted partner in navigating the future of finance. We provide secure and transparent
-                        investment solutions.</p>
-                </div>
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <ul>
-                        <li><a href="about.html">About Us</a></li>
-                        <li><a href="plans.html">Plans</a></li>
-                        <li><a href="contact.html">Contact Support</a></li>
-                        <li><a href="blog.html">Blog</a></li>
-                    </ul>
-                </div>
-                <div class="footer-links">
-                    <h4>Legal & Help</h4>
-                    <ul>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Service</a></li>
-                        <li><a href="#">FAQ</a></li>
-                    </ul>
-                </div>
-                <div class="footer-newsletter">
-                    <h4>Subscribe to our Newsletter</h4>
-                    <p>Get the latest market insights and updates from our team.</p>
-                    <form id="newsletter-form">
-                        <input type="email" id="newsletter-email" placeholder="Enter your email" required>
-                        <button type="submit">Subscribe</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Footer Bottom Section (Copyright and Socials) -->
-            <div class="footer-bottom">
-                <p>© 2025 Project Apex. All Rights Reserved.</p>
-                Project Apex is powered by Saencrystal Global Limited
-                <!-- We can add social media icons here later -->
-            </div>
+<!--   NEWSLETTER SIGNUP SECTION  -->
+<!-- ============================ -->
+<section class="newsletter-section">
+    <div class="container">
+        <div class="newsletter-content">
+            <h2 class="section-title">Stay Ahead of the Curve</h2>
+            <p class="section-subtitle">Subscribe to our newsletter for weekly market analysis, investment tips, and exclusive platform updates.</p>
+            <!-- We will reuse the newsletter form style from the footer -->
+            <form id="page-newsletter-form">
+                <input type="email" id="page-newsletter-email" placeholder="Enter your email address" required>
+                <button type="submit">Subscribe Now</button>
+            </form>
         </div>
-    </footer>
+    </div>
+</section>
 
-    <!-- We don't need app.js on this page, but a smaller public.js could be added later -->
-    <script type="module" src="js/public.js"></script>
+    <!-- The rest of the page sections will go here -->
+  </main>
+
+  <!-- ============================ -->
+  <!--         MAIN FOOTER          -->
+  <!-- ============================ -->
+  <footer class="site-footer">
+    <div class="container">
+      <!-- Footer Top Section (Links and Brand) -->
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="index.html" class="logo">Project Apex</a>
+          <p>Your trusted partner in navigating the future of finance. We provide secure and transparent
+            investment solutions.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="plans.html">Plans</a></li>
+            <li><a href="contact.html">Contact Support</a></li>
+            <li><a href="blog.html">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Legal & Help</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-newsletter">
+          <h4>Subscribe to our Newsletter</h4>
+          <p>Get the latest market insights and updates from our team.</p>
+          <form id="newsletter-form">
+            <input type="email" id="newsletter-email" placeholder="Enter your email" required>
+            <button type="submit">Subscribe</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Footer Bottom Section (Copyright and Socials) -->
+      <div class="footer-bottom">
+        <p>© 2025 Project Apex. All Rights Reserved.</p>
+        Project Apex is powered by Saencrystal Global Limited
+        <!-- We can add social media icons here later -->
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== SCROLL TO TOP BUTTON ===== -->
+  <button id="scroll-to-top-btn" class="scroll-to-top" title="Go to top">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+  </button>
+  <!-- ================================ -->
+
+  <!-- We don't need app.js on this page, but a smaller public.js could be added later -->
+  <script type="module" src="js/splide.min.js"></script>
+  <script type="module" src="js/public.js"></script>
 
 </body>
 

@@ -1139,3 +1139,42 @@ ul {
     border-left: 5px solid #dc3545; /* Red */
     color: var(--color-text-primary);
 }
+
+/* ==========================================================
+   18. Scroll to Top Button Styles
+   ========================================================== */
+
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-image: var(--gradient-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 998;
+    box-shadow: var(--shadow-lg);
+    
+    /* Start hidden and off-screen */
+    opacity: 0;
+    transform: translateY(100px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.scroll-to-top.visible {
+    /* The visible state */
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.scroll-to-top:hover {
+    background-position: right center; /* Uses the same gradient hover as our other buttons */
+}

@@ -442,6 +442,33 @@ function runAllPageLogic(userData, uid) {
         signOut(auth).catch((err) => console.error('Logout error', err))
       );
     }
+
+    // =============================================================================
+    // --- Scroll to Top Button Logic (for Dashboard) ---
+    // =============================================================================
+    const scrollTopBtn = document.getElementById('scroll-to-top-btn');
+    // The scrolling container in the dashboard is '.main-content-wrapper'
+    const scrollContainer = document.querySelector('.main-content-wrapper');
+
+    if (scrollTopBtn && scrollContainer) {
+      // Show button when user scrolls down
+      scrollContainer.addEventListener('scroll', () => {
+        if (scrollContainer.scrollTop > 300) {
+          scrollTopBtn.classList.add('visible');
+        } else {
+          scrollTopBtn.classList.remove('visible');
+        }
+      });
+
+      // Scroll to top when button is clicked
+      scrollTopBtn.addEventListener('click', () => {
+        scrollContainer.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    }
+
   }
 
   function handleThemeSwitcher() {
