@@ -1,4 +1,15 @@
 // alert('app.js SCRIPT IS RUNNING!');
+
+// --- PAGE PRELOADER LOGIC ---
+// This listener waits for all page content (including images) to load
+// before fading out the preloader.
+window.addEventListener('load', () => {
+  const preloader = document.querySelector('.preloader');
+  if (preloader) {
+    preloader.classList.add('hidden');
+  }
+});
+
 // =================================================================================
 // PROJECT APEX: APP.JS - FINAL CONSOLIDATED SCRIPT (ALL FEATURES RESTORED)
 // =================================================================================
@@ -147,9 +158,8 @@ function runAllPageLogic(userData, uid) {
                         <td>${investment.investedAmount.toFixed(2)}</td>
                         <td>${startDate}</td>
                         <td>${endDate}</td>
-                        <td><span class="status status-${investment.status}">${
-              investment.status
-            }</span></td>
+                        <td><span class="status status-${investment.status}">${investment.status
+              }</span></td>
                     </tr>
                 `;
           });
@@ -280,13 +290,12 @@ function runAllPageLogic(userData, uid) {
                         <tr>
                             <td data-label="Date">${date}</td>
                             <td data-label="Amount">$${tx.amount.toFixed(
-                              2
-                            )}</td>
+              2
+            )}</td>
                             <td data-label="Wallet Address">${shortAddress}</td>
                             <td data-label="Status">
-                                <span class="status-badge status-${
-                                  tx.status
-                                }">${tx.status}</span>
+                                <span class="status-badge status-${tx.status
+              }">${tx.status}</span>
                             </td>
                         </tr>
                     `;
@@ -313,9 +322,8 @@ function runAllPageLogic(userData, uid) {
     if (statusBanner && userData.kycStatus) {
       const status = userData.kycStatus;
       statusBanner.className = `status-banner status-${status}`; // e.g., status-verified
-      statusBanner.innerHTML = `<strong>Your current status:</strong> ${
-        status.charAt(0).toUpperCase() + status.slice(1)
-      }`;
+      statusBanner.innerHTML = `<strong>Your current status:</strong> ${status.charAt(0).toUpperCase() + status.slice(1)
+        }`;
     }
 
     // Disable form if already verified or pending
@@ -474,13 +482,13 @@ function runAllPageLogic(userData, uid) {
       userData.totalDeposited
     );
 
-     // =============================================================
+    // =============================================================
     // --- THIS IS THE FIX ---
     // =============================================================
     const profitsDisplay = document.getElementById('profits-display');
     if (profitsDisplay) {
-        // Find and display the 'totalProfits' field from the user's document
-        profitsDisplay.textContent = formatCurrency(userData.totalProfits);
+      // Find and display the 'totalProfits' field from the user's document
+      profitsDisplay.textContent = formatCurrency(userData.totalProfits);
     }
     document.getElementById('withdrawn-display').textContent = formatCurrency(
       userData.totalWithdrawn
@@ -631,9 +639,8 @@ function runAllPageLogic(userData, uid) {
             10
           )}...</td><td>$${tx.amount.toFixed(
             2
-          )}</td><td>${tx.method.toUpperCase()}</td><td><span class="status status-${
-            tx.status
-          }">${tx.status}</span></td><td>${date}</td></tr>`;
+          )}</td><td>${tx.method.toUpperCase()}</td><td><span class="status status-${tx.status
+            }">${tx.status}</span></td><td>${date}</td></tr>`;
         });
         tableBody.innerHTML = rows;
       });
@@ -682,12 +689,10 @@ function runAllPageLogic(userData, uid) {
     // --- Function to open the modal (logic is correct) ---
     const openModal = (planCard) => {
       if (!planCard) return;
-      document.getElementById('modal-plan-name').textContent = `Invest in ${
-        planCard.querySelector('.plan-name').textContent
-      }`;
-      document.getElementById('modal-plan-details').textContent = `Range: ${
-        planCard.querySelector('.plan-price').textContent
-      }`;
+      document.getElementById('modal-plan-name').textContent = `Invest in ${planCard.querySelector('.plan-name').textContent
+        }`;
+      document.getElementById('modal-plan-details').textContent = `Range: ${planCard.querySelector('.plan-price').textContent
+        }`;
       document.getElementById(
         'modal-user-balance'
       ).textContent = `$${userData.accountBalance.toFixed(2)}`;
@@ -733,27 +738,22 @@ function runAllPageLogic(userData, uid) {
                 .toLowerCase()
                 .includes('premium');
               plansHTML += `
-                            <div class="plan-card ${
-                              isFeatured ? 'featured' : ''
-                            }">
-                                ${
-                                  isFeatured
-                                    ? '<div class="plan-badge">Most Popular</div>'
-                                    : ''
-                                }
+                            <div class="plan-card ${isFeatured ? 'featured' : ''
+                }">
+                                ${isFeatured
+                  ? '<div class="plan-badge">Most Popular</div>'
+                  : ''
+                }
                                 <div class="plan-header">
                                     <h3 class="plan-name">${plan.planName}</h3>
-                                    <div class="plan-price">$${
-                                      plan.minAmount
-                                    } - $${plan.maxAmount}</div>
+                                    <div class="plan-price">$${plan.minAmount
+                } - $${plan.maxAmount}</div>
                                 </div>
                                 <ul class="plan-features">
-                                    <li>Return <strong>${
-                                      plan.roiPercent
-                                    }% Daily</strong></li>
-                                    <li>Duration <strong>For ${
-                                      plan.durationDays
-                                    } Days</strong></li>
+                                    <li>Return <strong>${plan.roiPercent
+                }% Daily</strong></li>
+                                    <li>Duration <strong>For ${plan.durationDays
+                } Days</strong></li>
                                     <li>Referral Bonus <strong>5%</strong></li>
                                 </ul>
                                 <button class="btn btn-primary plan-btn">Invest Now</button>
@@ -1135,3 +1135,5 @@ function runAllPageLogic(userData, uid) {
     }
   }
 }
+
+
