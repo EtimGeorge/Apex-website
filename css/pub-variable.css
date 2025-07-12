@@ -1,0 +1,49 @@
+/* ==========================================================
+   CSS VARIABLES - V2 (with Gradients & Enhanced Colors)
+   ========================================================== */
+
+:root {
+  /* === Light Theme (Default) === */
+  
+  /* Core Palette */
+  --color-bg-primary: #f8f9fa;       /* A slightly brighter light grey */
+  --color-bg-secondary: #ffffff;     /* White for cards, headers */
+  --color-bg-hover: #f1f3f5;         /* A subtle hover for light elements */
+  --color-border: #dee2e6;
+  
+  /* Text */
+  --color-text-primary: #212529;     /* A stronger, near-black */
+  --color-text-secondary: #495057;   /* A softer grey for body text */
+  --color-text-muted: #6c757d;       /* For less important text */
+  
+  /* Accent Palette (More Vibrant) */
+  --color-accent-primary: #007bff;   /* The main blue */
+  --color-accent-secondary: #0056b3;  /* A darker blue for gradients/hovers */
+  --color-accent-success: #20c997;   /* A modern, vibrant green */
+  --color-accent-danger: #dc3545;    /* Red */
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(90deg, var(--color-accent-primary) 0%, #0056b3 100%);
+  --gradient-hero-overlay: linear-gradient(45deg, rgba(2,0,36,0.7) 0%, rgba(10, 25, 47, 0.8) 100%);
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+:root.dark-theme {
+  /* === Dark Theme Overrides === */
+
+  --color-bg-primary: #121212;
+  --color-bg-secondary: #1e1e1e;
+  --color-bg-hover: #2c2c2c;
+  --color-border: #333333;
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #adb5bd;
+  --color-text-muted: #868e96;
+
+  --color-accent-primary: #0d6efd; /* A slightly brighter blue for dark mode */
+  --color-accent-secondary: #0a58ca;
+}

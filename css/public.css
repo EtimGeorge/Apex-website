@@ -258,7 +258,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(10, 25, 47, 0.7);
+   background-image: var(--gradient-hero-overlay); /* Using the new gradient */
   z-index: 2;
 }
 @keyframes zoomIn {
@@ -345,7 +345,13 @@
 }
 
 /* --- 5. Ticker Section --- */
-/* We will add styles here when we add the widget */
+.ticker-section {
+    /* This separates it from the sections above and below */
+    padding: 1.5rem 0;
+    background-color: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+}
 
 /* --- 6. Key Benefits Section --- */
 .benefits-section {
@@ -409,11 +415,191 @@
   }
 }
 
-/* --- 5. Ticker Section --- */
-.ticker-section {
-    /* This separates it from the sections above and below */
-    padding: 1.5rem 0;
-    background-color: var(--color-bg-secondary);
-    border-top: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
+/* --- 7. Public Plans Section --- */
+.plans-section-public {
+    padding: 6rem 0;
+    background-color: var(--color-bg-hover);
 }
+
+/* We can reuse the .plans-grid and .plan-card styles from the main style.css,
+   so no new styles are needed for the cards themselves, ensuring consistency. */
+
+#public-plans-grid p { /* For the loading/error message */
+    text-align: center;
+    width: 100%;
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+}
+
+/* --- 8. How It Works Section --- */
+.how-it-works-section {
+    padding: 6rem 0;
+    background-color: var(--color-bg-primary);
+}
+
+.steps-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    position: relative;
+    margin-top: 3rem;
+}
+
+/* The connecting line */
+.steps-container::before {
+    content: '';
+    position: absolute;
+    top: 30px; /* Aligns with the middle of the step number */
+    left: 5%;
+    right: 5%;
+    height: 2px;
+    background-color: var(--color-border);
+    z-index: 1;
+}
+
+.step-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: var(--color-bg-secondary);
+    border: 2px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-accent-primary);
+    margin-bottom: 1.5rem;
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.step-card:hover .step-number {
+    border-color: var(--color-accent-primary);
+}
+
+.step-title {
+    font-size: 1.5rem;
+    color: var(--color-text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.step-description {
+    color: var(--color-text-muted);
+    line-height: 1.6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .steps-container {
+        flex-direction: column;
+    }
+    .steps-container::before {
+        left: 30px;
+        top: 5%;
+        bottom: 5%;
+        width: 2px;
+        height: auto;
+    }
+    .step-card {
+        flex-direction: row;
+        text-align: left;
+        align-items: flex-start;
+    }
+    .step-number {
+        margin-bottom: 0;
+        margin-right: 1.5rem;
+    }
+}
+
+/* --- 9. Testimonials Section --- */
+.testimonials-section {
+    padding: 6rem 0;
+    background-color: var(--color-bg-hover);
+}
+
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.testimonial-card {
+    background-color: var(--color-bg-secondary);
+    padding: 2.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+}
+
+.testimonial-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    flex-grow: 1; /* Pushes the author to the bottom */
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.testimonial-author img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+/* --- IMAGE PROMPTS ---
+- For avatar-1.jpg: "A professional headshot of a smiling woman in her 30s, with a neutral office background. She looks confident and successful."
+- For avatar-2.jpg: "A friendly headshot of a smiling man in his 40s, with a slightly more casual, out-of-focus background. He looks trustworthy and approachable."
+*/
+
+.author-name {
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.author-title {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ==========================================================
+   10. Scroll-to-Reveal Animations
+   ========================================================== */
+
+/* The 'before' state: hidden and slightly moved down */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* The 'after' state: revealed and in its final position */
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
