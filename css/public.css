@@ -114,30 +114,45 @@ header {
   color: var(--text-color-dark);
 }
 
-.nav-links a:hover {
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 2px;
+  background: var(--primary-color);
+  border-radius: 2px;
+  transition: transform 0.3s ease-out;
+  transform-origin: center;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--primary-color);
   background: var(--bg-light-light);
 }
 
-.dark-theme .nav-links a:hover {
+.dark-theme .nav-links a:hover,
+.dark-theme .nav-links a.active {
+  color: var(--primary-color);
   background: var(--bg-light-dark);
-}
-
-.nav-links a.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50%;
-  height: 3px;
-  background: var(--primary-color);
-  border-radius: 2px;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.mobile-only {
+  display: none;
 }
 
 /* ========== BUTTONS ========== */
@@ -700,15 +715,171 @@ header {
     list-style: none;
     padding: 0;
   }
-  #mobile-nav a {
+ #mobile-nav a {
     display: block;
-    padding: 0.75rem;
+    padding: 0.75rem 1.5rem;
     border-bottom: 1px solid #eee;
     color: var(--text-color-light);
+    text-decoration: none;
+    transition: var(--transition);
+    font-weight: 500;
+    border-left: 3px solid transparent;
   }
 
   .dark-theme #mobile-nav a {
     color: var(--text-color-dark);
+    border-bottom-color: #333;
+}
+
+#mobile-nav a:hover {
+    background: var(--bg-light-light);
+}
+
+.dark-theme #mobile-nav a:hover {
+    background: var(--bg-light-dark);
+}
+
+#mobile-nav a.active {
+    background: var(--bg-light-light);
+    color: var(--primary-color);
+    border-left-color: var(--primary-color);
+}
+
+.dark-theme #mobile-nav a.active {
+    background: var(--bg-light-dark);
+}
+
+.desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block; /* Or flex, etc., depending on the element */
+  }
+
+  /* Mobile Navigation Links */
+.mobile-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center links horizontally */
+  width: 100%;
+  padding-top: 20px; /* Add some space at the top */
+}
+
+.mobile-nav ul li {
+  width: 100%;
+  text-align: center; /* Center text within the list item */
+}
+
+.mobile-nav ul li a {
+  display: block; /* Make the entire area clickable */
+  padding: 12px 20px;
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: 500;
+  transition: background-color 0.3s, color 0.3s;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.mobile-nav ul li:last-child a {
+  border-bottom: none; /* Remove border from the last item */
+}
+
+.mobile-nav ul li a:hover,
+.mobile-nav ul li a.active {
+  background-color: var(--primary-color);
+  color: #fff; /* White text on hover/active */
+}
+
+/* Mobile Action Buttons */
+.mobile-actions {
+  display: flex;
+  justify-content: center; /* Center buttons */
+  gap: 10px; /* Add space between buttons */
+  padding: 20px 15px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--background-color);
+}
+
+.mobile-actions .btn {
+  padding: 10px 16px; /* Reduce button padding */
+  font-size: 0.9rem; /* Reduce font size */
+
+}
+
+.mobile-nav {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--background-color);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1000;
+  flex-direction: column; /* Ensure vertical layout */
+  align-items: stretch; /* Stretch items to fill the width */
+}
+
+/* Responsive Hero Section CTA */
+.hero-cta {
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically on mobile */
+  gap: 15px; /* Add space between the stacked buttons */
+  align-items: center; /* Center the buttons */
+}
+
+.hero-cta .btn {
+  padding: 12px 24px; /* Adjust padding for mobile */
+  font-size: 1rem; /* Adjust font size for mobile */
+  width: 80%; /* Make buttons wider for a better touch target */
+  text-align: center;
+}
+
+/* Responsive Page Newsletter Form */
+#page-newsletter-form {
+  display: flex;
+  flex-direction: column; /* Stack input and button */
+  align-items: center;
+  width: 100%;
+  max-width: 400px; /* Constrain max width */
+  margin: 0 auto;
+}
+
+#page-newsletter-form input[type="email"] {
+  width: 100%;
+  margin-bottom: 10px; /* Add space below the email input */
+  text-align: center;
+}
+
+#page-newsletter-form button {
+  width: 100%;
+}
+
+/* Responsive Footer Newsletter Form */
+.footer-newsletter form {
+  display: flex;
+  flex-direction: column; /* Stack input and button */
+  align-items: flex-start;
+}
+
+.footer-newsletter input[type="email"] {
+  width: 90%;
+  margin-bottom: 10px; /* Add space below the email input */
+}
+
+.footer-newsletter button {
+  width: 100%; /* Make button full-width */
+  background-color: var(--secondary-color);
+  color: var(--white);
+  border-radius: 3em;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  
 }
 
 }

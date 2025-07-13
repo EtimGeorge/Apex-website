@@ -2,25 +2,24 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Project Apex - Secure Your Financial Future</title>
   <!-- Stylesheets -->
   <!-- <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/pub-variable.css">
   <link rel="stylesheet" href="css/styles.css"> -->
-  <link rel="stylesheet" href="css/splide.min.css">
-  <link rel="stylesheet" href="css/public.css">
+  <link rel="stylesheet" href="css/splide.min.css" />
+  <link rel="stylesheet" href="css/public.css" />
   <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" />
 </head>
 
 <body>
-
   <!-- PAGE PRELOADER -->
   <div class="preloader">
     <div class="spinner">Project Apex</div>
@@ -38,6 +37,7 @@
           <li><a href="blog.html">Blog</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
+
         <div class="header-actions">
           <div class="theme-switcher">
             <button id="theme-toggle" title="Toggle Theme">
@@ -56,15 +56,17 @@
               </a>
             </div>
           </div>
-          <a href="login.html" class="btn btn-secondary">Login</a>
-          <a href="register.html" class="btn btn-primary">Get Started</a>
+          <div class="desktop-only">
+            <a href="login.html" class="btn btn-secondary">Login</a>
+            <a href="register.html" class="btn btn-primary">Get Started</a>
+          </div>
         </div>
-        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Open menu">
+        <button class="mobile-menu-toggle mobile-only" id="mobile-menu-toggle" aria-label="Open menu">
           <span></span><span></span><span></span>
         </button>
       </nav>
     </div>
-    <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav mobile-only" id="mobile-nav">
       <ul>
         <li><a href="index.html">Home</a></li>
         <li><a href="about.html">About Us</a></li>
@@ -84,9 +86,15 @@
     <div class="hero-background"></div>
     <div class="container">
       <div class="hero-content">
-        <h1 class="hero-headline">Build Your Future With <span class="highlight-text">Intelligent Investing.</span></h1>
-        <p class="hero-tagline">Welcome to Project Apex, where technology meets financial expertise. We provide
-          transparent, secure, and powerful solutions to help you grow your capital.</p>
+        <h1 class="hero-headline">
+          Build Your Future With
+          <span class="highlight-text">Intelligent Investing.</span>
+        </h1>
+        <p class="hero-tagline">
+          Welcome to Project Apex, where technology meets financial expertise.
+          We provide transparent, secure, and powerful solutions to help you
+          grow your capital.
+        </p>
         <div class="hero-cta">
           <a href="plans.html" class="btn btn-primary btn-lg">Explore Investment Plans</a>
           <a href="about.html" class="btn btn-secondary btn-lg">Learn More</a>
@@ -111,24 +119,39 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">Experience the Apex Advantage</h2>
-        <p class="section-subtitle">We combine cutting-edge technology with financial expertise to give you a secure and
-          profitable investment experience.</p>
+        <p class="section-subtitle">
+          We combine cutting-edge technology with financial expertise to give
+          you a secure and profitable investment experience.
+        </p>
       </div>
       <div class="benefits-grid">
         <div class="benefit-card">
-          <div class="benefit-icon"><img src="images/icon-security.gif" alt="Security"></div>
+          <div class="benefit-icon">
+            <img src="images/icon-security.gif" alt="Security" />
+          </div>
           <h3 class="benefit-title">Unmatched Security</h3>
-          <p class="benefit-description">Protected by multi-layer protocols, cold storage, and regular audits.</p>
+          <p class="benefit-description">
+            Protected by multi-layer protocols, cold storage, and regular
+            audits.
+          </p>
         </div>
         <div class="benefit-card">
-          <div class="benefit-icon"><img src="images/icon-plans.gif" alt="Plans"></div>
+          <div class="benefit-icon">
+            <img src="images/icon-plans.gif" alt="Plans" />
+          </div>
           <h3 class="benefit-title">Diverse Plans</h3>
-          <p class="benefit-description">Tailored investment plans to suit every goal and risk profile.</p>
+          <p class="benefit-description">
+            Tailored investment plans to suit every goal and risk profile.
+          </p>
         </div>
         <div class="benefit-card">
-          <div class="benefit-icon"><img src="images/icon-support.gif" alt="Support"></div>
+          <div class="benefit-icon">
+            <img src="images/icon-support.gif" alt="Support" />
+          </div>
           <h3 class="benefit-title">24/7 Expert Support</h3>
-          <p class="benefit-description">Our team is always available to assist you.</p>
+          <p class="benefit-description">
+            Our team is always available to assist you.
+          </p>
         </div>
       </div>
     </div>
@@ -139,7 +162,9 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">Find Your Perfect Plan</h2>
-        <p class="section-subtitle">Explore our investment plans tailored to your financial goals.</p>
+        <p class="section-subtitle">
+          Explore our investment plans tailored to your financial goals.
+        </p>
       </div>
       <div class="plans-grid" id="public-plans-grid">
         <p>Loading plans...</p>
@@ -152,23 +177,31 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">Get Started in 3 Simple Steps</h2>
-        <p class="section-subtitle">Investing with Project Apex is straightforward and efficient.</p>
+        <p class="section-subtitle">
+          Investing with Project Apex is straightforward and efficient.
+        </p>
       </div>
       <div class="steps-container">
         <div class="step-card">
           <div class="step-number">1</div>
           <h3 class="step-title">Create an Account</h3>
-          <p class="step-description">Quick registration to set up your account.</p>
+          <p class="step-description">
+            Quick registration to set up your account.
+          </p>
         </div>
         <div class="step-card">
           <div class="step-number">2</div>
           <h3 class="step-title">Fund Your Account</h3>
-          <p class="step-description">Choose secure payment methods to add funds.</p>
+          <p class="step-description">
+            Choose secure payment methods to add funds.
+          </p>
         </div>
         <div class="step-card">
           <div class="step-number">3</div>
           <h3 class="step-title">Invest & Grow</h3>
-          <p class="step-description">Select a plan and watch your capital grow.</p>
+          <p class="step-description">
+            Select a plan and watch your capital grow.
+          </p>
         </div>
       </div>
     </div>
@@ -186,28 +219,40 @@
           <ul class="splide__list">
             <li class="splide__slide">
               <div class="testimonial-card">
-                <p class="testimonial-text">"The transparency and consistent returns are top-notch."</p>
-                <div class="testimonial-author"><img src="images/avatar-1.jpg" alt="Jane">
-                  <div class="author-details"><span class="author-name">Jane Doe</span><span
-                      class="author-title">Investor</span></div>
+                <p class="testimonial-text">
+                  "The transparency and consistent returns are top-notch."
+                </p>
+                <div class="testimonial-author">
+                  <img src="images/avatar-1.jpg" alt="Jane" />
+                  <div class="author-details">
+                    <span class="author-name">Jane Doe</span><span class="author-title">Investor</span>
+                  </div>
                 </div>
               </div>
             </li>
             <li class="splide__slide">
               <div class="testimonial-card">
-                <p class="testimonial-text">"Project Apex made investing simple for me."</p>
-                <div class="testimonial-author"><img src="images/avatar-2.jpg" alt="John">
-                  <div class="author-details"><span class="author-name">John Smith</span><span class="author-title">New
-                      Investor</span></div>
+                <p class="testimonial-text">
+                  "Project Apex made investing simple for me."
+                </p>
+                <div class="testimonial-author">
+                  <img src="images/avatar-2.jpg" alt="John" />
+                  <div class="author-details">
+                    <span class="author-name">John Smith</span><span class="author-title">New Investor</span>
+                  </div>
                 </div>
               </div>
             </li>
             <li class="splide__slide">
               <div class="testimonial-card">
-                <p class="testimonial-text">"Security and professionalism are unmatched."</p>
-                <div class="testimonial-author"><img src="images/avatar-3.jpg" alt="Sarah">
-                  <div class="author-details"><span class="author-name">Sarah Lee</span><span
-                      class="author-title">Trader</span></div>
+                <p class="testimonial-text">
+                  "Security and professionalism are unmatched."
+                </p>
+                <div class="testimonial-author">
+                  <img src="images/avatar-3.jpg" alt="Sarah" />
+                  <div class="author-details">
+                    <span class="author-name">Sarah Lee</span><span class="author-title">Trader</span>
+                  </div>
                 </div>
               </div>
             </li>
@@ -221,16 +266,22 @@
   <section class="newsletter-section">
     <div class="container newsletter-content">
       <h2 class="section-title">Stay Ahead of the Curve</h2>
-      <p class="section-subtitle">Subscribe for market analysis and platform updates.</p>
-      <form id="page-newsletter-form"><input type="email" placeholder="Enter your email" required><button
-          type="submit">Subscribe Now</button></form>
+      <p class="section-subtitle">
+        Subscribe for market analysis and platform updates.
+      </p>
+      <form id="page-newsletter-form">
+        <input type="email" placeholder="Enter your email" required /><button type="submit">
+          Subscribe Now
+        </button>
+      </form>
     </div>
   </section>
 
   <!-- MAIN FOOTER -->
   <footer class="site-footer">
     <div class="container footer-content">
-      <div class="footer-brand"><a href="index.html" class="logo">Project Apex</a>
+      <div class="footer-brand">
+        <a href="index.html" class="logo">Project Apex</a>
         <p>Your trusted partner in financial growth.</p>
       </div>
       <div class="footer-links">
@@ -252,8 +303,9 @@
       </div>
       <div class="footer-newsletter">
         <h4>Subscribe to our Newsletter</h4>
-        <form id="newsletter-form"><input type="email" placeholder="Enter your email" required><button
-            type="submit">Subscribe</button></form>
+        <form id="newsletter-form">
+          <input type="email" placeholder="Enter your email" required /><button type="submit">Subscribe</button>
+        </form>
       </div>
     </div>
     <div class="footer-bottom">
