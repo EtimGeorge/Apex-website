@@ -3,10 +3,14 @@
 // --- PAGE PRELOADER LOGIC ---
 // This listener waits for all page content (including images) to load
 // before fading out the preloader.
+// Wait for DOM
 window.addEventListener('load', () => {
+  // ✅ Hide Preloader
   const preloader = document.querySelector('.preloader');
   if (preloader) {
-    preloader.classList.add('hidden');
+    preloader.style.opacity = '0';
+    preloader.style.visibility = 'hidden';
+    preloader.style.pointerEvents = 'none';
   }
 });
 
