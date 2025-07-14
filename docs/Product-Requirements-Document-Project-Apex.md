@@ -159,3 +159,4 @@ Project "Apex" aims to create a modern, user-friendly digital investment platfor
 - `roiFrequency` ('daily')
 - `durationDays`
 - `isActive` (Boolean)
+- `isFeatured` (Boolean, optional)

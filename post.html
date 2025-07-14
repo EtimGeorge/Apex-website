@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Post - Project Apex</title>
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/splide.min.css" />
+  <link rel="stylesheet" href="css/public.css" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap"
+    rel="stylesheet" />
+</head>
+<body>
+  <!-- PAGE PRELOADER -->
+  <div class="preloader">
+    <div class="spinner">Project Apex</div>
+  </div>
+
+  <!-- MAIN HEADER -->
+  <header class="main-site-header">
+    <div class="container">
+      <nav class="navbar">
+        <a href="index.html" class="logo">Project Apex</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="plans.html">Plans</a></li>
+          <li><a href="blog.html" class="active">Blog</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+
+        <div class="header-actions">
+          <div class="theme-switcher">
+            <button id="theme-toggle" title="Toggle Theme">
+              <span class="theme-icon sun">☀️</span>
+              <span class="theme-icon moon">🌙</span>
+            </button>
+            <div class="theme-menu">
+              <a href="#" data-theme="light">
+                <span class="theme-icon sun">☀️</span> Light Theme
+              </a>
+              <a href="#" data-theme="dark">
+                <span class="theme-icon moon">🌙</span> Dark Theme
+              </a>
+              <a href="#" data-theme="system">
+                <span class="theme-icon">⚙️</span> System Theme
+              </a>
+            </div>
+          </div>
+          <div class="desktop-only">
+            <a href="login.html" class="btn btn-secondary">Login</a>
+            <a href="register.html" class="btn btn-primary">Get Started</a>
+          </div>
+        </div>
+        <button class="mobile-menu-toggle mobile-only" id="mobile-menu-toggle" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </nav>
+    </div>
+    <div class="mobile-nav mobile-only" id="mobile-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="plans.html">Plans</a></li>
+        <li><a href="blog.html" class="active">Blog</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="mobile-actions">
+        <a href="login.html" class="btn btn-secondary">Login</a>
+        <a href="register.html" class="btn btn-primary">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- SINGLE POST SECTION -->
+  <section class="post-page-section">
+   <div class="container">
+      <article class="post-content-area" id="post-content-area">
+        <!-- Post content will be loaded here by public.js -->
+        <p>Loading post...</p>
+      </article>
+
+      <!-- RELATED POSTS SECTION -->
+      <div class="related-posts" id="related-posts">
+        <h2>Related Posts</h2>
+        <div class="blog-grid" id="related-posts-grid">
+          <p>Loading related articles...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN FOOTER -->
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">Project Apex</a>
+        <p>Your trusted partner in financial growth.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="plans.html">Plans</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contact.html">Contact Support</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Legal & Help</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-newsletter">
+        <h4>Subscribe to our Newsletter</h4>
+        <form id="newsletter-form">
+          <input type="email" placeholder="Enter your email" required /><button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Project Apex. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- SCROLL TO TOP BUTTON -->
+  <button id="scroll-to-top-btn" class="scroll-to-top" title="Go to top">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+  </button>
+
+  <!-- SCRIPTS -->
+  <script src="js/splide.min.js"></script>
+  <script type="module" src="js/public.js"></script>
+</body>
+</html>

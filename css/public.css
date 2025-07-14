@@ -18,7 +18,8 @@
   /* Dark Theme */
   --text-color-dark: #ddd;
   --text-light-dark: #aaa;
-  --bg-dark-dark: #0b0c10;
+  --bg-dark-dark: #0b0c10; /* Main dark bg */
+  --bg-section-dark: #101115; /* Alternate dark bg */
   --bg-light-dark: #1a1a1a;
   --header-bg-dark: #111;
 }
@@ -158,7 +159,7 @@ header {
 /* ========== BUTTONS ========== */
 .btn {
   padding: 0.75rem 1.5rem;
-  border-radius: var(--radius);
+  border-radius: 5em;
   text-decoration: none;
   font-weight: 500;
   transition: var(--transition);
@@ -240,7 +241,7 @@ header {
   cursor: pointer;
   color: var(--text-color-light);
   padding: 0.5rem;
-  border-radius: var(--radius);
+  border-radius: 5em;
   transition: var(--transition);
 }
 
@@ -249,7 +250,7 @@ header {
 }
 
 #theme-toggle:hover {
-  background: var(--bg-light);
+  background: var(--bg-light-light);
 }
 
 .theme-menu {
@@ -310,10 +311,44 @@ header {
 
 /* ========== HERO SECTION ========== */
 .hero-section {
-  background: var(--primary-gradient);
+  position: relative;
+  overflow: hidden;
   color: var(--white);
   padding: 5rem 1rem 4rem;
   text-align: center;
+  z-index: 1; /* Keeps content above the background elements */
+  /* Add perspective for parallax effect */
+  height: 80vh; /* Give the section a height to see the effect */
+  perspective: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('../images/hero-background.jpg'); /* Make sure you have this image */
+  background-size: cover;
+  background-position: center;
+  z-index: -2; /* Places it behind the overlay */
+  /* The magic for parallax */
+  transform: translateZ(-1px) scale(2);
+}
+
+/* Add a dark gradient overlay for text readability */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Combines your original gradient with a semi-transparent dark color */
+  background: var(--primary-gradient), rgba(11, 12, 16, 0.7);
+  background-blend-mode: overlay; /* Blends the gradient and color */
+  opacity: 0.85; /* Adjust for desired darkness */
+  z-index: -1; /* Places it on top of the image but behind the content */
 }
 
 .hero-headline {
@@ -332,15 +367,24 @@ header {
 /* ========== TICKER SECTION ========== */
 .ticker-section {
   padding: 2rem 0;
-  background: var(--bg-light);
+  background: var(--bg-light-light);
+}
+
+.dark-theme .ticker-section {
+  background: var(--bg-section-dark);
 }
 
 /* ========== BENEFITS SECTION ========== */
 .benefits-section {
-  background: var(--bg-light);
+  background: var(--white);
   padding: 4rem 1rem;
   text-align: center;
 }
+
+.dark-theme .benefits-section {
+  background: var(--bg-dark-dark);
+}
+
 .benefits-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -384,22 +428,19 @@ header {
 
 /* ========== PLANS SECTION ========== */
 .plans-section-public {
-  background: var(--white);
+  background: var(--bg-light-light);
   padding: 4rem 1rem;
   text-align: center;
-}
-
-.plans-section-public, .testimonials-section {
-  background: var(--white);
-}
-
-.dark-theme .plans-section-public, .dark-theme .testimonials-section {
-  background: var(--bg-dark-dark);
 }
 
 .plans-section-public .section-header {
   margin-bottom: 3rem;
 }
+
+.dark-theme .plans-section-public {
+  background: var(--bg-section-dark);
+}
+
 .plans-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -411,15 +452,46 @@ header {
   padding: 2rem;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   transition: var(--transition);
+  position: relative; /* Needed for the badge */
+  overflow: hidden; /* To contain the badge ribbon */
 }
 
 .dark-theme .plan-card {
   background: var(--bg-light-dark);
 }
 
+.plan-card.featured {
+  border: 2px solid var(--primary-color);
+  transform: scale(1.05); /* Make it slightly larger */
+  box-shadow: 0 20px 40px rgba(75, 108, 183, 0.2);
+}
+
+.dark-theme .plan-card.featured {
+    box-shadow: 0 15px 35px rgba(75, 108, 183, 0.1);
+}
+
+.plan-badge {
+  position: absolute;
+  top: 15px;
+  right: -35px;
+  background: var(--secondary-color);
+  color: var(--white);
+  padding: 5px 30px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  white-space: nowrap;
+  z-index: 2;
+}
+
 .plan-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 20px 35px rgba(0, 0, 0, 0.08);
+}
+.plan-card.featured:hover {
+    transform: scale(1.08) translateY(-5px);
 }
 .plan-title {
   font-size: 1.5rem;
@@ -446,7 +518,7 @@ header {
   background: var(--primary-gradient);
   color: var(--white);
   padding: 0.75rem 1.5rem;
-  border-radius: var(--radius);
+  border-radius: 5em;
   text-decoration: none;
   display: inline-block;
   transition: var(--transition);
@@ -457,66 +529,167 @@ header {
 
 /* ========== HOW IT WORKS SECTION ========== */
 .how-it-works-section {
-  background: var(--bg-light);
+  background: var(--white);
   padding: 4rem 1rem;
   text-align: center;
 }
-.steps-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+
+.dark-theme .how-it-works-section {
+  background: var(--bg-dark-dark);
 }
+
+.steps-container {
+  display: grid; /* Stacks cards on mobile by default */
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
 .step-card {
   background: var(--white);
   padding: 2rem;
   border-radius: var(--radius);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   transition: var(--transition);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
 .step-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
 }
+
 .step-number {
-  background: var(--primary-color);
+  background: var(--primary-gradient);
   color: var(--white);
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
+  font-size: 1.5rem;
   margin-bottom: 1rem;
+  border: 4px solid var(--white);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
+.dark-theme .step-number {
+  border-color: var(--bg-light-dark);
+}
+
 .step-title {
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
+  font-weight: 600;
 }
+
 .step-description {
   font-size: 0.95rem;
-  color: var(--text-light);
+  color: var(--text-light-light);
+}
+
+.dark-theme .step-description {
+  color: var(--text-light-dark);
+}
+
+.step-connector {
+  display: none; /* Hidden on mobile */
+}
+
+/* Desktop view for the steps with connectors */
+@media (min-width: 769px) {
+  .steps-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    gap: 0;
+  }
+
+  .step-card {
+    width: 30%;
+  }
+
+  .step-connector {
+    display: block;
+    flex-grow: 1;
+    height: 4px;
+    background-color: #e0e0e0;
+    background-image: linear-gradient(to right, #e0e0e0 50%, transparent 50%);
+    background-size: 16px 4px;
+    margin: 0 -2rem;
+    position: relative;
+    top: -2.5rem; /* Adjust vertical alignment */
+  }
+
+  .dark-theme .step-connector {
+    background-color: #444;
+    background-image: linear-gradient(to right, #444 50%, transparent 50%);
+  }
 }
 
 /* ========== TESTIMONIALS SECTION ========== */
 .testimonials-section {
-  background: var(--white);
-  padding: 4rem 1rem;
+  background: var(--bg-light-light); /* Keeps the alternating color pattern */
+  padding: 6rem 0; /* Increased padding and removed side padding for full-width feel */
   text-align: center;
+  overflow: hidden; /* To contain the animated elements */
 }
+
+.dark-theme .testimonials-section {
+  background: var(--bg-section-dark);
+}
+
 .splide {
-  margin-top: 2rem;
+  margin-top: 3rem;
+  padding-bottom: 3rem; /* Space for pagination */
 }
 .testimonial-card {
-  background: var(--bg-light);
-  padding: 2rem;
+  background: var(--white); /* White card on light grey background */
+  padding: 2.5rem;
   border-radius: var(--radius);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+  text-align: left;
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  transition: var(--transition);
+  /* Non-active slides are smaller and faded */
+  transform: scale(0.95);
+  opacity: 0.7;
 }
+
+.dark-theme .testimonial-card {
+  background: var(--bg-light-dark);
+  border-color: #333;
+}
+
+/* Add a decorative quote icon */
+.testimonial-card::before {
+  content: '“';
+  position: absolute;
+  top: -10px;
+  left: 15px;
+  font-size: 5rem;
+  color: var(--primary-color);
+  opacity: 0.1;
+  font-family: 'Playfair Display', serif;
+  line-height: 1;
+}
+
 .testimonial-text {
   font-style: italic;
-  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
 }
 .testimonial-author {
   display: flex;
@@ -527,13 +700,313 @@ header {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  border: 2px solid var(--primary-color);
 }
 .author-details .author-name {
   font-weight: 600;
 }
 .author-details .author-title {
   font-size: 0.85rem;
-  color: var(--text-light);
+  color: var(--text-light-light);
+}
+
+.dark-theme .author-details .author-title {
+  color: var(--text-light-dark);
+}
+
+/* Splide Active Slide Styling */
+.splide__slide.is-active .testimonial-card {
+  transform: scale(1);
+  opacity: 1;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Splide Pagination Styling */
+.splide__pagination {
+  bottom: 0; /* Position at the very bottom */
+}
+
+.splide__pagination__page {
+  background: #ccc;
+  width: 12px;
+  height: 12px;
+  margin: 0 5px;
+  transition: var(--transition);
+  opacity: 0.5;
+}
+
+.dark-theme .splide__pagination__page {
+  background: #555;
+}
+
+.splide__pagination__page.is-active {
+  background: var(--primary-color);
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+.splide__pagination__page:hover {
+  opacity: 0.8;
+}
+
+/* ========== BLOG PREVIEW SECTION ========== */
+.blog-preview-section {
+  background: var(--white);
+  padding: 4rem 1rem;
+  text-align: center;
+}
+
+.dark-theme .blog-preview-section {
+  background: var(--bg-dark-dark);
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+  text-align: left;
+}
+
+.blog-post-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid transparent;
+}
+
+.dark-theme .blog-post-card {
+  background: var(--bg-light-dark);
+  box-shadow: none;
+  border: 1px solid #333;
+}
+
+.blog-post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+}
+
+.dark-theme .blog-post-card:hover {
+  border-color: var(--primary-color);
+}
+
+.blog-card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.blog-card-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.blog-card-meta {
+  font-size: 0.85rem;
+  color: var(--text-light-light);
+  margin-bottom: 0.5rem;
+}
+
+.blog-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+}
+
+.blog-card-title a {
+  text-decoration: none;
+  color: inherit;
+  transition: var(--transition);
+}
+
+.blog-card-title a:hover {
+  color: var(--primary-color);
+}
+
+.blog-card-snippet {
+  font-size: 0.95rem;
+  color: var(--text-light-light);
+  line-height: 1.6;
+  flex-grow: 1;
+  margin-bottom: 1.5rem;
+}
+
+.blog-card-read-more {
+  font-weight: 500;
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.blog-card-read-more:hover {
+  opacity: 0.8;
+}
+
+.blog-preview-section .section-footer {
+  margin-top: 3rem;
+}
+
+/* ========== GENERIC PAGE HEADER ========== */
+.page-header {
+  background: var(--primary-gradient);
+  color: var(--white);
+  padding: 4rem 1rem;
+  text-align: center;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.page-header p {
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  opacity: 0.9;
+}
+
+/* ========== BLOG PAGE SECTION ========== */
+.blog-page-section {
+  padding: 4rem 1rem;
+  background: var(--bg-light-light);
+}
+
+.dark-theme .blog-page-section {
+  background: var(--bg-section-dark);
+}
+
+.pagination {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.pagination a {
+  text-decoration: none;
+  color: var(--text-color-light);
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.dark-theme .pagination a {
+  color: var(--text-color-dark);
+  border-color: #444;
+}
+
+.pagination a:hover {
+  background: var(--bg-light-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.dark-theme .pagination a:hover {
+  background: var(--bg-light-dark);
+}
+
+.pagination a.active {
+  background: var(--primary-color);
+  color: var(--white);
+  border-color: var(--primary-color);
+}
+
+.pagination a.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ========== SINGLE POST PAGE SECTION ========== */
+.post-page-section {
+  padding: 4rem 1rem;
+  background: var(--white);
+}
+
+.dark-theme .post-page-section {
+  background: var(--bg-dark-dark);
+}
+
+.post-content-area {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.post-title {
+  font-size: 2.8rem;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.post-meta {
+  color: var(--text-light-light);
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1.5rem;
+}
+
+.dark-theme .post-meta {
+  color: var(--text-light-dark);
+  border-bottom-color: #333;
+}
+
+.post-featured-image {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.post-body {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.post-body p {
+  margin-bottom: 1.5rem;
+}
+
+.post-body h2, .post-body h3, .post-body h4 {
+  font-family: 'Playfair Display', serif;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.post-body h2 { font-size: 2rem; }
+.post-body h3 { font-size: 1.75rem; }
+.post-body h4 { font-size: 1.5rem; }
+
+.post-body ul, .post-body ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.post-body li {
+  margin-bottom: 0.5rem;
+}
+
+.post-body blockquote {
+  border-left: 4px solid var(--primary-color);
+  padding-left: 1.5rem;
+  margin: 2rem 0;
+  font-style: italic;
+  color: var(--text-light-light);
+}
+
+.dark-theme .post-body blockquote {
+  color: var(--text-light-dark);
 }
 
 /* ========== NEWSLETTER SECTION ========== */
@@ -554,7 +1027,7 @@ header {
 .newsletter-section button {
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: var(--radius);
+  border-radius: 5em;
   background: var(--secondary-color);
   color: var(--white);
   cursor: pointer;
@@ -564,9 +1037,26 @@ header {
   opacity: 0.9;
 }
 
+/* ========== RELATED POSTS SECTION ========== */
+.related-posts {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid #eee;
+}
+
+.dark-theme .related-posts {
+  border-top-color: #333;
+}
+
+.related-posts h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  font-family: 'Playfair Display', serif;
+}
+
 /* ========== FOOTER ========== */
 .site-footer {
-  background: var(--bg-light-light);
+  background: var(--white);
   color: var(--text-light-light);
   padding: 4rem 1rem 2rem;
   border-top: 1px solid #eee;
@@ -875,7 +1365,7 @@ header {
   width: 100%; /* Make button full-width */
   background-color: var(--secondary-color);
   color: var(--white);
-  border-radius: 3em;
+  border-radius: 5em;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
