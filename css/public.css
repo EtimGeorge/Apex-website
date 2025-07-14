@@ -1247,11 +1247,6 @@ header {
     display: block; /* Or flex, etc., depending on the element */
   }
 
-  /* Mobile Navigation Links */
-.mobile-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center; /* Center links horizontally */
