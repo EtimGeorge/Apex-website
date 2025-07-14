@@ -84,6 +84,27 @@
         <p>Loading post...</p>
       </article>
 
+      <!-- Post Interactions (Likes & Comments) -->
+      <div class="post-interactions" id="post-interactions" style="display: none;">
+        <!-- Like button will be injected here by JS -->
+      </div>
+
+      <div class="comments-section" id="comments-section" style="display: none;">
+        <h2>Comments</h2>
+        <form id="comment-form">
+          <div class="form-group">
+            <label for="comment-name">Name</label>
+            <input type="text" id="comment-name" placeholder="Your Name" required>
+          </div>
+          <div class="form-group">
+            <label for="comment-text">Comment</label>
+            <textarea id="comment-text" rows="4" placeholder="Leave a comment..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Post Comment</button>
+        </form>
+        <div class="comments-list" id="comments-list"></div>
+      </div>
+
       <!-- RELATED POSTS SECTION -->
       <div class="related-posts" id="related-posts">
         <h2>Related Posts</h2>

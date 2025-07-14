@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="admin.css">
+    <!-- Add TinyMCE Rich Text Editor -->
+    <script src="https://cdn.tiny.cloud/1/ix7drud8e07rm2t9bmofezmo5qfiidmink34f0oc4el10kcm/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+
 </head>
 
 <body>
@@ -175,6 +178,44 @@
                         <p>Run scheduled jobs manually. This is for testing and should be automated in production.</p>
                         <button id="process-investments-btn" class="btn btn-primary">Run Daily Profit
                             Calculation</button>
+                    </div>
+
+                    <!-- ============================================= -->
+                    <!-- NEW BLOG POST CREATION SECTION -->
+                    <!-- ============================================= -->
+                    <div class="card" style="margin-top: 2rem;">
+                        <div class="card-header">
+                            <h2>Create New Blog Post</h2>
+                        </div>
+                        <div class="card-body">
+                            <form id="new-post-form">
+                                <div class="form-group">
+                                    <label for="post-title">Title</label>
+                                    <input type="text" id="post-title" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="post-snippet">Snippet (A short summary for the blog card)</label>
+                                    <textarea id="post-snippet" class="form-control" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="post-image-url">Image URL</label>
+                                    <input type="url" id="post-image-url" class="form-control"
+                                        placeholder="https://example.com/image.jpg">
+                                </div>
+                                <div class="form-group">
+                                    <label for="post-content">Content</label>
+                                    <textarea id="post-content" class="form-control" rows="12" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="post-status">Status</label>
+                                    <select id="post-status" class="form-control">
+                                        <option value="published" selected>Published</option>
+                                        <option value="draft">Draft</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Create Post</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

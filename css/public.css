@@ -812,6 +812,15 @@ header {
   color: var(--text-light-light);
   margin-bottom: 0.5rem;
 }
+.blog-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.blog-card-meta .meta-separator {
+  color: #ccc;
+}
 
 .blog-card-title {
   font-size: 1.25rem;
@@ -1054,6 +1063,173 @@ header {
   font-family: 'Playfair Display', serif;
 }
 
+/* ========== POST INTERACTIONS (Likes & Comments) ========== */
+.post-interactions {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dark-theme .post-interactions {
+  border-top-color: #333;
+}
+
+.like-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-light-light);
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 5em;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  color: var(--text-color-light);
+}
+
+.dark-theme .like-btn {
+  background: var(--bg-light-dark);
+  border-color: #444;
+  color: var(--text-color-dark);
+}
+
+.like-btn:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.like-btn .like-icon {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: var(--transition);
+}
+
+.like-btn.liked .like-icon {
+  fill: #e74c3c; /* Red heart when liked */
+  stroke: #e74c3c;
+}
+
+.like-btn.liked {
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.like-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.comments-section {
+  margin-top: 2rem;
+}
+
+.comments-section h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  font-family: 'Playfair Display', serif;
+}
+
+#comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  background: var(--bg-light-light);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid #eee;
+}
+
+.dark-theme #comment-form {
+  background: var(--bg-light-dark);
+  border-color: #333;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--text-color-light);
+  transition: var(--transition);
+}
+
+.dark-theme .form-group input,
+.dark-theme .form-group textarea {
+  background: var(--bg-dark-dark);
+  border-color: #444;
+  color: var(--text-color-dark);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(75, 108, 183, 0.2);
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.comment-item {
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid #eee;
+}
+
+.dark-theme .comment-item {
+  background: var(--bg-light-dark);
+  border-color: #333;
+}
+
+.comment-text {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.comment-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-light-light);
+}
+
+.dark-theme .comment-meta {
+  color: var(--text-light-dark);
+}
+
+.comment-author {
+  font-weight: 600;
+  color: var(--text-color-light);
+}
+
+.dark-theme .comment-author {
+  color: var(--text-color-dark);
+}
+
 /* ========== FOOTER ========== */
 .site-footer {
   background: var(--white);
@@ -1119,23 +1295,23 @@ header {
   color: var(--white);
 }
 
+.footer-newsletter form {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .footer-newsletter input {
-  width: 100%;
-  margin-bottom: 1rem;
   padding: 0.75rem 1rem;
   border: 1px solid #ddd;
   border-radius: var(--radius);
   background: var(--white);
+  flex-grow: 1;
 }
 
 .dark-theme .footer-newsletter input {
   background: var(--bg-light-dark);
   border-color: #444;
   color: var(--text-color-dark);
-}
-
-.footer-newsletter button {
-  width: 100%;
 }
 
 .footer-bottom {
@@ -1247,6 +1423,11 @@ header {
     display: block; /* Or flex, etc., depending on the element */
   }
 
+  /* Mobile Navigation Links */
+.mobile-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center; /* Center links horizontally */

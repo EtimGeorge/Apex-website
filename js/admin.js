@@ -19,6 +19,7 @@ import {
   runTransaction, // <<<--- ADDED
   updateDoc, // <<<--- ADDED
   addDoc,
+  serverTimestamp, // <-- Add this
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import {
   ref,
@@ -266,6 +267,54 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
           processButton.disabled = false;
           processButton.textContent = 'Run Daily Profit Calculation';
+        }
+      });
+    }
+
+    // --- NEW: Handle Blog Post Creation ---
+    const newPostForm = document.getElementById('new-post-form');
+    if (newPostForm) {
+      // Initialize TinyMCE on the content textarea
+      tinymce.init({
+        selector: '#post-content',
+        plugins: 'lists link image table code help wordcount',
+        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | code',
+        height: 400,
+        skin: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oxide-dark' : 'oxide'),
+        content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default')
+      });
+
+      newPostForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitButton = newPostForm.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Creating...';
+
+        // This is the alternative to using a Cloud Function.
+        // We will write directly to Firestore from the client.
+        try {
+          const newPostData = {
+            title: document.getElementById('post-title').value,
+            snippet: document.getElementById('post-snippet').value,
+            content: tinymce.get('post-content').getContent(), // Get content from TinyMCE
+            status: document.getElementById('post-status').value,
+            imageUrl: document.getElementById('post-image-url').value || null,
+            likeCount: 0,
+            authorId: auth.currentUser.uid, // Set the author ID
+            createdAt: serverTimestamp(), // Use the server's timestamp
+          };
+
+          const docRef = await addDoc(collection(db, "blogPosts"), newPostData);
+
+          alert(`Blog post created successfully with ID: ${docRef.id}`);
+          newPostForm.reset();
+
+        } catch (error) {
+          console.error('Error creating blog post:', error);
+          alert(`Failed to create post: ${error.message}`);
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Create Post';
         }
       });
     }

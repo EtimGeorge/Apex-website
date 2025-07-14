@@ -119,3 +119,67 @@ exports.processInvestments = onCall(async (request) => {
     message: `Processed ${processedCount} investments successfully.`,
   };
 });
+
+// =================================================================================
+//  CREATE BLOG POST FUNCTION
+//  Callable function for admins to create a new blog post.
+// =================================================================================
+exports.createBlogPost = onCall(async (request) => {
+  // --- 1. Security Check: Ensure the caller is an authenticated admin ---
+  if (!request.auth) {
+    // Throw an HttpsError to send a specific error back to the client.
+    throw new HttpsError(
+        "unauthenticated",
+        "You must be logged in to create a post.",
+    );
+  }
+
+  const db = getFirestore();
+  const uid = request.auth.uid;
+  const userRef = db.collection("users").doc(uid);
+
+  try {
+    const userDoc = await userRef.get();
+    // Check if the user document exists and if they have the isAdmin flag.
+    if (!userDoc.exists() || userDoc.data().isAdmin !== true) {
+      throw new HttpsError(
+          "permission-denied",
+          "You must be an admin to perform this action.",
+      );
+    }
+
+    // --- 2. Validate Input Data from the client ---
+    const data = request.data;
+    if (!data.title || !data.snippet || !data.content || !data.status) {
+      throw new HttpsError(
+          "invalid-argument",
+          "Missing required fields: title, snippet, content, or status.",
+      );
+    }
+
+    // --- 3. Prepare and add the new blog post document ---
+    const newPostRef = await db.collection("blogPosts").add({
+      title: data.title,
+      snippet: data.snippet,
+      content: data.content,
+      status: data.status,
+      imageUrl: data.imageUrl || null, // Use provided URL or null
+      likeCount: 0,
+      authorId: uid, // Track which admin created the post
+      createdAt: Timestamp.now(),
+    });
+
+    console.log(`Admin ${uid} created new blog post ${newPostRef.id}`);
+    return {status: "success", postId: newPostRef.id};
+  } catch (error) {
+    console.error("Error in createBlogPost function:", error);
+    // If it's not already an HttpsError, re-throw it as a generic internal error.
+    if (error instanceof HttpsError) {
+      throw error;
+    }
+    throw new HttpsError(
+        "internal",
+        "An internal error occurred while creating the post.",
+    );
+  }
+});
