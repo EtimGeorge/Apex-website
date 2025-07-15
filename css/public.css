@@ -8,6 +8,7 @@
   --white: #fff;
   --transition: all 0.3s ease-in-out;
   --radius: 8px;
+  --footer-bacground:#34494d;
 
   /* Light Theme */
   --text-color-light: #222;
@@ -1232,8 +1233,8 @@ header {
 
 /* ========== FOOTER ========== */
 .site-footer {
-  background: var(--white);
-  color: var(--text-light-light);
+  background: var(--footer-bacground);
+  color: var(--text-color-light);
   padding: 4rem 1rem 2rem;
   border-top: 1px solid #eee;
 }
