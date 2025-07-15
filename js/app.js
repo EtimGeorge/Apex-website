@@ -105,6 +105,7 @@ function runAllPageLogic(userData, uid) {
   updateHeaderUI(userData, uid);
   attachStaticEventListeners();
   handleThemeSwitcher();
+  handleMobileSidebar();
 
   // --- B. PAGE-SPECIFIC LOGIC ---
   if (currentPage === 'dashboard.html') {
@@ -152,14 +153,16 @@ function runAllPageLogic(userData, uid) {
             // Format the date nicely
             const startDate = investment.startDate
               .toDate()
-              .toLocaleDateString();
-            // We will leave End Date blank since we don't calculate it yet
-            const endDate = 'N/A';
+              .toLocaleDateString('en-US');
+            // Read the endDate we now store in the document
+            const endDate = investment.endDate
+              ? investment.endDate.toDate().toLocaleDateString('en-US')
+              : 'Processing...';
 
             tableRowsHTML += `
                     <tr>
                         <td>${investment.planName}</td>
-                        <td>${investment.investedAmount.toFixed(2)}</td>
+                        <td>$${investment.investedAmount.toFixed(2)}</td>
                         <td>${startDate}</td>
                         <td>${endDate}</td>
                         <td><span class="status status-${investment.status}">${investment.status
@@ -430,21 +433,23 @@ function runAllPageLogic(userData, uid) {
   }
 
   function attachStaticEventListeners() {
-    const dashboardLayout = document.querySelector('.dashboard-layout');
-    if (dashboardLayout) {
-      const sidebar = dashboardLayout.querySelector('.sidebar');
-      sidebar.addEventListener('mouseenter', () =>
-        dashboardLayout.classList.add('sidebar-expanded')
-      );
-      sidebar.addEventListener('mouseleave', () =>
-        dashboardLayout.classList.remove('sidebar-expanded')
-      );
-    }
-    const logoutButton = document.getElementById('logout-btn');
-    if (logoutButton) {
-      logoutButton.addEventListener('click', () =>
-        signOut(auth).catch((err) => console.error('Logout error', err))
-      );
+    // =============================================================================
+    // --- Desktop-Only Sidebar Hover Logic (THE DEFINITIVE FIX) ---
+    // =============================================================================
+    // We use matchMedia to ensure this JS only runs on desktop screens,
+    // preventing any hover effects on mobile devices.
+    if (window.matchMedia('(min-width: 993px)').matches) {
+      const dashboardLayout = document.querySelector('.dashboard-layout');
+      if (dashboardLayout) {
+        const sidebar = dashboardLayout.querySelector('.sidebar');
+        // This listener correctly targets ONLY the sidebar
+        sidebar.addEventListener('mouseenter', () =>
+          dashboardLayout.classList.add('sidebar-expanded')
+        );
+        sidebar.addEventListener('mouseleave', () =>
+          dashboardLayout.classList.remove('sidebar-expanded')
+        );
+      }
     }
 
     // =============================================================================
@@ -473,6 +478,13 @@ function runAllPageLogic(userData, uid) {
       });
     }
 
+    // --- Logout Button ---
+    const logoutButton = document.getElementById('logout-btn');
+    if (logoutButton) {
+      logoutButton.addEventListener('click', () =>
+        signOut(auth).catch((err) => console.error('Logout error', err))
+      );
+    }
   }
 
   function handleThemeSwitcher() {
@@ -498,6 +510,43 @@ function runAllPageLogic(userData, uid) {
       });
     }
   }
+
+  function handleMobileSidebar() {
+    const toggleButton = document.getElementById('mobile-sidebar-toggle');
+    const closeButton = document.getElementById('sidebar-close-btn');
+    const dashboardLayout = document.querySelector('.dashboard-layout');
+    const sidebarOverlay = document.querySelector('.sidebar-overlay');
+
+    // If the main layout container doesn't exist, we can't do anything.
+    if (!dashboardLayout) {
+      return;
+    }
+
+    // Function to open the sidebar
+    const openSidebar = () => {
+      dashboardLayout.classList.add('sidebar-mobile-open');
+      if (toggleButton) toggleButton.classList.add('open');
+    };
+
+    // Function to close the sidebar
+    const closeSidebar = () => {
+      dashboardLayout.classList.remove('sidebar-mobile-open');
+      if (toggleButton) toggleButton.classList.remove('open');
+    };
+
+    // The hamburger button should TOGGLE the sidebar's state.
+    if (toggleButton) {
+      toggleButton.addEventListener('click', () => {
+        if (dashboardLayout.classList.contains('sidebar-mobile-open')) closeSidebar();
+        else openSidebar();
+      });
+    }
+    // The dedicated close button inside the sidebar always closes it.
+    if (closeButton) closeButton.addEventListener('click', closeSidebar);
+    // Clicking the overlay (outside the sidebar) also closes it.
+    if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+  }
+
 
   // --- Page-Specific Handlers ---
   function handleDashboardPage(userData, uid) {
@@ -1166,5 +1215,3 @@ function runAllPageLogic(userData, uid) {
     }
   }
 }
-
-

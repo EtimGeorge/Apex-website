@@ -1,0 +1,65 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Allow public read access to plans and blog posts
+    match /plans/{planId} {
+      allow read: if true;
+      allow write: if false; // Prevent client-side writes
+    }
+
+    match /blogPosts/{postId} {
+      // Anyone can read posts and comments. This fixes the error.
+      allow read: if true;
+
+      // Only allow updates to increment the likeCount
+      allow update: if request.resource.data.likeCount == resource.data.likeCount + 1;
+
+      // Allow an admin to create a post directly from the client.
+      // This rule checks if the user has an `isAdmin: true` flag in their user document
+      // and validates the data being sent.
+      allow create: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true
+                    && request.resource.data.title is string
+                    && request.resource.data.snippet is string
+                    && request.resource.data.content is string
+                    && request.resource.data.status in ['published', 'draft']
+                    && request.resource.data.likeCount == 0
+                    && request.resource.data.authorId == request.auth.uid
+                    && request.resource.data.createdAt == request.time;
+
+      // Rules for the Comments subcollection
+      match /comments/{commentId} {
+        // Anyone can read comments
+        allow read: if true;
+
+        // Anyone can create a comment, but with validation
+        allow create: if request.resource.data.name is string
+                      && request.resource.data.name.size() > 1 && request.resource.data.name.size() < 50
+                      && request.resource.data.text is string
+                      && request.resource.data.text.size() > 1 && request.resource.data.text.size() < 1500
+                      && request.resource.data.createdAt == request.time;
+
+        // Nobody can update or delete comments from the client
+        allow update, delete: if false;
+      }
+    }
+
+    // Secure user-specific collections
+    // Users can only access their own documents
+    match /users/{userId} {
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+      allow create, delete: if false;
+    }
+
+    match /transactions/{txId} {
+      allow read, create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false; // Only backend/admins should update status
+    }
+
+    match /investments/{invId} {
+      allow read, create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false; // Only backend/admins should update status
+    }
+  }
+}

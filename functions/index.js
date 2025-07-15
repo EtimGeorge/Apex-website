@@ -49,16 +49,15 @@ exports.processInvestments = onCall(async (request) => {
     const investmentId = investmentDoc.id;
     const userId = investment.userId;
 
-    // --- A. Find the corresponding plan to get ROI and Duration ---
-    const planQuery = db.collection("plans")
-        .where("planName", "==", investment.planName);
-    const planSnapshot = await planQuery.get();
+    // --- A. Find the corresponding plan using its ID (MUCH BETTER!) ---
+    const planRef = db.collection("plans").doc(investment.planId);
+    const planDoc = await planRef.get();
 
-    if (planSnapshot.empty) {
-      console.error(`Plan '${investment.planName}' not found for investment ID: ${investmentId}. Skipping.`);
+    if (!planDoc.exists()) {
+      console.error(`Plan with ID '${investment.planId}' not found for investment ID: ${investmentId}. Skipping.`);
       return; // Skip this investment if the plan doesn't exist
     }
-    const plan = planSnapshot.docs[0].data();
+    const plan = planDoc.data();
 
     // --- B. Find the user to update their balances ---
     const userRef = db.collection("users").doc(userId);
@@ -67,11 +66,8 @@ exports.processInvestments = onCall(async (request) => {
     const dailyProfit = (investment.investedAmount * plan.roiPercent) / 100;
 
     // --- D. Check if the investment period is over ---
-    const startDate = investment.startDate.toDate();
-    const endDate = new Date(startDate.getTime());
-    endDate.setDate(startDate.getDate() + plan.durationDays);
-
-    const isCompleted = now.toDate() >= endDate;
+    // We can now directly compare the stored endDate with the current time
+    const isCompleted = now.toDate() >= investment.endDate.toDate();
 
     // --- E. Run a transaction to update everything safely ---
     await db.runTransaction(async (transaction) => {

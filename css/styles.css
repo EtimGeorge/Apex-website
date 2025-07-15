@@ -64,8 +64,20 @@ ul {
   transition: grid-template-columns var(--sidebar-transition-duration)
     ease-in-out;
 }
+
+/* This class is added by JS on DESKTOP ONLY to expand the sidebar */
 .dashboard-layout.sidebar-expanded {
   grid-template-columns: var(--sidebar-width-expanded) 1fr;
+}
+
+/* When expanded on desktop, the logo and text become visible */
+.sidebar-expanded .sidebar .logo,
+.sidebar-expanded .sidebar .nav-section-title,
+.sidebar-expanded .sidebar .nav-text {
+  opacity: 1;
+}
+.sidebar-expanded .sidebar .nav-text {
+  transition-delay: 0.1s; /* Keep the smooth appearance delay */
 }
 
 /* --- 3. Sidebar (THE DEFINITIVE FIX) --- */
@@ -89,8 +101,11 @@ ul {
   transition: opacity 0.2s ease;
   margin-bottom: 2rem;
 }
-.sidebar-expanded .logo {
-  opacity: 1; /* Visible when expanded */
+.sidebar-header {
+  /* This ensures the logo and the new close button are aligned nicely */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .sidebar-nav {
   display: flex;
@@ -107,9 +122,6 @@ ul {
   white-space: nowrap;
   opacity: 0; /* Hidden when collapsed */
   transition: opacity 0.2s ease;
-}
-.sidebar-expanded .nav-section-title {
-  opacity: 1; /* Visible when expanded */
 }
 .nav-item {
   display: flex;
@@ -129,9 +141,6 @@ ul {
   opacity: 0; /* Hidden when collapsed */
   transition: opacity 0.2s ease;
   transition-delay: 0.1s; /* Slight delay for smoother appearance */
-}
-.sidebar-expanded .nav-text {
-  opacity: 1; /* Visible when expanded */
 }
 .nav-item:hover {
   color: var(--color-text-sidebar-active);
@@ -175,14 +184,20 @@ ul {
 }
 .main-header {
   display: flex;
-  justify-content: flex-end; /* Pushes header-actions to the right */
+  justify-content: flex-end; /* Pushes header-actions to the right on desktop */
   align-items: center;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--color-border);
 }
-.header-spacer {
-  flex-grow: 1;
-  /* This empty div will take up all available space */
+
+.mobile-sidebar-toggle {
+    display: none; /* Hidden on desktop by default */
+    position: relative; /* Needed for z-index to work */
+    z-index: 1060; /* Higher than the sidebar and overlay */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
 }
 
 /* .header-bottom-row {
@@ -1170,6 +1185,153 @@ ul {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
+}
+
+/* ==========================================================
+   19. Mobile Dashboard Navigation
+   ========================================================== */
+
+.mobile-sidebar-toggle span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: var(--color-text-primary);
+    margin: 5px auto;
+    transition: all 0.3s ease-in-out;
+}
+
+.dark-theme .mobile-sidebar-toggle span {
+    background-color: var(--color-text-sidebar-active);
+}
+
+.mobile-sidebar-toggle.open span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.mobile-sidebar-toggle.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-sidebar-toggle.open span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1040; /* Below sidebar, above content */
+    transition: opacity 0.3s ease;
+}
+
+/* --- Responsive Breakpoint for Dashboard --- */
+@media (max-width: 992px) {
+    .dashboard-layout {
+        /* Switch to a single column layout, removing the fixed sidebar column */
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-layout.sidebar-expanded {
+        /* Disable the hover-to-expand effect on mobile */
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        /* Take sidebar out of the grid flow and hide it off-screen */
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 280px; /* A good fixed width for mobile */
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1050; /* Highest z-index to be on top */
+        overflow-y: auto; /* Allow scrolling within the sidebar if content overflows */
+        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+
+    /* --- This is the new logic for the sticky mobile header --- */
+    .sidebar {
+        padding: 0; /* Remove padding from the main container */
+    }
+    .sidebar-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: var(--color-bg-sidebar);
+        padding: 1.5rem; /* Re-apply padding here */
+        /* Add a subtle line to separate header from scrolling content */
+        border-bottom: 1px solid #4a5568; 
+        /* Add flex properties to align logo and close button */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .sidebar-nav {
+        padding: 0 1.5rem; /* Add horizontal padding to the nav links */
+    }
+    .sidebar-footer {
+        padding: 1.5rem; /* Re-apply padding to the footer */
+    }
+    /* --- End of new logic --- */
+
+    .dashboard-layout.sidebar-mobile-open .sidebar {
+        transform: translateX(0);
+    }
+
+    .dashboard-layout.sidebar-mobile-open .sidebar-overlay {
+        display: block;
+    }
+
+    .main-content {
+        /* It now takes up the full width of the screen */
+        grid-column: 1 / -1;
+    }
+    .main-content-wrapper {
+        /* Remove padding on small screens for a cleaner look */
+        padding: 1rem;
+    }
+
+
+    .mobile-sidebar-toggle {
+        display: block; /* Show the hamburger button */
+    }
+
+    /* On mobile, space out the hamburger and the user actions */
+    .main-header {
+        justify-content: space-between;
+    }
+
+    /* On mobile, we want the sidebar text to be visible without hovering */
+    .sidebar .logo,
+    .sidebar .nav-section-title,
+    .sidebar .nav-text {
+        opacity: 1;
+    }
+
+    /* When the mobile sidebar is open, prevent the main page from scrolling */
+    .dashboard-layout.sidebar-mobile-open {
+        overflow: hidden;
+    }
+
+    .sidebar-close-btn {
+        display: block; /* Show the close button on mobile */
+    }
+}
+
+.sidebar-close-btn {
+  display: none; /* Hidden on desktop by default */
+  background: none;
+  border: none;
+  color: #ea5455; /* Use a specific danger color for visibility */
+  cursor: pointer;
+  padding: 0.5rem; /* Make the click target slightly larger */
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+.sidebar-close-btn:hover {
+  opacity: 1;
 }
 
 .scroll-to-top:hover {
