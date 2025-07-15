@@ -20,11 +20,11 @@ Here are the core principles that can guide your journey:
 
 ### 1. Define Your "Why": Set Clear Financial Goals
 
-Before you invest a single dollar, ask yourself: *What am I investing for?* Your goals will determine your strategy.
+Before you invest a single dollar, ask yourself: _What am I investing for?_ Your goals will determine your strategy.
 
-*   **Short-Term Goals (1-3 years):** Saving for a vacation or a new car. These goals require lower-risk investments to preserve your capital.
-*   **Mid-Term Goals (3-10 years):** A down payment on a home or funding a business. A balanced approach with a mix of growth and stability is often suitable.
-*   **Long-Term Goals (10+ years):** Retirement or leaving a legacy. Here, you can typically afford to take on more risk for potentially higher returns, as you have time to recover from market downturns.
+- **Short-Term Goals (1-3 years):** Saving for a vacation or a new car. These goals require lower-risk investments to preserve your capital.
+- **Mid-Term Goals (3-10 years):** A down payment on a home or funding a business. A balanced approach with a mix of growth and stability is often suitable.
+- **Long-Term Goals (10+ years):** Retirement or leaving a legacy. Here, you can typically afford to take on more risk for potentially higher returns, as you have time to recover from market downturns.
 
 ### 2. Understand Your Risk Tolerance
 
@@ -48,12 +48,12 @@ Never invest in something you don't understand. Before committing your capital, 
 
 At Project Apex, we've built our platform around these core principles to give you a secure and transparent path to achieving your financial goals.
 
-*   **Diverse Plans for Clear Goals:** We offer a range of [investment plans](plans.html) tailored to different risk profiles and objectives. Whether you're a cautious beginner or a seasoned investor, you can find a plan that aligns with your "why."
-*   **Unmatched Security:** We handle the complexities of security so you can focus on your strategy. With multi-layer protocols and regular audits, your capital is protected.
-*   **A Simple, Disciplined Approach:** Getting started is straightforward:
-    1.  **Create an Account:** Quick and secure registration.
-    2.  **Fund Your Account:** Easily deposit funds using secure methods.
-    3.  **Invest & Grow:** Choose a plan and let our expertise work for you.
+- **Diverse Plans for Clear Goals:** We offer a range of [investment plans](plans.html) tailored to different risk profiles and objectives. Whether you're a cautious beginner or a seasoned investor, you can find a plan that aligns with your "why."
+- **Unmatched Security:** We handle the complexities of security so you can focus on your strategy. With multi-layer protocols and regular audits, your capital is protected.
+- **A Simple, Disciplined Approach:** Getting started is straightforward:
+  1.  **Create an Account:** Quick and secure registration.
+  2.  **Fund Your Account:** Easily deposit funds using secure methods.
+  3.  **Invest & Grow:** Choose a plan and let our expertise work for you.
 
 ## Your Journey Starts Now
 

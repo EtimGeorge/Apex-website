@@ -331,7 +331,7 @@ header {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('../images/hero-background.jpg'); /* Make sure you have this image */
+  background-image: url('../images/hero-background-1.png'); /* Make sure you have this image */
   background-size: cover;
   background-position: center;
   z-index: -2; /* Places it behind the overlay */
@@ -345,7 +345,7 @@ header {
   position: absolute;
   inset: 0;
   /* Combines your original gradient with a semi-transparent dark color */
-  background: var(--primary-gradient), rgba(11, 12, 16, 0.7);
+  background: var(--primary-gradient), rgba(31, 34, 48, 0.226);
   background-blend-mode: overlay; /* Blends the gradient and color */
   opacity: 0.85; /* Adjust for desired darkness */
   z-index: -1; /* Places it on top of the image but behind the content */
