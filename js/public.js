@@ -60,6 +60,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   themeSwitcher();
 
+  // Animate on scroll using Intersection Observer
+  const animatedSections = document.querySelectorAll('.fade-in-section');
+  if (animatedSections.length > 0) {
+      const observer = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('is-visible');
+                  observer.unobserve(entry.target); // Stop observing once animated
+              }
+          });
+      }, {
+          rootMargin: '0px 0px -100px 0px' // Start animation when element is 100px from the bottom of the viewport
+      });
+
+      animatedSections.forEach(section => {
+          observer.observe(section);
+      });
+  }
+
 
    // Mobile Menu Toggle
   const mobileToggle = document.getElementById('mobile-menu-toggle');
