@@ -41,6 +41,11 @@
       <aside class="sidebar">
         <div class="sidebar-header">
           <a href="dashboard.html" class="logo">Project Apex</a>
+          <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close sidebar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
         </div>
         <nav class="sidebar-nav">
           <!-- New Sidebar Navigation with Icons -->
@@ -240,47 +245,44 @@
 
       </aside>
 
-      <!-- ===== Main Content Area ===== -->
-      <main class="main-content">
-        <div class="main-content-wrapper">
-          <!-- 1. Ticker Tape widget(Top Block) -->
-          <!-- Original Ticker Tape Widget -->
-          <div class="tradingview-widget-container ticker-tape-widget">
-            <div class="tradingview-widget-container__widget"></div>
-            <script
-              type="text/javascript"
-              src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
-              async
-            >
+      <!-- ========================correction 1 start ====================== -->
+    <!-- ===== Main Content Area ===== -->
+    <main class="main-content">
+      <div class="main-content-wrapper">
+        <!-- 1. Ticker Tape widget(Top Block) -->
+        <!-- Final, Working Ticker Tape Widget -->
+        <div class="tradingview-widget-container" style="height: 48px; width: 100%; margin-bottom: 1.5rem">
+          <div class="tradingview-widget-container__widget"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
+            async>
               {
-                "symbols": [{"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"}, {"proName": "FOREXCOM:NSXUSD", "title": "US 100"}, {"proName": "FX_IDC:EURUSD", "title": "EUR/USD"}, {"proName": "BITSTAMP:BTCUSD", "title": "Bitcoin"}, {"proName": "BITSTAMP:ETHUSD", "title": "Ethereum"}],
-                "showSymbolLogo": true, "colorTheme": "light", "isTransparent": true, "displayMode": "adaptive", "locale": "en"
+                "symbols": [{ "proName": "FOREXCOM:SPXUSD", "title": "S&P 500" }, { "proName": "FOREXCOM:NSXUSD", "title": "US 100" }, { "proName": "FX_IDC:EURUSD", "title": "EUR/USD" }, { "proName": "BITSTAMP:BTCUSD", "title": "Bitcoin" }, { "proName": "BITSTAMP:ETHUSD", "title": "Ethereum" }],
+                  "showSymbolLogo": true,
+                    "colorTheme": "light",
+                      "isTransparent": false,
+                        "displayMode": "adaptive",
+                          "locale": "en"
               }
             </script>
-          </div>
+        </div>
 
-          <!-- 2. Main Header (Middle Block) -->
-          <header class="main-header">
-            <!-- This empty div is a spacer to push the other items to the right -->
-            <div class="header-spacer"></div>
+        <!-- 2. Main Header (Middle Block) -->
+        <header class="main-header">
+          <!-- Mobile Sidebar Toggle -->
+          <button class="mobile-sidebar-toggle" id="mobile-sidebar-toggle">
+              <span></span>
+              <span></span>
+              <span></span>
+          </button>
+          <div class="header-actions">
+            <div class="theme-dropdown">
+              <button id="theme-toggle-btn" class="theme-btn">
+                <!-- <span class="sr-only">Toggle Theme</span> -->
 
-            <div class="header-actions">
-              <div class="theme-dropdown">
-                <button id="theme-toggle-btn" class="theme-btn">
-                  <!-- <span class="sr-only">Toggle Theme</span> -->
-
-                  <!-- SVG for theme icon -->
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
+                <!-- SVG for theme icon -->
+                <!-- ==================correction 1 end ====================== -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="5"></circle>
                   <line x1="12" y1="1" x2="12" y2="3"></line>
                   <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -293,19 +295,11 @@
                 </svg>
               </button>
               <div id="theme-menu" class="theme-menu hidden">
+                <!-- UL with LI items for theme menu -->
                 <ul>
                   <li data-theme="light">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <circle cx="12" cy="12" r="5"></circle>
                       <line x1="12" y1="1" x2="12" y2="3"></line>
                       <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -314,62 +308,30 @@
                       <line x1="1" y1="12" x2="3" y2="12"></line>
                       <line x1="21" y1="12" x2="23" y2="12"></line>
                       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                      <line
-                        x1="18.36"
-                        y1="5.64"
-                        x2="19.78"
-                        y2="4.22"
-                      ></line></svg
-                    ><span>Light</span>
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg><span>Light</span>
                   </li>
                   <li data-theme="dark">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path
-                        d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-                      ></path></svg
-                    ><span>Dark</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg><span>Dark</span>
                   </li>
                   <li data-theme="system">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <rect
-                        x="2"
-                        y="3"
-                        width="20"
-                        height="14"
-                        rx="2"
-                        ry="2"
-                      ></rect>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                       <line x1="8" y1="21" x2="16" y2="21"></line>
-                      <line x1="12" y1="17" x2="12" y2="21"></line></svg
-                    ><span>System</span>
+                      <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg><span>System</span>
                   </li>
                 </ul>
               </div>
             </div>
-             <div class="user-info">
+            <div class="user-info">
               <span id="user-name-display"></span>
               <a href="my-account.html">
-                <img id="user-profile-pic" src="" alt="User Profile" class="profile-pic">
+                <img id="user-profile-pic" src="" alt="User Profile" class="profile-pic" />
               </a>
             </div>
           </div>

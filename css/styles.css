@@ -193,12 +193,17 @@ ul {
 .mobile-sidebar-toggle {
     display: none; /* Hidden on desktop by default */
     position: relative; /* Needed for z-index to work */
-    z-index: 1060; /* Higher than the sidebar and overlay */
+    /* z-index: 1060; Higher than the sidebar and overlay */
+    border: 1px solid var(--color-border);
     background: none;
     border: none;
     cursor: pointer;
     padding: 0.5rem;
 }
+
+ .sidebar-close-btn {
+        display: none; /* Show the close button on mobile */
+    }
 
 /* .header-bottom-row {
     display: flex;
@@ -1162,8 +1167,8 @@ ul {
     right: 20px;
     width: 50px;
     height: 50px;
-    background-image: var(--gradient-primary);
-    color: #ffffff;
+    background-color: var(--color-text-sidebar-active);
+    color: var(--color-accent-success);
     border: none;
     border-radius: 50%;
     display: flex;
@@ -1255,7 +1260,7 @@ ul {
     .sidebar {
         padding: 0; /* Remove padding from the main container */
     }
-    .sidebar-header {
+    .sidebar-header  {
         position: sticky;
         top: 0;
         z-index: 10;
@@ -1318,12 +1323,12 @@ ul {
     .sidebar-close-btn {
         display: block; /* Show the close button on mobile */
     }
-}
+
 
 .sidebar-close-btn {
-  display: none; /* Hidden on desktop by default */
-  background: none;
-  border: none;
+  display: block; /* Hidden on desktop by default */
+  background: var(--gradient-primary);
+  /* border: none; */
   color: #ea5455; /* Use a specific danger color for visibility */
   cursor: pointer;
   padding: 0.5rem; /* Make the click target slightly larger */
@@ -1336,4 +1341,5 @@ ul {
 
 .scroll-to-top:hover {
     background-position: right center; /* Uses the same gradient hover as our other buttons */
+}
 }
