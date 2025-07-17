@@ -406,6 +406,7 @@ header {
 
 .hero-headline {
   font-size: 2.5rem;
+  font-family: 'Playfair Display', serif;
   margin-bottom: 1rem;
 }
 .hero-tagline {
