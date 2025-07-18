@@ -499,6 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return Promise.all(promises);
           })
           .then((transactionsWithUsernames) => {
+            if (!transactionsWithUsernames) return; // Guard against empty snapshot result
             // Now we have a complete array and can build the table
             let rowsHTML = '';
             transactionsWithUsernames.forEach((tx) => {
@@ -673,6 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return Promise.all(promises);
           })
           .then((transactions) => {
+            if (!transactions) return; // Guard against empty snapshot result
             let rowsHTML = '';
             transactions.forEach((tx) => {
               // Truncate wallet address for display
