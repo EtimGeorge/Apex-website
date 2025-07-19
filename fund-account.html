@@ -307,9 +307,19 @@
                     <option value="eth">Ethereum (ETH)</option>
                     <option value="usdt">Tether (USDT)</option>
                     <option value="bnb">Binance Coin (BNB)</option>
+                    <option value="sol">Solana (SOL)</option>
+                    <option value="ada">Cardano (ADA)</option>
+                    <option value="xrp">Ripple (XRP)</option>
                     <option value="pi">Pi Network (PI)</option>
                     <option value="ice">Ice Network (ICE)</option>
                     <!-- Add other coins here -->
+                  </select>
+                </div>
+
+                <div class="form-group" id="fund-network-group">
+                  <label for="fund-network">Network</label>
+                  <select id="fund-network" name="fund-network" class="form-control">
+                    <!-- Options will be populated by JavaScript -->
                   </select>
                 </div>
 
@@ -355,6 +365,14 @@
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                   </svg>
                 </button>
+              </div>
+              <div class="wallet-address-group">
+                <label>Network</label>
+                <input type="text" id="wallet-network-display" value="Loading network..." readonly>
+              </div>
+              <div id="xrp-tag-group" class="wallet-address-group hidden">
+                <label>Destination Tag</label>
+                <input type="text" id="xrp-tag-display" value="" readonly>
               </div>
               <small class="wallet-warning">Please send only <strong id="wallet-coin-symbol">BTC</strong> to this
                 address. Sending any other coins may result in permanent loss.</small>

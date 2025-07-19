@@ -107,11 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
           querySnapshot.forEach((doc) => {
             const userData = doc.data();
             const regDate = userData.createdAt.toDate().toLocaleDateString();
-            tableRowsHTML += `<tr><td>${userData.fullName}</td><td>${userData.email
-              }</td><td><span class="status status-${userData.kycStatus}">${userData.kycStatus
-              }</span></td><td>$${(userData.accountBalance || 0).toFixed(
-                2
-              )}</td><td>${regDate}</td></tr>`;
+            tableRowsHTML += `<tr>
+                <td data-label="User">${userData.fullName}</td>
+                <td data-label="Email">${userData.email}</td>
+                <td data-label="KYC Status"><span class="status status-${userData.kycStatus}">${userData.kycStatus}</span></td>
+                <td data-label="Balance">${(userData.accountBalance || 0).toFixed(2)}</td>
+                <td data-label="Date Registered">${regDate}</td>
+            </tr>`;
           });
           tableBody.innerHTML = querySnapshot.empty
             ? '<tr><td colspan="5">No users found.</td></tr>'
@@ -233,11 +235,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
           rowsHTML += `
                 <tr>
-                    <td>${investment.userName}</td>
-                    <td>${investment.planName}</td>
-                    <td>${investment.investedAmount.toFixed(2)}</td>
-                    <td>${investment.startDate.toLocaleDateString()}</td>
-                    <td>${plan ? endDate.toLocaleDateString() : 'N/A'}</td>
+                    <td data-label="User Name">${investment.userName}</td>
+                    <td data-label="Plan Name">${investment.planName}</td>
+                    <td data-label="Invested Amount">${investment.investedAmount.toFixed(2)}</td>
+                    <td data-label="Start Date">${investment.startDate.toLocaleDateString()}</td>
+                    <td data-label="End Date">${plan ? endDate.toLocaleDateString() : 'N/A'}</td>
                 </tr>
             `;
         });
@@ -584,17 +586,13 @@ document.addEventListener('DOMContentLoaded', () => {
             let rowsHTML = '';
             transactionsWithUsernames.forEach((tx) => {
               rowsHTML += `
-                            <tr data-txid="${tx.id}" data-userid="${tx.userId
-                }" data-amount="${tx.amount}">
-                                <td>${tx.userName}</td>
-                                <td>$${tx.amount.toFixed(2)}</td>
-                                <td>${tx.method.toUpperCase()}</td>
-                                <td>${tx.date
-                  .toDate()
-                  .toLocaleDateString()}</td>
-                                <td><span class="status status-pending">${tx.status
-                }</span></td>
-                                <td class="actions-cell">
+                            <tr data-txid="${tx.id}" data-userid="${tx.userId}" data-amount="${tx.amount}">
+                                <td data-label="User">${tx.userName}</td>
+                                <td data-label="Amount">${tx.amount.toFixed(2)}</td>
+                                <td data-label="Method">${tx.method.toUpperCase()}</td>
+                                <td data-label="Date">${tx.date.toDate().toLocaleDateString()}</td>
+                                <td data-label="Status"><span class="status status-pending">${tx.status}</span></td>
+                                <td data-label="Actions" class="actions-cell">
                                     <button class="btn-action approve-deposit">Approve</button>
                                     <button class="btn-action reject-deposit">Reject</button>
                                 </td>
@@ -767,19 +765,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 )}`
                 : 'N/A';
               rowsHTML += `
-                                <tr data-txid="${tx.id}" data-userid="${tx.userId
-                }" data-amount="${tx.amount}">
-                                    <td>${tx.userName}</td>
-                                    <td>$${tx.amount.toFixed(2)}</td>
-                                    <td>${tx.method.toUpperCase()}</td>
-                                    <td title="${tx.walletAddress
-                }">${shortAddress}</td>
-                                    <td>${tx.date
-                  .toDate()
-                  .toLocaleDateString()}</td>
-                                    <td><span class="status status-pending">${tx.status
-                }</span></td>
-                                    <td class="actions-cell">
+                                <tr data-txid="${tx.id}" data-userid="${tx.userId}" data-amount="${tx.amount}">
+                                    <td data-label="User">${tx.userName}</td>
+                                    <td data-label="Amount">${tx.amount.toFixed(2)}</td>
+                                    <td data-label="Method">${tx.method.toUpperCase()}</td>
+                                    <td data-label="Wallet Address" title="${tx.walletAddress}">${shortAddress}</td>
+                                    <td data-label="Date">${tx.date.toDate().toLocaleDateString()}</td>
+                                    <td data-label="Status"><span class="status status-pending">${tx.status}</span></td>
+                                    <td data-label="Actions" class="actions-cell">
                                         <button class="btn-action approve-withdrawal">Approve</button>
                                         <button class="btn-action reject-withdrawal">Reject</button>
                                     </td>
@@ -950,11 +943,11 @@ document.addEventListener('DOMContentLoaded', () => {
           // Added data-planid and data-isactive attributes to the row
           rowsHTML += `
             <tr data-planid="${doc.id}" data-isactive="${plan.isActive}" class="${plan.isFeatured ? 'featured-row' : ''}">
-                <td>${plan.planName} ${plan.isFeatured ? '(Featured)' : ''}</td>
-                <td>${plan.minAmount} - ${plan.maxAmount}</td>
-                <td>${plan.roiPercent}% Daily</td>
-                <td>${plan.durationDays} Days</td>
-                <td class="actions-cell">
+                <td data-label="Plan Name">${plan.planName} ${plan.isFeatured ? '(Featured)' : ''}</td>
+                <td data-label="Amount Range">${plan.minAmount} - ${plan.maxAmount}</td>
+                <td data-label="Daily ROI">${plan.roiPercent}% Daily</td>
+                <td data-label="Duration">${plan.durationDays} Days</td>
+                <td data-label="Actions" class="actions-cell">
                     ${plan.isActive
                       ? '<button class="btn-action deactivate-plan">Deactivate</button>'
                       : '<button class="btn-action activate-plan">Activate</button>'
@@ -1049,4 +1042,77 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // End of admin user check
+
+  // --- Universal UI Updaters ---
+  function attachAdminStaticEventListeners() {
+    // =============================================================================
+    // --- Desktop-Only Sidebar Hover Logic ---
+    // =============================================================================
+    if (window.matchMedia('(min-width: 993px)').matches) {
+      const dashboardLayout = document.querySelector('.dashboard-layout');
+      if (dashboardLayout) {
+        const sidebar = dashboardLayout.querySelector('.sidebar');
+        sidebar.addEventListener('mouseenter', () =>
+          dashboardLayout.classList.add('sidebar-expanded')
+        );
+        sidebar.addEventListener('mouseleave', () =>
+          dashboardLayout.classList.remove('sidebar-expanded')
+        );
+      }
+    }
+
+    // --- Logout Button ---
+    const logoutButton = document.getElementById('logout-btn');
+    if (logoutButton) {
+      logoutButton.addEventListener('click', () =>
+        signOut(auth).then(() => {
+          window.location.href = 'index.html';
+        })
+      );
+    }
+  }
+
+  // --- Function to handle mobile sidebar (Copied from app.js) ---
+  function handleMobileSidebar() {
+    const toggleButton = document.getElementById('mobile-sidebar-toggle');
+    const closeButton = document.getElementById('sidebar-close-btn');
+    const dashboardLayout = document.querySelector('.dashboard-layout');
+    const sidebarOverlay = document.querySelector('.sidebar-overlay');
+
+    // If the main layout container doesn't exist, we can't do anything.
+    if (!dashboardLayout) {
+      return;
+    }
+
+    // Function to open the sidebar
+    const openSidebar = () => {
+      dashboardLayout.classList.add('sidebar-mobile-open');
+      if (toggleButton) toggleButton.classList.add('open'); // Add 'open' class to hamburger icon for animation
+    };
+
+    // Function to close the sidebar
+    const closeSidebar = () => {
+      dashboardLayout.classList.remove('sidebar-mobile-open');
+      if (toggleButton) toggleButton.classList.remove('open'); // Remove 'open' class from hamburger icon
+    };
+
+    // The hamburger button should TOGGLE the sidebar's state.
+    if (toggleButton) {
+      toggleButton.addEventListener('click', () => {
+        if (dashboardLayout.classList.contains('sidebar-mobile-open')) {
+          closeSidebar();
+        } else {
+          openSidebar();
+        }
+      });
+    }
+    // The dedicated close button inside the sidebar always closes it.
+    if (closeButton) closeButton.addEventListener('click', closeSidebar);
+    // Clicking the overlay (outside the sidebar) also closes it.
+    if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+  }
+
+  // --- Call functions on page load ---
+  attachAdminStaticEventListeners();
+  handleMobileSidebar();
 });

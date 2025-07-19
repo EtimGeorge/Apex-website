@@ -109,3 +109,156 @@
     margin: -1rem 0 1.5rem 0;
     color: var(--color-text-muted);
 }
+
+/* ==========================================================
+   Mobile Dashboard Navigation (Copied from styles.css)
+   ========================================================== */
+
+/* Styles for the hamburger icon bars */
+.mobile-sidebar-toggle span {
+    display: block; /* Each span is a block to create separate bars */
+    width: 25px; /* Width of the hamburger bar */
+    height: 3px; /* Thickness of the hamburger bar */
+    background-color: var(--color-text-primary); /* Color of the bars */
+    margin: 5px auto; /* Vertical spacing between bars */
+    transition: all 0.3s ease-in-out; /* Smooth transition for animation */
+}
+
+/* Dark theme adjustment for hamburger bars */
+.dark-theme .mobile-sidebar-toggle span {
+    background-color: var(--color-text-sidebar-active);
+}
+
+/* Animation for the top bar when menu is open (rotates and moves) */
+.mobile-sidebar-toggle.open span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+/* Animation for the middle bar when menu is open (fades out) */
+.mobile-sidebar-toggle.open span:nth-child(2) {
+    opacity: 0;
+}
+
+/* Animation for the bottom bar when menu is open (rotates and moves) */
+.mobile-sidebar-toggle.open span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Styles for the semi-transparent overlay */
+.sidebar-overlay {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed position relative to viewport */
+    inset: 0; /* Covers the entire viewport */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    z-index: 1040; /* Below sidebar, above content */
+    transition: opacity 0.3s ease; /* Smooth fade-in/out */
+}
+
+/* Responsive Breakpoint for Dashboard (adjusts layout for mobile) */
+@media (max-width: 992px) {
+    .dashboard-layout {
+        /* Switch to a single column layout, removing the fixed sidebar column */
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-layout.sidebar-expanded {
+        /* Disable the hover-to-expand effect on mobile */
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        /* Take sidebar out of the grid flow and hide it off-screen */
+        position: fixed; /* Fixed position for slide-out effect */
+        top: 0; /* Align to top */
+        left: 0; /* Align to left */
+        height: 100%; /* Full height */
+        width: 280px; /* A good fixed width for mobile sidebar */
+        transform: translateX(-100%); /* Initially hidden off-screen to the left */
+        transition: transform 0.3s ease-in-out; /* Smooth slide-in/out transition */
+        z-index: 1050; /* Highest z-index to be on top of other content */
+        overflow-y: auto; /* Allow scrolling within the sidebar if content overflows */
+        box-shadow: 0 0 20px rgba(0,0,0,0.2); /* Subtle shadow for depth */
+    }
+
+    /* New logic for sticky mobile sidebar header */
+    .sidebar {
+        padding: 0; /* Remove padding from the main sidebar container */
+    }
+    .sidebar-header  {
+        position: sticky; /* Makes the header sticky within the scrolling sidebar */
+        top: 0; /* Sticks to the top of the sidebar */
+        z-index: 10; /* Ensures it stays above scrolling content */
+        background-color: var(--color-bg-sidebar); /* Background color */
+        padding: 1.5rem; /* Re-apply padding here for the header content */
+        border-bottom: 1px solid #4a5568; /* Subtle separator line */
+        display: flex; /* Use flexbox for alignment */
+        justify-content: space-between; /* Space out logo and close button */
+        align-items: center; /* Vertically align items */
+    }
+    .sidebar-nav {
+        padding: 0 1.5rem; /* Add horizontal padding to the navigation links */
+    }
+    .sidebar-footer {
+        padding: 1.5rem; /* Re-apply padding to the sidebar footer */
+    }
+    /* End of new logic */
+
+    /* When sidebar is open, slide it into view */
+    .dashboard-layout.sidebar-mobile-open .sidebar {
+        transform: translateX(0);
+    }
+
+    /* When sidebar is open, show the overlay */
+    .dashboard-layout.sidebar-mobile-open .sidebar-overlay {
+        display: block;
+    }
+
+    .main-content {
+        /* On mobile, the main content takes up the full width */
+        grid-column: 1 / -1;
+    }
+    .main-content-wrapper {
+        /* Remove padding on small screens for a cleaner look */
+        padding: 1rem;
+    }
+
+    /* Show the hamburger button on mobile */
+    .mobile-sidebar-toggle {
+        display: block;
+    }
+
+    /* On mobile, space out the hamburger and the user actions in the header */
+    .main-header {
+        justify-content: space-between;
+    }
+
+    /* On mobile, sidebar text should always be visible (no hover-to-expand) */
+    .sidebar .logo,
+    .sidebar .nav-section-title,
+    .sidebar .nav-text {
+        opacity: 1;
+    }
+
+    /* When the mobile sidebar is open, prevent the main page from scrolling */
+    .dashboard-layout.sidebar-mobile-open {
+        overflow: hidden;
+    }
+
+    /* Show the close button inside the sidebar on mobile */
+    .sidebar-close-btn {
+        display: block;
+    }
+
+    /* Styling for the close button */
+    .sidebar-close-btn {
+        background: none; /* No background */
+        border: none; /* No border */
+        color: var(--color-text-primary); /* Color of the 'X' icon */
+        cursor: pointer; /* Indicate clickable */
+        padding: 0.5rem; /* Make the click target slightly larger */
+        opacity: 0.8; /* Slightly transparent by default */
+        transition: opacity 0.2s ease; /* Smooth transition on hover */
+    }
+    .sidebar-close-btn:hover {
+        opacity: 1; /* Fully opaque on hover */
+    }

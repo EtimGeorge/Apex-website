@@ -954,6 +954,7 @@ ul {
     padding-left: 50%; /* Make space for the label */
     position: relative;
     border-bottom: 1px dotted var(--color-border);
+    font-size: 0.9rem; /* Reduced font size for mobile table cells */
   }
   .transaction-table tr td:last-child {
     border-bottom: none;
@@ -965,6 +966,7 @@ ul {
     font-weight: 600;
     color: var(--color-text-primary);
     text-align: left;
+    font-size: 0.8rem; /* Reduced font size for data-label */
   }
 }
 
