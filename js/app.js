@@ -108,7 +108,7 @@ const companyWallets = {
     name: 'Bitcoin (BTC)',
     symbol: 'BTC',
     networks: [
-      {name: 'Bitcion', value:'bitcoin', address: 'bc1qtuhgz4ays8w5l3z3ynj7lk7e5qumn5hv5ga6n5'}
+      {name: 'Bitcion', value:'bitcoin', address: 'bc1qtuhgz4ays8w5l3z3ynj7lk7e5qumn5hv5ga6n5'},
       { name: 'BRC20', value: 'brc20', address: '1N6hXVAkAhouaFv6eLvvdSg6pDfH8YAfBk' },
       { name: 'BNB Smart Chain', value: 'bnb smart chain', address: '0x73aB257AbD916beCd67a062eD973211335635cb1 ' },
     ],
