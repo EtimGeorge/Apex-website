@@ -814,20 +814,17 @@ function runAllPageLogic(userData, uid) {
           } else {
             snapshot.forEach((doc) => {
               const plan = doc.data();
-              const isFeatured = plan.planName
-                .toLowerCase()
-                .includes('premium');
+              const isFeatured = plan.isFeatured;
               plansHTML += `
-                            <div class="plan-card ${isFeatured ? 'featured' : ''
-                }">
+                            <div class="plan-card ${isFeatured ? 'featured' : ''}">
                                 ${isFeatured
                   ? '<div class="plan-badge">Most Popular</div>'
                   : ''
                 }
                                 <div class="plan-header">
                                     <h3 class="plan-name">${plan.planName}</h3>
-                                    <div class="plan-price">$${plan.minAmount
-                } - $${plan.maxAmount}</div>
+                                    <div class="plan-price">${plan.minAmount} - ${plan.maxAmount}</div>
+                                    <p class="plan-description">${plan.description || ''}</p>
                                 </div>
                                 <ul class="plan-features">
                                     <li>Return <strong>${plan.roiPercent
@@ -871,28 +868,29 @@ function runAllPageLogic(userData, uid) {
       btc: {
         name: 'Bitcoin (BTC)',
         symbol: 'BTC',
-        address: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+        address: '0x73aB257AbD916beCd67a062eD973211335635cb1',
       },
       eth: {
         name: 'Ethereum (ETH)',
         symbol: 'ETH',
-        address: '0x3a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b',
+        address: '0x73aB257AbD916beCd67a062eD973211335635cb1',
       },
       usdt: {
         name: 'Tether (USDT)',
         symbol: 'USDT',
-        address: '0x7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b',
+        address: '0x73aB257AbD916beCd67a062eD973211335635cb1',
       },
       pi: {
         name: 'Pi Network (PI)',
         symbol: 'PI',
-        address: 'GABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+        address: 'MBC6NRTTQLRCABQHIR5J4R4YDJWFWRAO4ZRQIM2SVI5GSIZ2HZ42QAAAAAABIUBK5PH24',
       },
       ice: {
         name: 'Ice Network (ICE)',
         symbol: 'ICE',
-        address: 'ice_1234567890abcdefghijklmnopqrstuvwxyz',
+        address: '0x73aB257AbD916beCd67a062eD973211335635cb1',
       },
+      
       // Add more coins here
     };
 
@@ -1120,7 +1118,7 @@ function runAllPageLogic(userData, uid) {
   }
 
   // =================================================================================
-  // --- Investment Form Submission Handler (DEBUGGING VERSION) ---
+  // --- Investment Form Submission Handler (REVISED FOR DATA INTEGRITY) ---
   // =================================================================================
   async function handleInvestmentSubmission(event, currentUserData) {
     event.preventDefault();
@@ -1133,6 +1131,9 @@ function runAllPageLogic(userData, uid) {
       document.getElementById('investment-amount').value
     );
     const user = auth.currentUser;
+    const planName = document
+      .getElementById('modal-plan-name')
+      .textContent.replace('Invest in ', '');
 
     // --- Validation ---
     if (!user || isNaN(amount) || amount <= 0) {
@@ -1142,7 +1143,6 @@ function runAllPageLogic(userData, uid) {
       return;
     }
 
-    // We use the globally fetched userData for the initial check
     if (amount > currentUserData.accountBalance) {
       alert('Insufficient balance for this investment.');
       submitButton.disabled = false;
@@ -1150,68 +1150,65 @@ function runAllPageLogic(userData, uid) {
       return;
     }
 
-    // --- Firestore Transaction ---
+    // --- Get Plan Details BEFORE Transaction ---
     try {
-      console.log('DEBUG: Starting investment transaction...');
+      const plansQuery = query(
+        collection(db, 'plans'),
+        where('planName', '==', planName)
+      );
+      const plansSnapshot = await getDocs(plansQuery);
 
+      if (plansSnapshot.empty) {
+        throw `The "${planName}" plan could not be found. It may have been deactivated.`;
+      }
+      const planData = plansSnapshot.docs[0].data();
+
+      // --- Firestore Transaction ---
       await runTransaction(db, async (transaction) => {
-        console.log('DEBUG: 1. Inside runTransaction callback.');
         const userDocRef = doc(db, 'users', user.uid);
-
-        console.log(
-          'DEBUG: 2. Getting fresh user document inside transaction...'
-        );
         const userDoc = await transaction.get(userDocRef);
 
         if (!userDoc.exists()) {
-          // This error will be caught by the outer catch block
-          throw 'FATAL: User document could not be found inside transaction.';
+          throw 'FATAL: User document could not be found.';
         }
-        console.log('DEBUG: 3. Fresh user document found.');
 
         const currentBalance = userDoc.data().accountBalance;
-        console.log(
-          `DEBUG: 4. Balance inside transaction is: $${currentBalance}`
-        );
-
         if (amount > currentBalance) {
-          throw `Your current balance ($${currentBalance}) is no longer sufficient.`;
+          throw `Your current balance (${currentBalance.toFixed(
+            2
+          )}) is no longer sufficient.`;
         }
 
         // --- Step A: Update User's Balance ---
         const newBalance = currentBalance - amount;
-        console.log(`DEBUG: 5. Updating user balance to: $${newBalance}`);
         transaction.update(userDocRef, { accountBalance: newBalance });
 
-        // --- Step B: Create New Investment Document ---
-        const newInvestmentRef = doc(collection(db, 'investments')); // Auto-generates an ID
+        // --- Step B: Create New Investment Document (with all plan details) ---
+        const newInvestmentRef = doc(collection(db, 'investments'));
+        const startDate = new Date();
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + planData.durationDays);
+
         const newInvestmentData = {
           userId: user.uid,
-          planName: document
-            .getElementById('modal-plan-name')
-            .textContent.replace('Invest in ', ''),
+          planName: planData.planName,
           investedAmount: amount,
           status: 'active',
-          startDate: new Date(),
+          startDate: startDate,
+          endDate: endDate, // <-- CRITICAL: Store the calculated end date
+          roiPercent: planData.roiPercent, // <-- CRITICAL: Store the ROI
+          durationDays: planData.durationDays, // <-- CRITICAL: Store the duration
         };
-        console.log(
-          'DEBUG: 6. Creating new investment document with data:',
-          newInvestmentData
-        );
         transaction.set(newInvestmentRef, newInvestmentData);
-
-        console.log('DEBUG: 7. Transaction operations queued successfully.');
       });
 
-      console.log('DEBUG: 8. Transaction completed successfully!');
       alert('Investment successful! Your plan is now active.');
       window.location.href = 'my-plans.html';
     } catch (error) {
-      console.error('--- INVESTMENT FAILED ---');
-      console.error('Error message:', error);
+      console.error('--- INVESTMENT FAILED ---', error);
       alert('Investment failed: ' + error);
       submitButton.disabled = false;
       submitButton.textContent = 'Confirm Investment';
     }
-  }
+  }''
 }

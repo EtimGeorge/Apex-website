@@ -171,85 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    // --- NEW: Function to load and display active investments ---
-    const loadActiveInvestments = async () => {
-      const tableBody = document.getElementById('active-investments-table-body');
-      if (!tableBody) return;
-
-      try {
-        const investmentsQuery = query(
-          collection(db, 'investments'),
-          where('status', '==', 'active'),
-          orderBy('startDate', 'desc')
-        );
-        const investmentsSnapshot = await getDocs(investmentsQuery);
-
-        if (investmentsSnapshot.empty) {
-          tableBody.innerHTML = '<tr><td colspan="5">There are no active investments.</td></tr>';
-          return;
-        }
-
-        // Use Promise.all to fetch user data concurrently
-        const promises = investmentsSnapshot.docs.map(async (investmentDoc) => {
-          const investment = investmentDoc.data();
-          const userDocRef = doc(db, 'users', investment.userId);
-          const userDoc = await getDoc(userDocRef);
-          const userName = userDoc.exists() ? userDoc.data().fullName : 'Unknown User';
-
-          // Calculate end date
-          const startDate = investment.startDate.toDate();
-          const endDate = new Date(startDate);
-          // Assuming durationDays is stored in the investment document or needs to be fetched
-          // For this example, let's assume it's available. If not, we'd need another lookup.
-          // NOTE: The current investment object doesn't have durationDays. This needs to be fixed.
-          // We will add it when the investment is created. For now, we'll leave it blank.
-          // Let's assume we have a plansMap available like in the processing function.
-          // We will fetch plans and create a map.
-
-          return {
-            userName,
-            ...investment,
-            startDate,
-            // endDate will be calculated after we have the plan's duration
-          };
-        });
-
-        const plansSnapshot = await getDocs(collection(db, 'plans'));
-        const plansMap = new Map();
-        plansSnapshot.forEach(planDoc => {
-          plansMap.set(planDoc.data().planName, planDoc.data());
-        });
-
-        const investmentsWithData = await Promise.all(promises);
-
-        let rowsHTML = '';
-        investmentsWithData.forEach(investment => {
-          const plan = plansMap.get(investment.planName);
-          const duration = plan ? plan.durationDays : 'N/A';
-          const endDate = new Date(investment.startDate);
-          if (plan) {
-            endDate.setDate(investment.startDate.getDate() + plan.durationDays);
-          }
-
-          rowsHTML += `
-                <tr>
-                    <td>${investment.userName}</td>
-                    <td>${investment.planName}</td>
-                    <td>${investment.investedAmount.toFixed(2)}</td>
-                    <td>${investment.startDate.toLocaleDateString()}</td>
-                    <td>${plan ? endDate.toLocaleDateString() : 'N/A'}</td>
-                </tr>
-            `;
-        });
-
-        tableBody.innerHTML = rowsHTML;
-
-      } catch (error) {
-        console.error('Error loading active investments:', error);
-        tableBody.innerHTML = '<tr><td colspan="5">Failed to load investments. See console.</td></tr>';
-      }
-    };
-
     // --- Logic for the "Process Investments" Button (This is your existing, working code) ---
     const processButton = document.getElementById('process-investments-btn');
 
@@ -400,7 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initial Page Load ---
     populateDashboardStats();
-    loadActiveInvestments();
   } // End of dashboard.html block
 
   // =============================================================================
@@ -949,8 +869,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const plan = doc.data();
           // Added data-planid and data-isactive attributes to the row
           rowsHTML += `
-            <tr data-planid="${doc.id}" data-isactive="${plan.isActive}" class="${plan.isFeatured ? 'featured-row' : ''}">
-                <td>${plan.planName} ${plan.isFeatured ? '(Featured)' : ''}</td>
+            <tr data-planid="${doc.id}" data-isactive="${plan.isActive}">
+                <td>${plan.planName}</td>
                 <td>${plan.minAmount} - ${plan.maxAmount}</td>
                 <td>${plan.roiPercent}% Daily</td>
                 <td>${plan.durationDays} Days</td>
@@ -1022,8 +942,6 @@ document.addEventListener('DOMContentLoaded', () => {
             durationDays: parseInt(
               document.getElementById('duration-days').value
             ),
-            description: document.getElementById('plan-description').value, // <-- ADDED
-            isFeatured: document.getElementById('is-featured').checked, // <-- ADDED
             isActive: true, // All new plans are active by default
             createdAt: new Date(),
           };

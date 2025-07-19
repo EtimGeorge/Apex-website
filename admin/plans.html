@@ -152,6 +152,14 @@
                   <label for="duration-days">Duration (Days)</label>
                   <input type="number" id="duration-days" class="form-control" placeholder="3" required />
                 </div>
+                <div class="form-group">
+                  <label for="plan-description">Description</label>
+                  <textarea id="plan-description" class="form-control" rows="3" placeholder="A short explainer for the plan."></textarea>
+                </div>
+                <div class="form-group form-check">
+                  <input type="checkbox" id="is-featured" class="form-check-input" />
+                  <label for="is-featured" class="form-check-label">Mark as Featured</label>
+                </div>
                 <button type="submit" class="btn btn-primary form-submit-btn">
                   Create Plan
                 </button>
@@ -166,14 +174,15 @@
                   <thead>
                     <tr>
                       <th>Plan Name</th>
-                      <th>Range</th>
-                      <th>ROI</th>
+                      <th>Amount Range</th>
+                      <th>Daily ROI</th>
                       <th>Duration</th>
+                      <th>Actions</th> <!-- ADD THIS LINE -->
                     </tr>
                   </thead>
                   <tbody id="plans-table-body">
                     <tr>
-                      <td colspan="4">Loading existing plans...</td>
+                      <td colspan="5">Loading existing plans...</td>
                     </tr>
                   </tbody>
                 </table>
