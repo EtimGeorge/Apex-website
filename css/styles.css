@@ -101,6 +101,8 @@ ul {
   transition: opacity 0.2s ease;
   margin-bottom: 2rem;
 }
+
+
 .sidebar-header {
   /* This ensures the logo and the new close button are aligned nicely */
   display: flex;
